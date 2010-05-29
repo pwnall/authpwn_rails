@@ -10,7 +10,7 @@ begin
     gem.email = "victor@costan.us"
     gem.homepage = "http://github.com/costan/mini_auth_rails"
     gem.authors = ["Victor Costan"]
-    gem.add_runtime_dependency "fbgraph_rails", ">= 0.1.1"
+    gem.add_runtime_dependency "fbgraph_rails", ">= 0.1.3"
     gem.add_development_dependency "actionpack", ">= 3.0.0.beta3"
     gem.add_development_dependency "activesupport", ">= 3.0.0.beta3"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings

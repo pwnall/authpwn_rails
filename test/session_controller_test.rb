@@ -23,14 +23,15 @@ class SessionControllerTest < ActionController::TestCase
     get :show
     assert_response :success
     assert_nil assigns(:current_user)
-    assert_equal 'No user', @response.body
+    assert_equal 'No user', response.body
   end
   
   test "valid user_id in session" do
-    get :show, {}, :current_user_id => @first_user.id
+    set_session_current_user @first_user
+    get :show, {}
     assert_response :success
     assert_equal @first_user, assigns(:current_user)
-    assert_equal 'User: 1', @response.body
+    assert_equal 'User: 1', response.body
   end
   
   test "invalid user_id in session" do

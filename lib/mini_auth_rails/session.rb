@@ -46,6 +46,14 @@ end
 
 ActionController::Base.send :include, ControllerMixin
 
+# :nodoc: add session modification
+class ActionController::TestCase
+  # Sets the authenticated user in the test session.
+  def set_session_current_user(user)
+    request.session[:current_user_id] = user ? user.id : nil
+  end
+end
+
 end  # namespace MiniAuthRails::Session
 
 end  # namespace MiniAuthRails

@@ -27,18 +27,18 @@ class FacebookControllerTest < ActionController::TestCase
     get :show
     assert_response :success
     assert_nil assigns(:current_user)
-    assert_equal 'No user', @response.body
   end
   
   test "facebook token for existing user" do
-    get :show, {}, :current_facebook_token => @first_user.token
+    set_session_current_facebook_token @first_user.token
+    get :show, {}
     assert_response :success
     assert_equal @first_user, assigns(:current_user)
-    assert_equal 'User: 1', @response.body
   end
   
   test "new facebook token" do    
-    get :show, {}, :current_facebook_token => @new_token
+    set_session_current_facebook_token @new_token
+    get :show, {}
     assert_response :success
     assert !(@first_user == assigns(:current_user))
     assert_equal @new_token, assigns(:current_user).token
