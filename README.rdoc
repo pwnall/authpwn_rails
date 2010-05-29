@@ -1,6 +1,10 @@
 = mini_auth_rails
 
-Description goes here.
+User authentication for a Ruby on Rails 3 application. Works with Facebook.
+
+== Integration
+
+TBD
 
 == Note on Patches/Pull Requests
  
@@ -14,4 +18,4 @@ Description goes here.
 
 == Copyright
 
-Copyright (c) 2010 Victor Costan. See LICENSE for details.
+Copyright (c) 2010 Victor Costan, released under the MIT license
