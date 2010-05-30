@@ -27,7 +27,7 @@ class CookieControllerTest < ActionController::TestCase
   
   test "valid user_id in session" do
     set_session_current_user @first_user
-    get :show, {}
+    get :show
     assert_response :success
     assert_equal @first_user, assigns(:current_user)
     assert_equal 'User: 1', response.body

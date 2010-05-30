@@ -32,7 +32,11 @@ module ControllerInstanceMethods
   
   def current_user=(user)
     @current_user = user
-    session[:current_user_id] = user.id
+    if user
+      session[:current_user_id] = user.id
+    else
+      session.delete :current_user_id
+    end
   end  
 
   def authenticate_using_session

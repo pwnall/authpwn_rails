@@ -5,6 +5,9 @@ class ActionController::TestCase
     @routes.draw do |map|
       resource :cookie, :controller => 'cookie'
       resource :facebook, :controller => 'facebook'
+      resource :session, :controller => 'session'
+      root :to => 'session#index'
     end
+    ApplicationController.send :include, @routes.url_helpers
   end
 end
