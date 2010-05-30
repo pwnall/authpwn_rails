@@ -1,5 +1,4 @@
 require File.expand_path('../test_helper', __FILE__)
-require 'action_controller'
 
 # Mock controller used for testing session handling.
 class FacebookController < ActionController::Base

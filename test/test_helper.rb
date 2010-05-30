@@ -8,6 +8,7 @@ require 'fbgraph_rails/controller'
 
 require 'mini_auth_rails'
 
+require 'helpers/application_controller.rb'
 require 'helpers/fbgraph.rb'
 require 'helpers/routes.rb'
 require 'helpers/user.rb'
