@@ -1,7 +1,7 @@
 require 'action_controller'
 
 # :nodoc: namespace
-module MiniAuthRails
+module AuthpwnRails
 
 # :nodoc: namespace
 module FacebookToken
@@ -39,6 +39,6 @@ end
 
 ActionController::Base.send :include, ControllerMixin
 
-end  # namespace MiniAuthRails::FacebookToken
+end  # namespace AuthpwnRails::FacebookToken
 
-end  # namespace MiniAuthRails
+end  # namespace AuthpwnRails

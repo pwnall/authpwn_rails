@@ -2,7 +2,7 @@ require 'mini_auth_rails'
 require 'rails'
 
 # :nodoc: namespace
-module MiniAuthRails
+module AuthpwnRails
 
 class Engine < Rails::Engine
   paths.app                 = "app"
@@ -15,7 +15,11 @@ class Engine < Rails::Engine
   # paths.config              = "config"
   # paths.config.initializers = "config/initializers"
   # paths.config.locales      = "config/locales"
-  paths.config.routes       = "config/routes.rb"  
-end  # class MiniAuthRails::Engine
+  paths.config.routes       = "config/routes.rb"
+  
+  def generators
+    require 'mini_auth_rails/generators/user_model_generator.rb'
+  end
+end  # class AuthpwnRails::Engine
 
-end  # namespace MiniAuthRails
+end  # namespace AuthpwnRails

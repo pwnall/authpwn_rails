@@ -1,5 +1,5 @@
 # :nodoc: namespace
-module MiniAuthRails
+module AuthpwnRails
 end
 
 require 'mini_auth_rails/facebook_token.rb'

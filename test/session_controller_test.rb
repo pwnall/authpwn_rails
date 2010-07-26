@@ -4,11 +4,11 @@ require File.expand_path('../../app/controllers/session_controller', __FILE__)
 
 class SessionControllerTest < ActionController::TestCase
   setup do
-    @first_user = User.mock_user
+    @user = users(:john)
   end
 
   test "logout" do
-    set_session_current_user @first_user
+    set_session_current_user @user
     delete :destroy
     
     assert_redirected_to root_url

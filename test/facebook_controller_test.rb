@@ -1,7 +1,7 @@
 require File.expand_path('../test_helper', __FILE__)
 
 # Mock controller used for testing session handling.
-class FacebookController < ActionController::Base
+class FacebookController < ApplicationController
   authenticates_using_session
   probes_facebook_access_token
   authenticates_using_facebook
@@ -17,9 +17,8 @@ end
 
 class FacebookControllerTest < ActionController::TestCase
   setup do
-    @first_user = User.mock_user
-    @first_user.token = 'facebook:token'
-    @new_token = 'facebook:new_token'
+    @user = users(:john)
+    @new_token = 'facebook:new_token|boom'
   end
 
   test "no facebook token" do
@@ -29,17 +28,16 @@ class FacebookControllerTest < ActionController::TestCase
   end
   
   test "facebook token for existing user" do
-    set_session_current_facebook_token @first_user.token
+    set_session_current_facebook_token facebook_tokens(:john).access_token
     get :show, {}
     assert_response :success
-    assert_equal @first_user, assigns(:current_user)
+    assert_equal @user, assigns(:current_user)
   end
   
   test "new facebook token" do    
     set_session_current_facebook_token @new_token
     get :show, {}
     assert_response :success
-    assert !(@first_user == assigns(:current_user))
-    assert_equal @new_token, assigns(:current_user).token
+    assert !(@user == assigns(:current_user))
   end
 end

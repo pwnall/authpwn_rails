@@ -1,7 +1,7 @@
 require 'action_controller'
 
 # :nodoc: namespace
-module MiniAuthRails
+module AuthpwnRails
 
 # :nodoc: namespace
 module Session
@@ -58,6 +58,6 @@ class ActionController::TestCase
   end
 end
 
-end  # namespace MiniAuthRails::Session
+end  # namespace AuthpwnRails::Session
 
-end  # namespace MiniAuthRails
+end  # namespace AuthpwnRails

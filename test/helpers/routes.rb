@@ -1,8 +1,8 @@
 # :nodoc: the routes used in all tests
 class ActionController::TestCase
-  setup do
-    @routes = ActionDispatch::Routing::RouteSet.new
-    @routes.draw do |map|
+  def setup_routes
+    @routes = ActionController::Routing::RouteSet.new
+    @routes.draw do
       resource :cookie, :controller => 'cookie'
       resource :facebook, :controller => 'facebook'
       resource :session, :controller => 'session'
@@ -10,4 +10,6 @@ class ActionController::TestCase
     end
     ApplicationController.send :include, @routes.url_helpers
   end
+  
+  setup :setup_routes
 end

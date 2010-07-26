@@ -1,0 +1,9 @@
+jane:
+  email: jane@gmail.com
+  password_salt: 5678
+  password_hash: <%= User.hash_password('pa55w0rd', '5678').inspect %>
+
+john:
+  email: john@gmail.com
+  password_salt: 1234
+  password_hash: <%= User.hash_password('password', '1234').inspect %>
