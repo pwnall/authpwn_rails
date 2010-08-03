@@ -11,9 +11,9 @@ begin
     gem.homepage = "http://github.com/costan/mini_auth_rails"
     gem.authors = ["Victor Costan"]
     gem.add_runtime_dependency "fbgraph_rails", ">= 0.1.3"
-    gem.add_development_dependency "activerecord", ">= 3.0.0.beta4"
-    gem.add_development_dependency "actionpack", ">= 3.0.0.beta4"
-    gem.add_development_dependency "activesupport", ">= 3.0.0.beta4"
+    gem.add_development_dependency "activerecord", ">= 3.0.0.rc"
+    gem.add_development_dependency "actionpack", ">= 3.0.0.rc"
+    gem.add_development_dependency "activesupport", ">= 3.0.0.rc"
     gem.add_development_dependency "sqlite3-ruby", ">= 1.3.0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end

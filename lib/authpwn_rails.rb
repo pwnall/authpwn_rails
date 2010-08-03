@@ -2,11 +2,11 @@
 module AuthpwnRails
 end
 
-require 'mini_auth_rails/facebook_token.rb'
-require 'mini_auth_rails/session.rb'
+require 'authpwn_rails/facebook_token.rb'
+require 'authpwn_rails/session.rb'
 
 if defined?(Rails)
-  require 'mini_auth_rails/engine.rb'
+  require 'authpwn_rails/engine.rb'
 
   # HACK(costan): this works around a known Rails bug
   #     https://rails.lighthouseapp.com/projects/8994/tickets/1905-apphelpers-within-plugin-not-being-mixed-in
