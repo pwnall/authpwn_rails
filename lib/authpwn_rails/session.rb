@@ -56,6 +56,12 @@ class ActionController::TestCase
   def set_session_current_user(user)
     request.session[:current_user_id] = user ? user.id : nil
   end
+  
+  # The authenticated user in the test session.
+  def session_current_user
+    return nil unless user_id = request.session[:current_user_id]
+    User.find user_id
+  end
 end
 
 end  # namespace AuthpwnRails::Session

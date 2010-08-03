@@ -11,6 +11,6 @@ class UserGenerator < Rails::Generators::Base
         File.join('db', 'migrations', '20100725000001_create_users.rb')
     copy_file 'users.yml', File.join('test', 'fixtures', 'users.yml')
   end
-end  # class AuthpwnRails::UserMigrationGenerator
+end  # class AuthpwnRails::UserGenerator
 
 end  # namespace AuthpwnRails

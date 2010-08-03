@@ -13,6 +13,6 @@ class FacebookGenerator < Rails::Generators::Base
     copy_file 'facebook_tokens.yml',
               File.join('test', 'fixtures', 'facebook_tokens.yml')
   end
-end  # class AuthpwnRails::UserMigrationGenerator
+end  # class AuthpwnRails::FacebookGenerator
 
 end  # namespace AuthpwnRails

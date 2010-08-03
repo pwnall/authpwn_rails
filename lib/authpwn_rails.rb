@@ -2,8 +2,9 @@
 module AuthpwnRails
 end
 
-require 'authpwn_rails/facebook_token.rb'
+require 'authpwn_rails/facebook_extensions.rb'
 require 'authpwn_rails/session.rb'
+require 'authpwn_rails/user_model.rb'
 
 if defined?(Rails)
   require 'authpwn_rails/engine.rb'
