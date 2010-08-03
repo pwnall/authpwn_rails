@@ -1,4 +1,4 @@
-require 'mini_auth_rails'
+require 'authpwn_rails'
 require 'rails'
 
 # :nodoc: namespace
