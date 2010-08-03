@@ -17,8 +17,9 @@ class Engine < Rails::Engine
   # paths.config.locales      = "config/locales"
   paths.config.routes       = "config/routes.rb"
   
-  def generators
-    require 'mini_auth_rails/generators/user_model_generator.rb'
+  generators do
+    require 'authpwn_rails/generators/facebook_generator.rb'
+    require 'authpwn_rails/generators/user_generator.rb'
   end
 end  # class AuthpwnRails::Engine
 

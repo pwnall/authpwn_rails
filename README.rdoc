@@ -4,7 +4,8 @@ User authentication for a Ruby on Rails 3 application. Works with Facebook.
 
 == Integration
 
-TBD
+Generate the structure for user accounts:
+    rails g authpwn_rails
 
 == Note on Patches/Pull Requests
  
