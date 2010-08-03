@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{authpwn_rails}
-  s.version = "0.3.0"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
@@ -26,22 +26,24 @@ Gem::Specification.new do |s|
      "VERSION",
      "app/controllers/session_controller.rb",
      "app/helpers/session_helper.rb",
-     "app/models/facebook_token.rb",
-     "app/models/user.rb",
      "authpwn_rails.gemspec",
      "config/routes.rb",
      "lib/authpwn_rails.rb",
      "lib/authpwn_rails/engine.rb",
-     "lib/authpwn_rails/facebook_token.rb",
-     "lib/authpwn_rails/generators/facebook_migration_generator.rb",
+     "lib/authpwn_rails/facebook_extensions.rb",
+     "lib/authpwn_rails/generators/facebook_generator.rb",
+     "lib/authpwn_rails/generators/session_views_generator.rb",
      "lib/authpwn_rails/generators/templates/001_create_users.rb",
      "lib/authpwn_rails/generators/templates/002_create_facebook_tokens.rb",
      "lib/authpwn_rails/generators/templates/facebook_token.rb",
      "lib/authpwn_rails/generators/templates/facebook_tokens.yml",
+     "lib/authpwn_rails/generators/templates/session/home.html.erb",
+     "lib/authpwn_rails/generators/templates/session/welcome.html.erb",
      "lib/authpwn_rails/generators/templates/user.rb",
      "lib/authpwn_rails/generators/templates/users.yml",
-     "lib/authpwn_rails/generators/user_migration_generator.rb",
+     "lib/authpwn_rails/generators/user_generator.rb",
      "lib/authpwn_rails/session.rb",
+     "lib/authpwn_rails/user_model.rb",
      "test/cookie_controller_test.rb",
      "test/facebook_controller_test.rb",
      "test/facebook_token_test.rb",
@@ -49,6 +51,7 @@ Gem::Specification.new do |s|
      "test/helpers/db_setup.rb",
      "test/helpers/fbgraph.rb",
      "test/helpers/routes.rb",
+     "test/helpers/view_helpers.rb",
      "test/session_controller_test.rb",
      "test/test_helper.rb",
      "test/user_test.rb"
@@ -68,7 +71,8 @@ Gem::Specification.new do |s|
      "test/helpers/application_controller.rb",
      "test/helpers/routes.rb",
      "test/helpers/fbgraph.rb",
-     "test/helpers/db_setup.rb"
+     "test/helpers/db_setup.rb",
+     "test/helpers/view_helpers.rb"
   ]
 
   if s.respond_to? :specification_version then
