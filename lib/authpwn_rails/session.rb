@@ -24,6 +24,15 @@ module ControllerClassMethods
     include ControllerInstanceMethods
     before_filter :authenticate_using_session, options   
   end
+  
+  # Turns the current controller into the session processing controller.
+  #
+  # Right now, this should be called from SessionController. The controller name
+  # is hardwired in other parts of the implementation.
+  def authpwn_session_controller
+    include SessionControllerInstanceMethods
+    authenticates_using_session
+  end
 end
 
 # Included in controllers that call authenticates_using_session.
@@ -48,7 +57,61 @@ module ControllerInstanceMethods
   private :authenticate_using_session  
 end
 
+# Included in controllers that call authenticates_using_session.
+module SessionControllerInstanceMethods
+  # GET /session/new
+  def new
+    @user = User.new
+    redirect_to session_url if current_user
+  end
+
+  # GET /session
+  def show
+    @user = current_user || User.new
+    if @user.new_record?
+      welcome
+      render :action => :welcome
+    else      
+      home
+      render :action => :home
+    end
+  end
+  
+  # POST /session
+  def create
+    @user = User.new params[:user]
+    self.current_user =
+        User.find_by_email_and_password @user.email, @user.password
+        
+    respond_to do |format|
+      if current_user
+        format.html { redirect_to session_url }
+      else
+        flash[:notice] = 'Invalid e-mail or password'
+        format.html { redirect_to session_url }
+      end
+    end
+  end
+
+  # DELETE /session
+  def destroy
+    self.current_user = nil
+    redirect_to session_url
+  end
+
+  # Hook for setting up the home view.
+  def home
+  end
+  private :home
+  
+  # Hook for setting up the welcome view.
+  def welcome
+  end
+  private :welcome
+end  # module Authpwn::Session::SessionControllerInstanceMethods
+
 ActionController::Base.send :include, ControllerMixin
+
 
 # :nodoc: add session modification
 class ActionController::TestCase

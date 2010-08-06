@@ -5,6 +5,7 @@ class ActionController::TestCase
     @routes.draw do
       resource :cookie, :controller => 'cookie'
       resource :facebook, :controller => 'facebook'
+      # NOTE: this route should be kept in sync with the session template.
       resource :session, :controller => 'session'
       root :to => 'session#index'
     end

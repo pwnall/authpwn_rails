@@ -1,6 +1,6 @@
 require File.expand_path('../test_helper', __FILE__)
 
-require File.expand_path('../../app/controllers/session_controller', __FILE__)
+require 'authpwn_rails/generators/templates/session_controller.rb'
 
 class SessionControllerTest < ActionController::TestCase
   setup do
@@ -11,6 +11,8 @@ class SessionControllerTest < ActionController::TestCase
     get :show
     assert_template :welcome
     assert_nil assigns(:current_user)
+    assert_equal User.count, assigns(:user_count),
+                 'welcome controller method not called'
   end
   
   test "show renders home with a user" do
@@ -18,6 +20,7 @@ class SessionControllerTest < ActionController::TestCase
     get :show
     assert_template :home
     assert_equal @user, assigns(:current_user)
+    assert_equal @user, assigns(:user), 'home controller method not called'
   end
   
   test "new redirects homes with a user" do

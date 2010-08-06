@@ -15,11 +15,11 @@ class Engine < Rails::Engine
   # paths.config              = "config"
   # paths.config.initializers = "config/initializers"
   # paths.config.locales      = "config/locales"
-  paths.config.routes       = "config/routes.rb"
+  # paths.config.routes       = "config/routes.rb"
   
   generators do
     require 'authpwn_rails/generators/facebook_generator.rb'
-    require 'authpwn_rails/generators/session_views_generator.rb'
+    require 'authpwn_rails/generators/session_generator.rb'
     require 'authpwn_rails/generators/user_generator.rb'
   end
 end  # class AuthpwnRails::Engine
