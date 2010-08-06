@@ -2,6 +2,12 @@
 class SessionController < ApplicationController
   authenticates_using_session
 
+  # GET /session/new
+  def new
+    @user = User.new
+    redirect_to session_url if current_user
+  end
+
   # GET /session
   def show
     @user = current_user || User.new

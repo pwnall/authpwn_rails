@@ -20,6 +20,25 @@ class SessionControllerTest < ActionController::TestCase
     assert_equal @user, assigns(:current_user)
   end
   
+  test "new redirects homes with a user" do
+    set_session_current_user @user
+    get :new
+    assert_redirected_to session_url
+  end     
+
+  test "new renders login form without a user" do
+    get :new
+    assert_template :new
+    assert_nil assigns(:current_user), 'current_user should not be set'
+    assert assigns(:user).new_record?, 'user instance variable should be fresh'
+  
+    assert_select 'form' do
+      assert_select 'input#user_email'
+      assert_select 'input#user_password'
+      assert_select 'input[type=submit]'
+    end
+  end     
+  
   test "create logs in with good account details" do
     post :create, :user => { :email => @user.email, :password => 'password' }
     assert_redirected_to session_url

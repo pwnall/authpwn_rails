@@ -8,6 +8,8 @@ class SessionViewsGenerator < Rails::Generators::Base
   def create_session_views
     copy_file File.join('session', 'home.html.erb'),
               File.join('app', 'views', 'session', 'home.html.erb')
+    copy_file File.join('session', 'new.html.erb'),
+              File.join('app', 'views', 'session', 'new.html.erb')
     copy_file File.join('session', 'welcome.html.erb'),
               File.join('app', 'views', 'session', 'welcome.html.erb')
   end
