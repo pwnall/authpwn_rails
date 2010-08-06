@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{authpwn_rails}
-  s.version = "0.4.2"
+  s.version = "0.4.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
@@ -24,15 +24,13 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "VERSION",
-     "app/controllers/session_controller.rb",
      "app/helpers/session_helper.rb",
      "authpwn_rails.gemspec",
-     "config/routes.rb",
      "lib/authpwn_rails.rb",
      "lib/authpwn_rails/engine.rb",
      "lib/authpwn_rails/facebook_extensions.rb",
      "lib/authpwn_rails/generators/facebook_generator.rb",
-     "lib/authpwn_rails/generators/session_views_generator.rb",
+     "lib/authpwn_rails/generators/session_generator.rb",
      "lib/authpwn_rails/generators/templates/001_create_users.rb",
      "lib/authpwn_rails/generators/templates/002_create_facebook_tokens.rb",
      "lib/authpwn_rails/generators/templates/facebook_token.rb",
@@ -40,6 +38,7 @@ Gem::Specification.new do |s|
      "lib/authpwn_rails/generators/templates/session/home.html.erb",
      "lib/authpwn_rails/generators/templates/session/new.html.erb",
      "lib/authpwn_rails/generators/templates/session/welcome.html.erb",
+     "lib/authpwn_rails/generators/templates/session_controller.rb",
      "lib/authpwn_rails/generators/templates/user.rb",
      "lib/authpwn_rails/generators/templates/users.yml",
      "lib/authpwn_rails/generators/user_generator.rb",
