@@ -2,7 +2,13 @@ require File.expand_path('../test_helper', __FILE__)
 
 require 'authpwn_rails/generators/templates/session_controller.rb'
 
-class SessionControllerTest < ActionController::TestCase
+# Run the tests in the generator, to make sure they pass.
+require 'authpwn_rails/generators/templates/session_controller_test.rb'
+
+# Tests the methods injected by authpwn_session_controller.
+class SessionControllerApiTest < ActionController::TestCase
+  tests SessionController
+  
   setup do
     @user = users(:john)
   end

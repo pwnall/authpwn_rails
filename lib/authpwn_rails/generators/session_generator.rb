@@ -14,6 +14,8 @@ class SessionGenerator < Rails::Generators::Base
               File.join('app', 'views', 'session', 'new.html.erb')
     copy_file File.join('session', 'welcome.html.erb'),
               File.join('app', 'views', 'session', 'welcome.html.erb')
+    copy_file File.join('session_controller_test.rb'),
+              File.join('test', 'functional', 'session_controller_test.rb')
 
     route "resource :session, :controller => 'session'"
   end
