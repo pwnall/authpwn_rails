@@ -8,7 +8,7 @@ begin
     gem.summary = %Q{User authentication for Rails 3 applications.}
     gem.description = %Q{Works with Facebook.}
     gem.email = "victor@costan.us"
-    gem.homepage = "http://github.com/costan/mini_auth_rails"
+    gem.homepage = "http://github.com/pwnall/authpwn_rails"
     gem.authors = ["Victor Costan"]
     gem.add_runtime_dependency "fbgraph_rails", ">= 0.1.3"
     gem.add_runtime_dependency "rails", ">= 3.0.0.rc"
@@ -51,5 +51,6 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title = "authpwn_rails #{version}"
   rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('app/**/*.rb')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end

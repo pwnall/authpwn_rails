@@ -1,4 +1,4 @@
-= mini_auth_rails
+= authpwn_rails
 
 User authentication for a Ruby on Rails 3 application. Works with Facebook.
 
