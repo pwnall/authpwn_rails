@@ -58,7 +58,7 @@ module ModelMetaclassMethods
   
   # Generates a random salt value.
   def random_salt
-    (0...16).map { |i| 1 + rand(255) }.pack('C*')
+    [(0...12).map { |i| 1 + rand(255) }.pack('C*')].pack('m').strip
   end  
   
   # Fills out a new user's information based on a Facebook access token.
