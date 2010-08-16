@@ -57,16 +57,18 @@ class SessionControllerApiTest < ActionController::TestCase
   
   test "create does not log in with bad password" do
     post :create, :user => { :email => @user.email, :password => 'fail' }
-    assert_redirected_to session_url
+    assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
+    assert_not_nil flash[:notice]
   end
 
   test "create does not log in with bad e-mail" do
     post :create, :user => { :email => 'nobody@gmail.com', :password => 'no' }
-    assert_redirected_to session_url
+    assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
+    assert_not_nil flash[:notice]
   end
 
   test "logout" do

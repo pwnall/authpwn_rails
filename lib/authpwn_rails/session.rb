@@ -87,8 +87,9 @@ module SessionControllerInstanceMethods
       if current_user
         format.html { redirect_to session_url }
       else
-        flash[:notice] = 'Invalid e-mail or password'
-        format.html { redirect_to session_url }
+        format.html do
+          redirect_to new_session_url, :notice => 'Invalid e-mail or password'
+        end
       end
     end
   end
