@@ -44,7 +44,7 @@ class UserTest < ActiveSupport::TestCase
   test 'email format' do
     ['cos tan@gmail.com', 'costan@x@mit.edu'].each do |email|
       @user.email = email
-      assert !@user.valid?, "Bad email format - #{name}"
+      assert !@user.valid?, "Bad email format - #{email}"
     end    
   end
   
