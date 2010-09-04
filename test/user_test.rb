@@ -63,11 +63,22 @@ class UserTest < ActiveSupport::TestCase
     assert !@user.valid?
   end
   
+  test 'to_param' do
+    assert_equal @user.email, @user.to_param
+  end
+  
   test 'password_matches?' do
     assert_equal true, @user.password_matches?('awesome')
     assert_equal false, @user.password_matches?('not awesome'), 'Bogus password'
     assert_equal false, @user.password_matches?('password'),
                  "Another user's password" 
+  end
+  
+  test 'find_by_param' do
+    assert_equal users(:john), User.find_by_param(users(:john).to_param)
+    assert_equal users(:jane), User.find_by_param(users(:jane).to_param)
+    assert_equal nil, User.find_by_param('bogus email')
+    assert_equal nil, User.find_by_param(nil)
   end
   
   test 'find_by_email_and_password' do
