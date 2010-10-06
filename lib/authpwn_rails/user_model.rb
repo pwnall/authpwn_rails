@@ -45,12 +45,19 @@ end  # module AuthpwnRails::UserModel::ModelClassMethods
 
 # Included in the metaclass of models that call pwnauth_user_model.
 module ModelMetaclassMethods
+  # Queries the database using the value returned by User#to_param.
+  #
+  # Returns nil if no matching User exists.
+  def find_by_param(param)
+    where(:email => param).first
+  end
+  
   # The authenticated user or nil.
   def find_by_email_and_password(email, password)
-    @user = where(:email => email).first
-    (@user && @user.password_matches?(password)) ? @user : nil
+    user = where(:email => email).first
+    (user && user.password_matches?(password)) ? user : nil
   end
-    
+  
   # Computes a password hash from a raw password and a salt.
   def hash_password(password, salt)
     Digest::SHA2.hexdigest(password + salt)
@@ -72,7 +79,7 @@ module ModelMetaclassMethods
   # the case for a new visitor.
   def for_facebook_token(access_token)
     FacebookToken.for(access_token).user
-  end  
+  end
 end  # module AuthpwnRails::UserModel::ModelMetaclassMethods
 
 
@@ -95,6 +102,11 @@ module ModelInstanceMethods
     @password = new_password
     self.password_salt = self.class.random_salt
     self.password_hash = self.class.hash_password new_password, password_salt
+  end
+  
+  # Don't expose user IDs. Expose e-mail addresses instead.
+  def to_param
+    email
   end
 end  # module AuthpwnRails::UserModel::ModelInstanceMethods
 

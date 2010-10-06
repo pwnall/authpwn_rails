@@ -70,6 +70,16 @@ class UserTest < ActiveSupport::TestCase
                  "Another user's password" 
   end
   
+  test 'to_param' do
+    assert_equal 'dvdjohn@mit.edu', @user.to_param
+  end
+  
+  test 'find_by_param' do
+    assert_equal users(:john), User.find_by_param('john@gmail.com')
+    assert_equal users(:jane), User.find_by_param('jane@gmail.com')
+    assert_equal nil, User.find_by_param('random@user.com')
+  end
+  
   test 'find_by_email_and_password' do
     assert_equal users(:john),
         User.find_by_email_and_password('john@gmail.com', 'password')

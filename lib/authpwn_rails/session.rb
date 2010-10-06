@@ -42,16 +42,16 @@ module ControllerInstanceMethods
   def current_user=(user)
     @current_user = user
     if user
-      session[:current_user_id] = user.id
+      session[:current_user_pid] = user.to_param
     else
-      session.delete :current_user_id
+      session.delete :current_user_pid
     end
   end  
 
   def authenticate_using_session
     return true if current_user
-    user_id = session[:current_user_id]
-    user = user_id && User.find_by_id(user_id)
+    user_id = session[:current_user_pid]
+    user = user_id && User.find_by_param(user_id)
     self.current_user = user if user
   end
   private :authenticate_using_session  
@@ -118,13 +118,13 @@ ActionController::Base.send :include, ControllerMixin
 class ActionController::TestCase
   # Sets the authenticated user in the test session.
   def set_session_current_user(user)
-    request.session[:current_user_id] = user ? user.id : nil
+    request.session[:current_user_pid] = user ? user.to_param : nil
   end
   
   # The authenticated user in the test session.
   def session_current_user
-    return nil unless user_id = request.session[:current_user_id]
-    User.find user_id
+    return nil unless user_id = request.session[:current_user_pid]
+    User.find_by_param user_id
   end
 end
 

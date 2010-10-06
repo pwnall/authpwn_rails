@@ -33,8 +33,8 @@ class CookieControllerTest < ActionController::TestCase
     assert_equal "User: #{Fixtures.identify(:john)}", response.body
   end
   
-  test "invalid user_id in session" do
-    get :show, {}, :current_user_id => 999
+  test "invalid user_pid in session" do
+    get :show, {}, :current_user_pid => 'random@user.com'
     assert_response :success
     assert_nil assigns(:current_user)
   end
