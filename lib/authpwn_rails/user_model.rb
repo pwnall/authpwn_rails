@@ -104,10 +104,10 @@ module ModelInstanceMethods
     self.password_hash = self.class.hash_password new_password, password_salt
   end
   
-  # Don't expose user IDs. Expose e-mail addresses instead.
+  # Use e-mails instead of exposing ActiveRecord IDs.
   def to_param
     email
-  end
+  end  
 end  # module AuthpwnRails::UserModel::ModelInstanceMethods
 
 ActiveRecord::Base.send :include, ModelMixin

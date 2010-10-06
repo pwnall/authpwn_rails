@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{authpwn_rails}
-  s.version = "0.4.6"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
-  s.date = %q{2010-08-16}
+  s.date = %q{2010-09-05}
   s.description = %q{Works with Facebook.}
   s.email = %q{victor@costan.us}
   s.extra_rdoc_files = [
@@ -63,17 +63,17 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{User authentication for Rails 3 applications.}
   s.test_files = [
-    "test/facebook_token_test.rb",
-     "test/session_controller_api_test.rb",
-     "test/user_test.rb",
-     "test/cookie_controller_test.rb",
-     "test/test_helper.rb",
+    "test/cookie_controller_test.rb",
      "test/facebook_controller_test.rb",
+     "test/facebook_token_test.rb",
      "test/helpers/application_controller.rb",
-     "test/helpers/routes.rb",
-     "test/helpers/fbgraph.rb",
      "test/helpers/db_setup.rb",
-     "test/helpers/view_helpers.rb"
+     "test/helpers/fbgraph.rb",
+     "test/helpers/routes.rb",
+     "test/helpers/view_helpers.rb",
+     "test/session_controller_api_test.rb",
+     "test/test_helper.rb",
+     "test/user_test.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -82,16 +82,16 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<fbgraph_rails>, [">= 0.1.3"])
-      s.add_runtime_dependency(%q<rails>, [">= 3.0.0.rc"])
+      s.add_runtime_dependency(%q<rails>, [">= 3.0.0"])
       s.add_development_dependency(%q<sqlite3-ruby>, [">= 1.3.0"])
     else
       s.add_dependency(%q<fbgraph_rails>, [">= 0.1.3"])
-      s.add_dependency(%q<rails>, [">= 3.0.0.rc"])
+      s.add_dependency(%q<rails>, [">= 3.0.0"])
       s.add_dependency(%q<sqlite3-ruby>, [">= 1.3.0"])
     end
   else
     s.add_dependency(%q<fbgraph_rails>, [">= 0.1.3"])
-    s.add_dependency(%q<rails>, [">= 3.0.0.rc"])
+    s.add_dependency(%q<rails>, [">= 3.0.0"])
     s.add_dependency(%q<sqlite3-ruby>, [">= 1.3.0"])
   end
 end
