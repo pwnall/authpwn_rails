@@ -5,75 +5,73 @@
 
 Gem::Specification.new do |s|
   s.name = %q{authpwn_rails}
-  s.version = "0.5.1"
+  s.version = "0.5.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
-  s.date = %q{2010-10-06}
+  s.date = %q{2010-10-15}
   s.description = %q{Works with Facebook.}
   s.email = %q{victor@costan.us}
   s.extra_rdoc_files = [
     "LICENSE",
-     "README.rdoc"
+    "README.rdoc"
   ]
   s.files = [
     ".document",
-     ".gitignore",
-     ".project",
-     "LICENSE",
-     "README.rdoc",
-     "Rakefile",
-     "VERSION",
-     "app/helpers/session_helper.rb",
-     "authpwn_rails.gemspec",
-     "lib/authpwn_rails.rb",
-     "lib/authpwn_rails/engine.rb",
-     "lib/authpwn_rails/facebook_extensions.rb",
-     "lib/authpwn_rails/generators/facebook_generator.rb",
-     "lib/authpwn_rails/generators/session_generator.rb",
-     "lib/authpwn_rails/generators/templates/001_create_users.rb",
-     "lib/authpwn_rails/generators/templates/002_create_facebook_tokens.rb",
-     "lib/authpwn_rails/generators/templates/facebook_token.rb",
-     "lib/authpwn_rails/generators/templates/facebook_tokens.yml",
-     "lib/authpwn_rails/generators/templates/session/home.html.erb",
-     "lib/authpwn_rails/generators/templates/session/new.html.erb",
-     "lib/authpwn_rails/generators/templates/session/welcome.html.erb",
-     "lib/authpwn_rails/generators/templates/session_controller.rb",
-     "lib/authpwn_rails/generators/templates/session_controller_test.rb",
-     "lib/authpwn_rails/generators/templates/user.rb",
-     "lib/authpwn_rails/generators/templates/users.yml",
-     "lib/authpwn_rails/generators/user_generator.rb",
-     "lib/authpwn_rails/session.rb",
-     "lib/authpwn_rails/user_model.rb",
-     "test/cookie_controller_test.rb",
-     "test/facebook_controller_test.rb",
-     "test/facebook_token_test.rb",
-     "test/helpers/application_controller.rb",
-     "test/helpers/db_setup.rb",
-     "test/helpers/fbgraph.rb",
-     "test/helpers/routes.rb",
-     "test/helpers/view_helpers.rb",
-     "test/session_controller_api_test.rb",
-     "test/test_helper.rb",
-     "test/user_test.rb"
+    ".project",
+    "LICENSE",
+    "README.rdoc",
+    "Rakefile",
+    "VERSION",
+    "app/helpers/session_helper.rb",
+    "authpwn_rails.gemspec",
+    "lib/authpwn_rails.rb",
+    "lib/authpwn_rails/engine.rb",
+    "lib/authpwn_rails/facebook_extensions.rb",
+    "lib/authpwn_rails/generators/facebook_generator.rb",
+    "lib/authpwn_rails/generators/session_generator.rb",
+    "lib/authpwn_rails/generators/templates/001_create_users.rb",
+    "lib/authpwn_rails/generators/templates/002_create_facebook_tokens.rb",
+    "lib/authpwn_rails/generators/templates/facebook_token.rb",
+    "lib/authpwn_rails/generators/templates/facebook_tokens.yml",
+    "lib/authpwn_rails/generators/templates/session/home.html.erb",
+    "lib/authpwn_rails/generators/templates/session/new.html.erb",
+    "lib/authpwn_rails/generators/templates/session/welcome.html.erb",
+    "lib/authpwn_rails/generators/templates/session_controller.rb",
+    "lib/authpwn_rails/generators/templates/session_controller_test.rb",
+    "lib/authpwn_rails/generators/templates/user.rb",
+    "lib/authpwn_rails/generators/templates/users.yml",
+    "lib/authpwn_rails/generators/user_generator.rb",
+    "lib/authpwn_rails/session.rb",
+    "lib/authpwn_rails/user_model.rb",
+    "test/cookie_controller_test.rb",
+    "test/facebook_controller_test.rb",
+    "test/facebook_token_test.rb",
+    "test/helpers/application_controller.rb",
+    "test/helpers/db_setup.rb",
+    "test/helpers/fbgraph.rb",
+    "test/helpers/routes.rb",
+    "test/helpers/view_helpers.rb",
+    "test/session_controller_api_test.rb",
+    "test/test_helper.rb",
+    "test/user_test.rb"
   ]
   s.homepage = %q{http://github.com/pwnall/authpwn_rails}
-  s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{User authentication for Rails 3 applications.}
   s.test_files = [
+    "test/cookie_controller_test.rb",
+    "test/facebook_controller_test.rb",
     "test/facebook_token_test.rb",
-     "test/session_controller_api_test.rb",
-     "test/user_test.rb",
-     "test/cookie_controller_test.rb",
-     "test/test_helper.rb",
-     "test/facebook_controller_test.rb",
-     "test/helpers/application_controller.rb",
-     "test/helpers/routes.rb",
-     "test/helpers/fbgraph.rb",
-     "test/helpers/db_setup.rb",
-     "test/helpers/view_helpers.rb"
+    "test/helpers/application_controller.rb",
+    "test/helpers/db_setup.rb",
+    "test/helpers/fbgraph.rb",
+    "test/helpers/routes.rb",
+    "test/helpers/view_helpers.rb",
+    "test/session_controller_api_test.rb",
+    "test/test_helper.rb",
+    "test/user_test.rb"
   ]
 
   if s.respond_to? :specification_version then
