@@ -36,6 +36,9 @@ module ModelClassMethods
     # Virtual attribute: confirmation for the user's password.
     attr_accessor :password_confirmation
     validates_confirmation_of :password
+    
+    # Facebook token.
+    has_one :facebook_token, :dependent => :destroy, :inverse_of => :user    
 
     extend ModelMetaclassMethods    
     include ModelInstanceMethods

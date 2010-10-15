@@ -11,7 +11,7 @@ module FacebookExtensions
 # Mixed into ActiveController::Base
 module ControllerMixin
   def self.included(base)
-    base.send :extend, ControllerClassMethods
+    base.send :extend, ControllerClassMethods    
   end
 end
 
@@ -60,7 +60,7 @@ module ModelClassMethods
   # Extends the model with all that it needs to be PwnAuth's user model.
   def pwnauth_facebook_token_model
     # The user whose token this is.
-    belongs_to :user
+    belongs_to :user, :inverse_of => :facebook_token
     validates :user, :presence => true
     
     # A unique ID on the Facebook site for the user owning this token.

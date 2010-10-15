@@ -96,4 +96,17 @@ class UserTest < ActiveSupport::TestCase
         User.find_by_email_and_password('john@gmail.com', 'awesome'),
         'Bogus password'
   end
+    
+  test 'facebook_token' do
+    assert_nil @user.facebook_token
+    
+    user = users(:john)
+    assert_equal facebook_tokens(:john), user.facebook_token
+  end
+  
+  
+  test 'for_facebook_token' do
+    assert_equal users(:john),
+        User.for_facebook_token(users(:john). facebook_token.access_token)
+  end
 end
