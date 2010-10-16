@@ -11,7 +11,7 @@ Scaffold user accounts, session controller views, and Facebook extensions.
     
 Wire authentication into your ApplicationController.
     authenticates_using_session
-    authenticates_using_facebook_token
+    authenticates_using_facebook
 
 Point the default route to the sessions controller in config/routes.rb
     root :to => "session#show" 
