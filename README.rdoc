@@ -13,6 +13,8 @@ Wire authentication into your ApplicationController.
     authenticates_using_session
     authenticates_using_facebook_token
 
+Point the default route to the sessions controller in config/routes.rb
+    root :to => "session#show" 
 
 Note: the code inside the models and controllers is tucked away in the plug-in.
 The scaffold models and controllers are there as extension points. You will be
