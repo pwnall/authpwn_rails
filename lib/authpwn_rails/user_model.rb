@@ -73,7 +73,7 @@ module ModelMetaclassMethods
   
   # Fills out a new user's information based on a Facebook access token.
   def create_with_facebook_token(token)
-    self.create :email => "#{token.external_uid}@graph.facebook.com"
+    self.create! :email => "#{token.external_uid}@graph.facebook.com"
   end
   
   # The user that owns a given Facebook OAuth2 token.
