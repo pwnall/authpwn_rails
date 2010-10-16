@@ -70,10 +70,10 @@ module SessionControllerInstanceMethods
     @user = current_user || User.new
     if @user.new_record?
       welcome
-      render :action => :welcome
+      render :action => :welcome unless performed?
     else      
       home
-      render :action => :home
+      render :action => :home unless performed?
     end
   end
   
