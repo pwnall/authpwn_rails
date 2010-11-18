@@ -83,7 +83,7 @@ module ModelMetaclassMethods
   # token. Otherwise, a new model will be created, together with a user.
   def for(access_token)
     uid = uid_from_token access_token
-    token = self.where(:external_uid => uid).first
+    token = self.where(:external_uid => uid.to_str).first
     if token
       token.access_token = access_token
     else
