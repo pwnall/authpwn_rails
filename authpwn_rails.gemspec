@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{authpwn_rails}
-  s.version = "0.5.6"
+  s.version = "0.6.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
-  s.date = %q{2010-11-18}
+  s.date = %q{2010-11-25}
   s.description = %q{Works with Facebook.}
   s.email = %q{victor@costan.us}
   s.extra_rdoc_files = [
@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
     "lib/authpwn_rails/generators/templates/002_create_facebook_tokens.rb",
     "lib/authpwn_rails/generators/templates/facebook_token.rb",
     "lib/authpwn_rails/generators/templates/facebook_tokens.yml",
+    "lib/authpwn_rails/generators/templates/session/forbidden.html.erb",
     "lib/authpwn_rails/generators/templates/session/home.html.erb",
     "lib/authpwn_rails/generators/templates/session/new.html.erb",
     "lib/authpwn_rails/generators/templates/session/welcome.html.erb",
