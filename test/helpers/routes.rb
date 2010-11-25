@@ -3,7 +3,9 @@ class ActionController::TestCase
   def setup_routes
     @routes = ActionController::Routing::RouteSet.new
     @routes.draw do
-      resource :cookie, :controller => 'cookie'
+      resource :cookie, :controller => 'cookie' do
+        collection { get :bouncer }
+      end
       resource :facebook, :controller => 'facebook'
       # NOTE: this route should be kept in sync with the session template.
       resource :session, :controller => 'session'

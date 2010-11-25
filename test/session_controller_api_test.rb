@@ -46,7 +46,17 @@ class SessionControllerApiTest < ActionController::TestCase
       assert_select 'input#user_password'
       assert_select 'input[type=submit]'
     end
-  end     
+  end
+  
+  test "new renders redirect_url when present in flash" do
+    url = 'http://authpwn.redirect.url'    
+    get :new, {}, {}, { :auth_redirect_url => url }
+    assert_template :new
+    assert_equal url, assigns(:redirect_url), 'redirect_url should be set'
+    assert_select 'form' do
+      assert_select "input[name=redirect_url][value=#{url}]"
+    end
+  end
   
   test "create logs in with good account details" do
     post :create, :user => { :email => @user.email, :password => 'password' }
@@ -55,12 +65,28 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_equal @user, session_current_user, 'session'
   end
   
+  test "create redirects properly with good account details" do
+    url = 'http://authpwn.redirect.url'
+    post :create, :user => { :email => @user.email, :password => 'password' },
+                  :redirect_url => url
+    assert_redirected_to url
+  end
+  
   test "create does not log in with bad password" do
     post :create, :user => { :email => @user.email, :password => 'fail' }
     assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
     assert_not_nil flash[:notice]
+  end
+
+  test "create maintains redirect_url for bad logins" do
+    url = 'http://authpwn.redirect.url'
+    post :create, :user => { :email => @user.email, :password => 'fail' },
+                  :redirect_url => url
+    assert_redirected_to new_session_url
+    assert_not_nil flash[:notice]
+    assert_equal url, flash[:auth_redirect_url]
   end
 
   test "create does not log in with bad e-mail" do

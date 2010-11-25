@@ -54,7 +54,24 @@ module ControllerInstanceMethods
     user = user_param && User.find_by_param(user_param)
     self.current_user = user if user
   end
-  private :authenticate_using_session  
+  private :authenticate_using_session
+  
+  # Inform the user that their request is forbidden.
+  #
+  # If a user is logged on, this renders the session/forbidden view with a HTTP
+  # 403 code.
+  # 
+  # If no user is logged in, the user is redirected to session/new, and the
+  # current request's URL is saved in flash[:auth_redirect_url].
+  def bounce_user(redirect_url = request.url)
+    @redirect_url = redirect_url
+    if current_user
+      render 'session/forbidden', :status => :forbidden
+    else
+      flash[:auth_redirect_url] = redirect_url
+      render 'session/forbidden', :status => :forbidden
+    end
+  end
 end
 
 # Included in controllers that call authenticates_using_session.
@@ -62,6 +79,7 @@ module SessionControllerInstanceMethods
   # GET /session/new
   def new
     @user = User.new
+    @redirect_url = flash[:auth_redirect_url]
     redirect_to session_url if current_user
   end
 
@@ -80,15 +98,18 @@ module SessionControllerInstanceMethods
   # POST /session
   def create
     @user = User.new params[:user]
+    @redirect_url = params[:redirect_url] || session_url
     self.current_user =
         User.find_by_email_and_password @user.email, @user.password
         
     respond_to do |format|
       if current_user
-        format.html { redirect_to session_url }
+        format.html { redirect_to @redirect_url }
       else
         format.html do
-          redirect_to new_session_url, :notice => 'Invalid e-mail or password'
+          redirect_to new_session_url, :flash => {
+            :notice => 'Invalid e-mail or password',
+            :auth_redirect_url => @redirect_url }
         end
       end
     end

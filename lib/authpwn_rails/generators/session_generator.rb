@@ -8,6 +8,8 @@ class SessionGenerator < Rails::Generators::Base
   def create_session
     copy_file 'session_controller.rb',
               File.join('app', 'controllers', 'session_controller.rb')    
+    copy_file File.join('session', 'forbidden.html.erb'),
+              File.join('app', 'views', 'session', 'forbidden.html.erb')
     copy_file File.join('session', 'home.html.erb'),
               File.join('app', 'views', 'session', 'home.html.erb')
     copy_file File.join('session', 'new.html.erb'),

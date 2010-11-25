@@ -11,6 +11,10 @@ class CookieController < ApplicationController
       render :text => "No user"
     end
   end
+  
+  def bouncer
+    bounce_user
+  end
 end
 
 class CookieControllerTest < ActionController::TestCase
@@ -37,5 +41,21 @@ class CookieControllerTest < ActionController::TestCase
     get :show, {}, :current_user_pid => 'random@user.com'
     assert_response :success
     assert_nil assigns(:current_user)
+  end
+  
+  test "valid user_id bounced" do
+    set_session_current_user @user
+    get :bouncer
+    assert_response :forbidden
+    assert_template 'session/forbidden'
+  end
+  
+  test "no user_id bounced" do
+    get :bouncer
+    assert_response :forbidden
+    assert_template 'session/forbidden'
+    assert_equal bouncer_cookie_url, flash[:auth_redirect_url]
+    
+    assert_select 'script', %r/.*window.location.*#{new_session_path}.*/
   end
 end

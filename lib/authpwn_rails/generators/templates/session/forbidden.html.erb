@@ -1,0 +1,20 @@
+<p>
+  This view gets displayed when the user tries to access something forbidden.
+</p>
+
+<% if current_user %>
+<p>
+  You should inform the user that they are logged in as 
+  <%= current_user.email %> and suggest them to
+  <%= link_to 'Log out', session_path, :method => :destroy %> and log in as a
+  different user.  
+</p>
+<% else %>
+<p>
+  The user will only see this if JavaScript is disabled. Ask them to
+  <%= link_to 'Log in', new_session_path %>.
+</p>
+<script type="text/javascript">
+window.location = "<%= new_session_path %>";
+</script>
+<% end %>
