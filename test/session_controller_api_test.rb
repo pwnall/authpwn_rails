@@ -20,12 +20,29 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_equal User.count, assigns(:user_count),
                  'welcome controller method not called'
   end
+
+  test "show json renders empty object without a user" do
+    get :show, :format => 'json'
+    assert_response :ok
+    assert_equal({}, ActiveSupport::JSON.decode(response.body))
+    assert_equal User.count, assigns(:user_count),
+                 'welcome controller method not called'
+  end
   
   test "show renders home with a user" do
     set_session_current_user @user
     get :show
     assert_template :home
     assert_equal @user, assigns(:current_user)
+    assert_equal @user, assigns(:user), 'home controller method not called'
+  end
+  
+  test "show json renders user when logged in" do
+    set_session_current_user @user
+    get :show, :format => 'json'
+    assert_response :ok
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal @user.email, data['user']['email']
     assert_equal @user, assigns(:user), 'home controller method not called'
   end
   
@@ -68,6 +85,7 @@ class SessionControllerApiTest < ActionController::TestCase
   test "create by json logs in with good account details" do
     post :create, :user => { :email => @user.email, :password => 'password' },
                   :format => 'json'
+    assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal @user.email, data['user']['email']
     assert_equal @user, assigns(:current_user), 'instance variable'
@@ -92,6 +110,7 @@ class SessionControllerApiTest < ActionController::TestCase
   test "create by json does not log in with bad password" do
     post :create, :user => { :email => @user.email, :password => 'fail' },
                   :format => 'json'
+    assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_match(/invalid/i , data['error'])
     assert_nil assigns(:current_user), 'instance variable'
