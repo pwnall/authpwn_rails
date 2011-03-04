@@ -64,6 +64,15 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
   end
+
+  test "create by json logs in with good account details" do
+    post :create, :user => { :email => @user.email, :password => 'password' },
+                  :format => 'json'
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal @user.email, data['user']['email']
+    assert_equal @user, assigns(:current_user), 'instance variable'
+    assert_equal @user, session_current_user, 'session'
+  end
   
   test "create redirects properly with good account details" do
     url = 'http://authpwn.redirect.url'
@@ -80,6 +89,15 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_not_nil flash[:notice]
   end
 
+  test "create by json does not log in with bad password" do
+    post :create, :user => { :email => @user.email, :password => 'fail' },
+                  :format => 'json'
+    data = ActiveSupport::JSON.decode response.body
+    assert_match(/invalid/i , data['error'])
+    assert_nil assigns(:current_user), 'instance variable'
+    assert_nil session_current_user, 'session'
+  end
+  
   test "create maintains redirect_url for bad logins" do
     url = 'http://authpwn.redirect.url'
     post :create, :user => { :email => @user.email, :password => 'fail' },
@@ -103,5 +121,13 @@ class SessionControllerApiTest < ActionController::TestCase
     
     assert_redirected_to session_url
     assert_nil assigns(:current_user)
-  end  
+  end
+  
+  test "logout by json" do
+    set_session_current_user @user
+    delete :destroy, :format => 'json'
+    
+    assert_response :ok
+    assert_nil assigns(:current_user)
+  end
 end

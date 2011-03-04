@@ -115,12 +115,14 @@ module SessionControllerInstanceMethods
     respond_to do |format|
       if current_user
         format.html { redirect_to @redirect_url }
+        format.json { render :json => current_user }
       else
+        notice = 'Invalid e-mail or password'
         format.html do
           redirect_to new_session_url, :flash => {
-            :notice => 'Invalid e-mail or password',
-            :auth_redirect_url => @redirect_url }
+            :notice => notice, :auth_redirect_url => @redirect_url }
         end
+        format.json { render :json => { :error => notice} }
       end
     end
   end
@@ -128,7 +130,10 @@ module SessionControllerInstanceMethods
   # DELETE /session
   def destroy
     self.current_user = nil
-    redirect_to session_url
+    respond_to do |format|
+      format.html { redirect_to session_url }
+      format.json { head :ok }
+    end
   end
 
   # Hook for setting up the home view.
