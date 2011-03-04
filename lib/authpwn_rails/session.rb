@@ -88,10 +88,20 @@ module SessionControllerInstanceMethods
     @user = current_user || User.new
     if @user.new_record?
       welcome
-      render :action => :welcome unless performed?
+      unless performed?
+        respond_to do |format|
+          format.html { render :action => :welcome }
+          format.json { render :json => {} }
+        end
+      end
     else      
       home
-      render :action => :home unless performed?
+      unless performed?
+        respond_to do |format|
+          format.html { render :action => :home }
+          format.json { render :json => @user }
+        end
+      end
     end
   end
   
