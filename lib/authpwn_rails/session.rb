@@ -99,7 +99,10 @@ module SessionControllerInstanceMethods
       unless performed?
         respond_to do |format|
           format.html { render :action => :home }
-          format.json { render :json => @user }
+          format.json do
+            render :json => { :user => @user.serializable_hash,
+                              :csrf => form_authenticity_token }
+          end
         end
       end
     end
@@ -115,7 +118,10 @@ module SessionControllerInstanceMethods
     respond_to do |format|
       if current_user
         format.html { redirect_to @redirect_url }
-        format.json { render :json => current_user }
+        format.json do
+          render :json => { :user => current_user.serializable_hash,
+                            :csrf => form_authenticity_token }
+        end
       else
         notice = 'Invalid e-mail or password'
         format.html do

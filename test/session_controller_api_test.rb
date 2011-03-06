@@ -43,6 +43,7 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal @user.email, data['user']['email']
+    assert_equal session[:_csrf_token], data['csrf']
     assert_equal @user, assigns(:user), 'home controller method not called'
   end
   
@@ -88,6 +89,7 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal @user.email, data['user']['email']
+    assert_equal session[:_csrf_token], data['csrf']
     assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
   end
