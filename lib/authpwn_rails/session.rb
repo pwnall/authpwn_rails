@@ -64,12 +64,22 @@ module ControllerInstanceMethods
   # If no user is logged in, the user is redirected to session/new, and the
   # current request's URL is saved in flash[:auth_redirect_url].
   def bounce_user(redirect_url = request.url)
-    @redirect_url = redirect_url
-    if current_user
-      render 'session/forbidden', :status => :forbidden
-    else
-      flash[:auth_redirect_url] = redirect_url
-      render 'session/forbidden', :status => :forbidden
+    # NOTE: this is tested in CookieControllerTest
+    respond_to do |format|
+      format.html do
+        @redirect_url = redirect_url
+        if current_user
+          render 'session/forbidden', :status => :forbidden
+        else
+          flash[:auth_redirect_url] = redirect_url
+          render 'session/forbidden', :status => :forbidden
+        end
+      end
+      format.json do
+        message = current_user ? "You're not allowed to access that" :
+                                 'Please sign in'
+        render :json => { :error => message }
+      end
     end
   end
 end

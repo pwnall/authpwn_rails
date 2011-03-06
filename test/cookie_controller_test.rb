@@ -49,6 +49,14 @@ class CookieControllerTest < ActionController::TestCase
     assert_response :forbidden
     assert_template 'session/forbidden'
   end
+
+  test "valid user_id bounced in json" do
+    set_session_current_user @user
+    get :bouncer, :format => 'json'
+    assert_response :ok
+    data = ActiveSupport::JSON.decode response.body
+    assert_match(/not allowed/i, data['error'])
+  end
   
   test "no user_id bounced" do
     get :bouncer
@@ -57,5 +65,12 @@ class CookieControllerTest < ActionController::TestCase
     assert_equal bouncer_cookie_url, flash[:auth_redirect_url]
     
     assert_select 'script', %r/.*window.location.*#{new_session_path}.*/
+  end
+
+  test "no user_id bounced in json" do
+    get :bouncer, :format => 'json'
+    assert_response :ok
+    data = ActiveSupport::JSON.decode response.body
+    assert_match(/sign in/i, data['error'])
   end
 end
