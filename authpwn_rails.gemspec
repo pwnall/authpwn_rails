@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{authpwn_rails}
-  s.version = "0.7.2"
+  s.version = "0.7.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
@@ -59,7 +59,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{http://github.com/pwnall/authpwn_rails}
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.6.0}
+  s.rubygems_version = %q{1.5.3}
   s.summary = %q{User authentication for Rails 3 applications.}
   s.test_files = [
     "test/cookie_controller_test.rb",
