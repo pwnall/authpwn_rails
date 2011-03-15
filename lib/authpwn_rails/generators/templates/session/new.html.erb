@@ -11,7 +11,7 @@
 </p>
 <% end %>
 
-<%= form_for User.new, :url => session_path do |f| %>
+<%= form_for @user, :url => session_path do |f| %>
   <div class="field">
     <%= f.label :email, 'Email Address' %><br />
     <%= f.email_field :email %>
