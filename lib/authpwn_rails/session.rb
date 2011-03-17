@@ -110,7 +110,9 @@ module SessionControllerInstanceMethods
         respond_to do |format|
           format.html { render :action => :home }
           format.json do
-            render :json => { :user => @user.serializable_hash,
+            user_data = @user.as_json
+            user_data = user_data['user'] if @user.class.include_root_in_json
+            render :json => { :user => user_data,
                               :csrf => form_authenticity_token }
           end
         end
@@ -129,7 +131,9 @@ module SessionControllerInstanceMethods
       if current_user
         format.html { redirect_to @redirect_url }
         format.json do
-          render :json => { :user => current_user.serializable_hash,
+          user_data = @user.as_json
+          user_data = user_data['user'] if @user.class.include_root_in_json
+          render :json => { :user => user_data,
                             :csrf => form_authenticity_token }
         end
       else

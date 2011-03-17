@@ -81,6 +81,14 @@ class UserTest < ActiveSupport::TestCase
     assert_equal nil, User.find_by_param(nil)
   end
   
+  test 'to_json does not show implementation details' do
+    json_data = ActiveSupport::JSON.decode users(:john).to_json
+    assert_operator json_data, :has_key?, 'user'
+    assert_nil json_data['user']['password_hash']
+    assert_nil json_data['user']['password_salt']
+    assert_nil json_data['user']['id']
+  end
+  
   test 'find_by_email_and_password' do
     assert_equal users(:john),
         User.find_by_email_and_password('john@gmail.com', 'password')

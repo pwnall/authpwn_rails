@@ -111,6 +111,12 @@ module ModelInstanceMethods
   def to_param
     email
   end  
+  
+  # Do not expose password and ActiveRecord IDs in JSON representation.
+  def as_json(options = {})
+    options ||= {}
+    super(options.merge(:except => [:password_salt, :password_hash, :id]))
+  end
 end  # module AuthpwnRails::UserModel::ModelInstanceMethods
 
 ActiveRecord::Base.send :include, ModelMixin
