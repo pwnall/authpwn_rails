@@ -84,7 +84,7 @@ module ControllerInstanceMethods
   end
 end
 
-# Included in controllers that call authenticates_using_session.
+# Included in controllers that call authpwn_session_controller.
 module SessionControllerInstanceMethods
   # GET /session/new
   def new
