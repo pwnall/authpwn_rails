@@ -37,7 +37,7 @@ class UserTest < ActiveSupport::TestCase
   end
   
   test 'email length' do
-    @user.email = 'abcde' * 12 + '@mit.edu'
+    @user.email = 'abcde' * 25 + '@mit.edu'
     assert !@user.valid?, 'Overly long user name'
   end
   
@@ -63,8 +63,14 @@ class UserTest < ActiveSupport::TestCase
     assert !@user.valid?
   end
   
+  test 'password can be nil' do
+    @user.password = @user.password_confirmation = nil
+    assert @user.valid?
+  end
+  
   test 'to_param' do
-    assert_equal 'dvdjohn@mit.edu', @user.to_param
+    sha2 = 'fc1ef1be38cd81490f31498d13e58bf273f94d5fa63c75dd8519271a96ff7bd2'
+    assert_equal sha2, @user.to_param
   end
   
   test 'password_matches?' do
@@ -77,7 +83,7 @@ class UserTest < ActiveSupport::TestCase
   test 'find_by_param' do
     assert_equal users(:john), User.find_by_param(users(:john).to_param)
     assert_equal users(:jane), User.find_by_param(users(:jane).to_param)
-    assert_equal nil, User.find_by_param('bogus email')
+    assert_equal nil, User.find_by_param('bogus hash')
     assert_equal nil, User.find_by_param(nil)
   end
   

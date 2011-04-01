@@ -21,13 +21,16 @@ module ModelClassMethods
   def pwnauth_user_model
     # E-mail address identifying the user account.
     validates :email, :format => /^[A-Za-z0-9.+_]+@[^@]*\.(\w+)$/,
-                      :presence => true, :length => 1..64, :uniqueness => true
-  
+                      :presence => true, :length => 1..128, :uniqueness => true
+    
+    # Hash of e-mail address of the user account.
+    validates :email_hash, :length => 64..64, :allow_nil => false
+    
     # Random string preventing dictionary attacks on the password database.
-    validates :password_salt, :length => 1..16, :allow_nil => true
+    validates :password_salt, :length => { :in => 1..16, :allow_nil => true }
     
     # SHA-256 of (salt + password).
-    validates :password_hash, :length => 1..64, :allow_nil => true
+    validates :password_hash, :length => { :in => 64..64, :allow_nil => true }
       
     # Virtual attribute: the user's password.
     attr_reader :password
@@ -52,7 +55,7 @@ module ModelMetaclassMethods
   #
   # Returns nil if no matching User exists.
   def find_by_param(param)
-    where(:email => param).first
+    where(:email_hash => param).first
   end
   
   # The authenticated user or nil.
@@ -104,13 +107,20 @@ module ModelInstanceMethods
   def password=(new_password)
     @password = new_password
     self.password_salt = self.class.random_salt
-    self.password_hash = self.class.hash_password new_password, password_salt
+    self.password_hash = new_password &&
+                         self.class.hash_password(new_password, password_salt)
   end
   
   # Use e-mails instead of exposing ActiveRecord IDs.
   def to_param
-    email
-  end  
+    email_hash
+  end
+  
+  # :nodoc: overwrites
+  def email=(new_email)
+    super
+    self.email_hash = new_email && Digest::SHA2.hexdigest(new_email)
+  end
   
   # Do not expose password and ActiveRecord IDs in JSON representation.
   def as_json(options = {})
