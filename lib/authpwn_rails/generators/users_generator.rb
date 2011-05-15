@@ -1,8 +1,8 @@
 # :nodoc: namespace
-module AuthpwnRails
+module Authpwn
 
-
-class UserGenerator < Rails::Generators::Base
+# rails g authpwn:users
+class UsersGenerator < Rails::Generators::Base
   source_root File.expand_path("../templates", __FILE__)
 
   def create_user_model
@@ -11,6 +11,6 @@ class UserGenerator < Rails::Generators::Base
         File.join('db', 'migrate', '20100725000001_create_users.rb')
     copy_file 'users.yml', File.join('test', 'fixtures', 'users.yml')
   end
-end  # class AuthpwnRails::UserGenerator
+end  # class Authpwn::UserGenerator
 
-end  # namespace AuthpwnRails
+end  # namespace Authpwn

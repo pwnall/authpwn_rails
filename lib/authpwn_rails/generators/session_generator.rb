@@ -1,7 +1,7 @@
 # :nodoc: namespace
-module AuthpwnRails
+module Authpwn
 
-
+# rails g authpwn:session
 class SessionGenerator < Rails::Generators::Base
   source_root File.expand_path("../templates", __FILE__)
 
@@ -21,6 +21,6 @@ class SessionGenerator < Rails::Generators::Base
 
     route "resource :session, :controller => 'session'"
   end
-end  # class AuthpwnRails::SessionViewsGenerator
+end  # class Authpwn::SessionViewsGenerator
 
-end  # namespace AuthpwnRails
+end  # namespace Authpwn

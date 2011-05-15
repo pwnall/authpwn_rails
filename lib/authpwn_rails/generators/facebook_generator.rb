@@ -1,7 +1,7 @@
 # :nodoc: namespace
-module AuthpwnRails
+module Authpwn
 
-
+# rails g authpwn:facebook
 class FacebookGenerator < Rails::Generators::Base
   source_root File.expand_path("../templates", __FILE__)
 
@@ -13,6 +13,6 @@ class FacebookGenerator < Rails::Generators::Base
     copy_file 'facebook_tokens.yml',
               File.join('test', 'fixtures', 'facebook_tokens.yml')
   end
-end  # class AuthpwnRails::FacebookGenerator
+end  # class Authpwn::FacebookGenerator
 
-end  # namespace AuthpwnRails
+end  # namespace Authpwn

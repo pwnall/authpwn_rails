@@ -5,9 +5,9 @@ User authentication for a Ruby on Rails 3 application. Works with Facebook.
 == Integration
 
 Scaffold user accounts, session controller views, and Facebook extensions.
-    rails g authpwn_rails:users
-    rails g authpwn_rails:session
-    rails g authpwn_rails:facebook
+    rails g authpwn:users
+    rails g authpwn:session
+    rails g authpwn:facebook
     
 Wire authentication into your ApplicationController.
     authenticates_using_session
