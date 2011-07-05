@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{authpwn_rails}
-  s.version = "0.8.3"
+  s.version = "0.9.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{Victor Costan}]
-  s.date = %q{2011-07-01}
+  s.date = %q{2011-07-05}
   s.description = %q{Works with Facebook.}
   s.email = %q{victor@costan.us}
   s.extra_rdoc_files = [
@@ -29,7 +29,8 @@ Gem::Specification.new do |s|
     "authpwn_rails.gemspec",
     "lib/authpwn_rails.rb",
     "lib/authpwn_rails/engine.rb",
-    "lib/authpwn_rails/facebook_extensions.rb",
+    "lib/authpwn_rails/facebook_session.rb",
+    "lib/authpwn_rails/facebook_token_model.rb",
     "lib/authpwn_rails/generators/facebook_generator.rb",
     "lib/authpwn_rails/generators/session_generator.rb",
     "lib/authpwn_rails/generators/templates/001_create_users.rb",
@@ -46,6 +47,7 @@ Gem::Specification.new do |s|
     "lib/authpwn_rails/generators/templates/users.yml",
     "lib/authpwn_rails/generators/users_generator.rb",
     "lib/authpwn_rails/session.rb",
+    "lib/authpwn_rails/session_controller.rb",
     "lib/authpwn_rails/user_model.rb",
     "test/cookie_controller_test.rb",
     "test/facebook_controller_test.rb",
@@ -62,7 +64,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/pwnall/authpwn_rails}
   s.licenses = [%q{MIT}]
   s.require_paths = [%q{lib}]
-  s.rubygems_version = %q{1.8.4}
+  s.rubygems_version = %q{1.8.5}
   s.summary = %q{User authentication for Rails 3 applications.}
 
   if s.respond_to? :specification_version then
