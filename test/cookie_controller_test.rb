@@ -34,7 +34,8 @@ class CookieControllerTest < ActionController::TestCase
     get :show
     assert_response :success
     assert_equal @user, assigns(:current_user)
-    assert_equal "User: #{Fixtures.identify(:john)}", response.body
+    assert_equal "User: #{ActiveRecord::Fixtures.identify(:john)}",
+                 response.body
   end
   
   test "invalid user_pid in session" do
