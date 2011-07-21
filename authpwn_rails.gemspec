@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{authpwn_rails}
-  s.version = "0.9.0"
+  s.version = "0.9.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{Victor Costan}]
-  s.date = %q{2011-07-05}
+  s.date = %q{2011-07-21}
   s.description = %q{Works with Facebook.}
   s.email = %q{victor@costan.us}
   s.extra_rdoc_files = [
@@ -48,6 +48,7 @@ Gem::Specification.new do |s|
     "lib/authpwn_rails/generators/users_generator.rb",
     "lib/authpwn_rails/session.rb",
     "lib/authpwn_rails/session_controller.rb",
+    "lib/authpwn_rails/test_extensions.rb",
     "lib/authpwn_rails/user_model.rb",
     "test/cookie_controller_test.rb",
     "test/facebook_controller_test.rb",
