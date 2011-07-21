@@ -6,6 +6,7 @@ require 'authpwn_rails/facebook_session.rb'
 require 'authpwn_rails/facebook_token_model.rb'
 require 'authpwn_rails/session.rb'
 require 'authpwn_rails/session_controller.rb'
+require 'authpwn_rails/test_extensions.rb'
 require 'authpwn_rails/user_model.rb'
 
 if defined?(Rails)
