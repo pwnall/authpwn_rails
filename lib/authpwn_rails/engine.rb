@@ -10,6 +10,18 @@ class Engine < Rails::Engine
     require 'authpwn_rails/generators/session_generator.rb'
     require 'authpwn_rails/generators/users_generator.rb'
   end
+  
+  initializer 'authpwn.rspec.extensions' do
+    begin
+      require 'rspec'
+      
+      RSpec.configure do |c|
+        c.include AuthpwnRails::TestExtensions
+      end
+    rescue LoadError
+      # No RSpec, no extensions.
+    end
+  end
 end  # class AuthpwnRails::Engine
 
 end  # namespace AuthpwnRails
