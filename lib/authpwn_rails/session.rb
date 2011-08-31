@@ -66,17 +66,3 @@ module ControllerInstanceMethods
 end  # module AuthpwnRails::ControllerInstanceMethods
 
 end  # namespace AuthpwnRails
-
-# :nodoc: add session modification
-class ActionController::TestCase
-  # Sets the authenticated user in the test session.
-  def set_session_current_user(user)
-    request.session[:current_user_pid] = user ? user.to_param : nil
-  end
-  
-  # The authenticated user in the test session.
-  def session_current_user
-    return nil unless user_param = request.session[:current_user_pid]
-    User.find_by_param user_param
-  end
-end
