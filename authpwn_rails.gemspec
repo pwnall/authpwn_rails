@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{Victor Costan}]
-  s.date = %q{2011-07-05}
+  s.date = %q{2011-08-31}
   s.description = %q{Works with Facebook.}
   s.email = %q{victor@costan.us}
   s.extra_rdoc_files = [
@@ -64,7 +64,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/pwnall/authpwn_rails}
   s.licenses = [%q{MIT}]
   s.require_paths = [%q{lib}]
-  s.rubygems_version = %q{1.8.5}
+  s.rubygems_version = %q{1.8.7}
   s.summary = %q{User authentication for Rails 3 applications.}
 
   if s.respond_to? :specification_version then
@@ -72,14 +72,14 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<fbgraph_rails>, [">= 0.1.7"])
-      s.add_runtime_dependency(%q<rails>, [">= 3.1.0.rc4"])
+      s.add_runtime_dependency(%q<rails>, [">= 3.1.0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.0"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
       s.add_development_dependency(%q<sqlite3>, [">= 1.3.3"])
     else
       s.add_dependency(%q<fbgraph_rails>, [">= 0.1.7"])
-      s.add_dependency(%q<rails>, [">= 3.1.0.rc4"])
+      s.add_dependency(%q<rails>, [">= 3.1.0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.0"])
       s.add_dependency(%q<rcov>, [">= 0"])
@@ -87,7 +87,7 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<fbgraph_rails>, [">= 0.1.7"])
-    s.add_dependency(%q<rails>, [">= 3.1.0.rc4"])
+    s.add_dependency(%q<rails>, [">= 3.1.0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.0"])
     s.add_dependency(%q<rcov>, [">= 0"])
