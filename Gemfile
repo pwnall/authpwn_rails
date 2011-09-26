@@ -1,5 +1,5 @@
 source "http://rubygems.org"
-gem "fbgraph_rails", ">= 0.1.7"
+gem "fbgraph_rails", ">= 0.2.0"
 gem "rails", ">= 3.1.0"
 
 group :development do
