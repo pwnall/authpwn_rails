@@ -35,28 +35,21 @@ GEM
     bcrypt-ruby (3.0.1)
     builder (3.0.0)
     erubis (2.7.0)
-    faraday (0.7.4)
+    faraday (0.7.5)
       addressable (~> 2.2.6)
-      multipart-post (~> 1.1.0)
+      multipart-post (~> 1.1.3)
       rack (< 2, >= 1.1.0)
-    fbgraph (1.8.0)
+    fbgraph (1.8.3)
       activesupport
-      activesupport
-      hashie
-      hashie
+      faraday (>= 0.7.5)
+      hashie (>= 1.0.0)
       i18n
-      i18n
-      json
-      json
-      oauth2
-      oauth2
+      json (>= 1.0.0)
+      oauth2 (>= 0.5.0)
       rest-client
-      rest-client
-      typhoeus
-      typhoeus
-    fbgraph_rails (0.2.0)
+    fbgraph_rails (0.2.2)
       erubis (>= 2.7.0)
-      fbgraph (>= 1.8.0)
+      fbgraph (>= 1.8.3)
       json (>= 1.6.1)
       oauth2 (>= 0.5.0)
       rails (>= 3.1.0)
@@ -76,11 +69,11 @@ GEM
     mime-types (1.16)
     multi_json (1.0.3)
     multipart-post (1.1.3)
-    oauth2 (0.5.0)
-      faraday (< 0.8, >= 0.6.1)
-      multi_json (~> 1.0.0)
+    oauth2 (0.5.1)
+      faraday (~> 0.7.4)
+      multi_json (~> 1.0.3)
     polyglot (0.3.2)
-    rack (1.3.3)
+    rack (1.3.4)
     rack-cache (1.0.3)
       rack (>= 0.4)
     rack-mount (0.8.3)
@@ -109,7 +102,7 @@ GEM
     rdoc (3.9.4)
     rest-client (1.6.7)
       mime-types (>= 1.16)
-    sprockets (2.0.0)
+    sprockets (2.0.2)
       hike (~> 1.2)
       rack (~> 1.0)
       tilt (!= 1.3.0, ~> 1.1)
@@ -119,17 +112,14 @@ GEM
     treetop (1.4.10)
       polyglot
       polyglot (>= 0.3.1)
-    typhoeus (0.2.4)
-      mime-types
-      mime-types
-    tzinfo (0.3.29)
+    tzinfo (0.3.30)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   bundler (~> 1.0.0)
-  fbgraph_rails (>= 0.2.0)
+  fbgraph_rails (>= 0.2.2)
   jeweler (~> 1.6.0)
   rails (>= 3.1.0)
   rcov
