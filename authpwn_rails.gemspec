@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "authpwn_rails"
-  s.version = "0.9.3"
+  s.version = "0.9.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
-  s.date = "2011-09-26"
+  s.date = "2011-10-04"
   s.description = "Works with Facebook."
   s.email = "victor@costan.us"
   s.extra_rdoc_files = [
@@ -72,14 +72,14 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<fbgraph_rails>, [">= 0.2.0"])
+      s.add_runtime_dependency(%q<fbgraph_rails>, [">= 0.2.2"])
       s.add_runtime_dependency(%q<rails>, [">= 3.1.0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.0"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
       s.add_development_dependency(%q<sqlite3>, [">= 1.3.3"])
     else
-      s.add_dependency(%q<fbgraph_rails>, [">= 0.2.0"])
+      s.add_dependency(%q<fbgraph_rails>, [">= 0.2.2"])
       s.add_dependency(%q<rails>, [">= 3.1.0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.0"])
@@ -87,7 +87,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<sqlite3>, [">= 1.3.3"])
     end
   else
-    s.add_dependency(%q<fbgraph_rails>, [">= 0.2.0"])
+    s.add_dependency(%q<fbgraph_rails>, [">= 0.2.2"])
     s.add_dependency(%q<rails>, [">= 3.1.0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.0"])
