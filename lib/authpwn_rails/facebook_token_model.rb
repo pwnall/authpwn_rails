@@ -44,11 +44,11 @@ module FacebookTokenModel
     
     # Extracts the Facebook user ID from a OAuth2 token.
     #
-    # This is a hack. It works based on the current format, but might break at
-    # any time. Hopefully, we'll eventually have an official way of pulling the
-    # UID out of an OAuth2 token.
+    # This used to be a hack that pulled the UID out of an OAuth2 token. The new
+    # encrypted OAuth2 tokens don't have UIDs anymore, so this method is an
+    # interim hack for old code that still depends on it.
     def uid_from_token(access_token)
-      access_token.split('|')[1].split('-').last
+      FBGraphRails.fbclient(access_token).selection.me.id.to_s
     end
   end  # module AuthpwnRails::FacebookTokenModel::ClassMethods
 
