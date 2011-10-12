@@ -48,7 +48,7 @@ module FacebookTokenModel
     # encrypted OAuth2 tokens don't have UIDs anymore, so this method is an
     # interim hack for old code that still depends on it.
     def uid_from_token(access_token)
-      FBGraphRails.fbclient(access_token).selection.me.id.to_s
+      FBGraphRails.fbclient(access_token).selection.me.info!.id.to_s
     end
   end  # module AuthpwnRails::FacebookTokenModel::ClassMethods
 
