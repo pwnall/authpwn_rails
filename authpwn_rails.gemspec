@@ -4,14 +4,14 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = "authpwn_rails"
-  s.version = "0.9.5"
+  s.name = %q{authpwn_rails}
+  s.version = "0.9.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Victor Costan"]
-  s.date = "2011-10-09"
-  s.description = "Works with Facebook."
-  s.email = "victor@costan.us"
+  s.authors = [%q{Victor Costan}]
+  s.date = %q{2011-10-12}
+  s.description = %q{Works with Facebook.}
+  s.email = %q{victor@costan.us}
   s.extra_rdoc_files = [
     "LICENSE",
     "README.rdoc"
@@ -62,11 +62,11 @@ Gem::Specification.new do |s|
     "test/test_helper.rb",
     "test/user_test.rb"
   ]
-  s.homepage = "http://github.com/pwnall/authpwn_rails"
-  s.licenses = ["MIT"]
-  s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.10"
-  s.summary = "User authentication for Rails 3 applications."
+  s.homepage = %q{http://github.com/pwnall/authpwn_rails}
+  s.licenses = [%q{MIT}]
+  s.require_paths = [%q{lib}]
+  s.rubygems_version = %q{1.8.6}
+  s.summary = %q{User authentication for Rails 3 applications.}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
