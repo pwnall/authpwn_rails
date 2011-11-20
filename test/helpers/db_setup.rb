@@ -4,12 +4,12 @@ ActiveRecord::Base.configurations = true
 
 ActiveRecord::Migration.verbose = false
 require 'authpwn_rails/generators/templates/001_create_users.rb'
-CreateUsers.up
+CreateUsers.migrate :up
 require 'authpwn_rails/generators/templates/002_create_credentials.rb'
-CreateCredentials.up
+CreateCredentials.migrate :up
 
-require 'authpwn_rails/generators/templates/facebook_token.rb'
 require 'authpwn_rails/generators/templates/user.rb'
+require 'authpwn_rails/generators/templates/credential.rb'
 
 # :nodoc: open TestCase to setup fixtures
 class ActiveSupport::TestCase

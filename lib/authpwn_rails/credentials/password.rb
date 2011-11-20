@@ -27,7 +27,7 @@ class Password < ::Credential
   end
 
   # Resets the virtual password attributes.
-  def clear_password
+  def clear_plaintext
     @password = @password_confirmation = nil
   end
 
@@ -35,7 +35,7 @@ class Password < ::Credential
   def self.authenticate_by_email(email, password)
     user = where(:email => email).first
     (user && user.password_matches?(password)) ? user : nil
-  end        
+  end
 
   # Computes a password hash from a raw password and a salt.
   def self.hash_password(password, salt)

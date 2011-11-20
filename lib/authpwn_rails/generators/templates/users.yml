@@ -1,5 +1,8 @@
 jane:
-  exuid:
+  exuid: 12345
 
 john:
-  exuid:
+  exuid: 56789
+
+bill:
+  exuid: 98765
