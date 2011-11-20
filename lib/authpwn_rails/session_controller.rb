@@ -1,7 +1,7 @@
 require 'active_support'
 
 # :nodoc: namespace
-module AuthpwnRails
+module Authpwn
 
 # Included by the controller that handles user authentication.
 #
@@ -14,7 +14,7 @@ module SessionController
     authenticates_using_session
   end
 
-  # Included in controllers that include AuthpwnRails::SessionController.
+  # Included in controllers that include Authpwn::SessionController.
   module InstanceMethods
     # GET /session/new
     def new
@@ -95,8 +95,8 @@ module SessionController
     def welcome
     end
     private :welcome
-  end  # module AuthpwnRails::SessionController::InstanceMethods
+  end  # module Authpwn::SessionController::InstanceMethods
 
-end  # module AuthpwnRails::SessionController
+end  # module Authpwn::SessionController
 
-end  # namespace AuthpwnRails
+end  # namespace Authpwn

@@ -8,13 +8,13 @@ class ActionController::Base
   # trick. Model instances must implement id, and the model class must implement
   # find_by_id.
   def self.authenticates_using_session(options = {})
-    include AuthpwnRails::ControllerInstanceMethods
+    include Authpwn::ControllerInstanceMethods
     before_filter :authenticate_using_session, options   
   end  
 end
 
 # :nodoc: namespace
-module AuthpwnRails
+module Authpwn
 
 # Included in controllers that call authenticates_using_session.
 module ControllerInstanceMethods
@@ -63,6 +63,6 @@ module ControllerInstanceMethods
       end
     end
   end
-end  # module AuthpwnRails::ControllerInstanceMethods
+end  # module Authpwn::ControllerInstanceMethods
 
-end  # namespace AuthpwnRails
+end  # namespace Authpwn

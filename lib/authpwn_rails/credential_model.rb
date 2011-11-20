@@ -1,25 +1,25 @@
 require 'active_support'
 
 # :nodoc: namespace
-module AuthpwnRails
+module Authpwn
 
 # Included by the model class that represents facebook tokens.
 #
-# Right now, some parts of the codebase assume the model will be named
-# FacebookToken.
-module FacebookTokenModel
+# Parts of the codebase assume the model will be named Credential.
+module CredentialModel
   extend ActiveSupport::Concern
 
   included do
     # The user whose token this is.
-    belongs_to :user, :inverse_of => :facebook_token
+    belongs_to :user, :inverse_of => :credentials
     validates :user, :presence => true
     
-    # A unique ID on the Facebook site for the user owning this token.
-    validates :external_uid, :length => 1..32, :presence => true
+    # Name that can be used to find the token.
+    validates :name, :length => { :in => 1..32, :allow_nil => true },
+                     :uniqueness => { :scope => [:type], :allow_nil => true }
   
-    # The OAuth2 access token.
-    validates :access_token, :length => 1..128, :presence => true
+    # Secret information associated with the token.
+    serialize :key, JSON
   end
 
   # Included in the metaclass of models that call pwnauth_facebook_token_model.
@@ -50,17 +50,17 @@ module FacebookTokenModel
     def uid_from_token(access_token)
       FBGraphRails.fbclient(access_token).selection.me.info!.id.to_s
     end
-  end  # module AuthpwnRails::FacebookTokenModel::ClassMethods
+  end  # module Authpwn::FacebookTokenModel::ClassMethods
 
   
-  # Included in models that include AuthpwnRails::FacebookTokenModel.
+  # Included in models that include Authpwn::FacebookTokenModel.
   module InstanceMethods
     # FBGraph client loaded with this access token.
     def facebook_client
       @client ||= FBGraphRails.fbclient(access_token)
     end  
-  end  # module AuthpwnRails::FacebookTokenModel::InstanceMethods
+  end  # module Authpwn::FacebookTokenModel::InstanceMethods
   
-end  # namespace AuthpwnRails::FacebookTokenModel
+end  # namespace Authpwn::FacebookTokenModel
 
-end  # namespace AuthpwnRails
+end  # namespace Authpwn

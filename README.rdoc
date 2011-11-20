@@ -4,17 +4,12 @@ User authentication for a Ruby on Rails 3 application. Works with Facebook.
 
 == Integration
 
-Scaffold user accounts, session controller views, and Facebook extensions.
-    rails g authpwn:users
-    rails g authpwn:session
-    rails g authpwn:facebook
+Scaffold user accounts, and session controller views.
+    rails g authpwn:all
     
 Wire authentication into your ApplicationController.
     authenticates_using_session
-    authenticates_using_facebook
-
-Point the default route to the sessions controller in config/routes.rb
-    root :to => "session#show" 
+    authenticates_using_facebook     
 
 Note: the code inside the models and controllers is tucked away in the plug-in.
 The scaffold models and controllers are there as extension points. You will be
@@ -24,12 +19,12 @@ able to update the plug-in without regenerating the scaffolds.
  
 * Fork the project.
 * Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
+* Add tests for it. This is important so I don't break it in a future version
+  unintentionally.
 * Commit, do not mess with rakefile, version, or history.
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
 == Copyright
 
-Copyright (c) 2010 Victor Costan, released under the MIT license
+Copyright (c) 2010-2012 Victor Costan, released under the MIT license

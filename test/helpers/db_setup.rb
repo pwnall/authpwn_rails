@@ -5,8 +5,8 @@ ActiveRecord::Base.configurations = true
 ActiveRecord::Migration.verbose = false
 require 'authpwn_rails/generators/templates/001_create_users.rb'
 CreateUsers.up
-require 'authpwn_rails/generators/templates/002_create_facebook_tokens.rb'
-CreateFacebookTokens.up
+require 'authpwn_rails/generators/templates/002_create_credentials.rb'
+CreateCredentials.up
 
 require 'authpwn_rails/generators/templates/facebook_token.rb'
 require 'authpwn_rails/generators/templates/user.rb'

@@ -2,13 +2,11 @@ require 'authpwn_rails'
 require 'rails'
 
 # :nodoc: namespace
-module AuthpwnRails
+module Authpwn
 
 class Engine < Rails::Engine
   generators do
-    require 'authpwn_rails/generators/facebook_generator.rb'
-    require 'authpwn_rails/generators/session_generator.rb'
-    require 'authpwn_rails/generators/users_generator.rb'
+    require 'authpwn_rails/generators/all_generator.rb'
   end
   
   initializer 'authpwn.rspec.extensions' do
@@ -16,12 +14,12 @@ class Engine < Rails::Engine
       require 'rspec'
       
       RSpec.configure do |c|
-        c.include AuthpwnRails::TestExtensions
+        c.include Authpwn::TestExtensions
       end
     rescue LoadError
       # No RSpec, no extensions.
     end
   end
-end  # class AuthpwnRails::Engine
+end  # class Authpwn::Engine
 
-end  # namespace AuthpwnRails
+end  # namespace Authpwn

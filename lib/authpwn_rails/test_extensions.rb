@@ -1,5 +1,5 @@
 # :nodoc: namespace
-module AuthpwnRails
+module Authpwn
 
 # Included in test cases.
 module TestExtensions
@@ -13,12 +13,12 @@ module TestExtensions
     return nil unless user_param = request.session[:current_user_pid]
     User.find_by_param user_param
   end
-end  # module AuthpwnRails::TestExtensions
+end  # module Authpwn::TestExtensions
 
-end  # namespace AuthpwnRails
+end  # namespace Authpwn
 
 
 # :nodoc: extend Test::Unit
 class ActionController::TestCase
-  include AuthpwnRails::TestExtensions
+  include Authpwn::TestExtensions
 end

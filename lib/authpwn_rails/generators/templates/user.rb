@@ -1,6 +1,6 @@
 # An user account.
 class User < ActiveRecord::Base
-  include AuthpwnRails::UserModel
+  include Authpwn::UserModel
 
-  # Add your extensions to the User class here.  
+  # Add your extensions to the User class here.
 end

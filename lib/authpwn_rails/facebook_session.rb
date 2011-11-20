@@ -8,13 +8,13 @@ class ActionController::Base
   # should obtain the Facebook token, using probes_facebook_access_token or
   # requires_facebook_access_token.
   def self.authenticates_using_facebook(options = {})
-    include AuthpwnRails::FacebookControllerInstanceMethods
+    include Authpwn::FacebookControllerInstanceMethods
     before_filter :authenticate_using_facebook_access_token, options
   end
-end  # module AuthpwnRails::FacebookExtensions::ControllerClassMethods
+end  # module Authpwn::FacebookExtensions::ControllerClassMethods
 
 # :nodoc: namespace
-module AuthpwnRails
+module Authpwn
 
 # Included in controllers that call authenticates_using_facebook.
 module FacebookControllerInstanceMethods
@@ -28,6 +28,6 @@ module FacebookControllerInstanceMethods
     end
   end
   private :authenticate_using_facebook_access_token
-end  # module AuthpwnRails::FacebookControllerInstanceMethods
+end  # module Authpwn::FacebookControllerInstanceMethods
 
-end  # namespace AuthpwnRails
+end  # namespace Authpwn
