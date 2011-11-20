@@ -2,7 +2,7 @@ require File.expand_path('../test_helper', __FILE__)
 
 class EmailCredentialTest < ActiveSupport::TestCase  
   def setup
-    @credential = Credentials::Email.new :name => 'dvdjohn@mit.edu',
+    @credential = Credentials::Email.new :email => 'dvdjohn@mit.edu',
         :user => users(:bill)
   end
   
@@ -10,8 +10,8 @@ class EmailCredentialTest < ActiveSupport::TestCase
     assert @credential.valid?
   end
   
-  test 'key required' do
-    @credential.key = nil
+  test 'verified required' do
+    @credential.verified = ''
     assert !@credential.valid?
   end
   
@@ -21,24 +21,24 @@ class EmailCredentialTest < ActiveSupport::TestCase
   end
 
   test 'email presence' do
-    @credential.name = nil
+    @credential.email = nil
     assert !@credential.valid?
   end
   
   test 'email length' do
-    @credential.name = 'abcde' * 25 + '@mit.edu'
+    @credential.email = 'abcde' * 25 + '@mit.edu'
     assert !@credential.valid?, 'Overly long email'
   end
   
   test 'email format' do
     ['cos tan@gmail.com', 'costan@x@mit.edu'].each do |email|
-      @credential.name = email
+      @credential.email = email
       assert !@credential.valid?, "Bad email format - #{email}"
     end    
   end
   
   test 'email uniqueness' do
-    @credential.name = credentials(:john_email).email
+    @credential.email = credentials(:john_email).email
     assert !@credential.valid?
   end
 end

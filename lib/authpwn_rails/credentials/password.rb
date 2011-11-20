@@ -10,13 +10,15 @@ class Password < ::Credential
   # Virtual attribute: confirmation for the user's password.
   attr_accessor :password_confirmation
 
+  # A user can have a single password
+  validates :user_id, :uniqueness => true
+
   # Compares the given password against the user's stored password.
   #
   # Returns +true+ for a match, +false+ otherwise.
   def authenticate(password)
-    return false unless password_hash
-    salt = password_hash.split('|', 2).first
-    key == self.class.hash_password(password, salt)
+    return false unless key
+    key == self.class.hash_password(password, key.split('|', 2).first)
   end
   
   # Password virtual attribute.
@@ -32,9 +34,13 @@ class Password < ::Credential
   end
 
   # The authenticated user or nil.
-  def self.authenticate_by_email(email, password)
-    user = where(:email => email).first
-    (user && user.password_matches?(password)) ? user : nil
+  def self.authenticate_email(email, password)
+    email_cred = Credentials::Email.where(:name => email).
+                                    includes(:user => :credentials).first
+    return nil unless email_cred    
+    credential = email_cred.user.credentials.
+                            find { |c| c.kind_of? Credentials::Password }
+    credential.authenticate(password) ? email_cred.user : nil
   end
 
   # Computes a password hash from a raw password and a salt.

@@ -25,18 +25,14 @@ class PasswordCredentialTest < ActiveSupport::TestCase
     assert !@credential.valid?
   end
   
-  test 'plaintext password not required' do
-    assert credentials(:john_password).valid?
-  end
-  
   test 'password confirmation' do
     @credential.password_confirmation = 'not awesome'
     assert !@credential.valid?
   end
   
-  test 'password can be nil' do
+  test 'password required' do
     @credential.password = @credential.password_confirmation = nil
-    assert @credential.valid?
+    assert !@credential.valid?
   end
   
   test 'authenticate' do

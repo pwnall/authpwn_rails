@@ -4,8 +4,8 @@
 
 <% if current_user %>
 <p>
-  You should inform the user that they are logged in as 
-  <%= current_user.email %> and suggest them to
+  You should inform the user that they are logged in as
+  <%= current_user.exuid %> and suggest them to
   <%= link_to 'Log out', session_path, :method => :destroy %> and log in as a
   different user.  
 </p>

@@ -23,15 +23,15 @@ module ControllerInstanceMethods
   def current_user=(user)
     @current_user = user
     if user
-      session[:current_user_pid] = user.to_param
+      session[:user_exuid] = user.to_param
     else
-      session.delete :current_user_pid
+      session.delete :user_exuid
     end
   end  
 
   def authenticate_using_session
     return true if current_user
-    user_param = session[:current_user_pid]
+    user_param = session[:user_exuid]
     user = user_param && User.find_by_param(user_param)
     self.current_user = user if user
   end

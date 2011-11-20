@@ -17,8 +17,8 @@ class SessionControllerTest < ActionController::TestCase
     set_session_current_user @user
     get :show, :format => 'json'
     
-    assert_equal @user.email,
-        ActiveSupport::JSON.decode(response.body)['user']['email']
+    assert_equal @user.exuid,
+        ActiveSupport::JSON.decode(response.body)['user']['exuid']
   end
   
   test "application welcome page" do

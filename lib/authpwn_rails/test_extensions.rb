@@ -5,12 +5,12 @@ module Authpwn
 module TestExtensions
   # Sets the authenticated user in the test session.
   def set_session_current_user(user)
-    request.session[:current_user_pid] = user ? user.to_param : nil
+    request.session[:user_exuid] = user ? user.to_param : nil
   end
   
   # The authenticated user in the test session.
   def session_current_user
-    return nil unless user_param = request.session[:current_user_pid]
+    return nil unless user_param = request.session[:user_exuid]
     User.find_by_param user_param
   end
 end  # module Authpwn::TestExtensions

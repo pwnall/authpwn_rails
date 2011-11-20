@@ -18,7 +18,7 @@ module SessionController
   module InstanceMethods
     # GET /session/new
     def new
-      @user = User.new
+      @email = params[:email]
       @redirect_url = flash[:auth_redirect_url]
       redirect_to session_url if current_user
     end
@@ -52,25 +52,27 @@ module SessionController
     
     # POST /session
     def create
-      @user = User.new params[:user]
       @redirect_url = params[:redirect_url] || session_url
-      self.current_user =
-          User.find_by_email_and_password @user.email, @user.password
+      @email = params[:email]
+      self.current_user = Credentials::Password.authenticate_email(@email,
+          params[:password])
           
       respond_to do |format|
         if current_user
           format.html { redirect_to @redirect_url }
           format.json do
-            user_data = @user.as_json
-            user_data = user_data['user'] if @user.class.include_root_in_json
+            user_data = current_user.as_json
+            if current_user.class.include_root_in_json
+              user_data = user_data['user']
+            end
             render :json => { :user => user_data,
                               :csrf => form_authenticity_token }
           end
         else
           notice = 'Invalid e-mail or password'
           format.html do
-            redirect_to new_session_url, :flash => {
-              :notice => notice, :auth_redirect_url => @redirect_url }
+            redirect_to new_session_url, :flash => { :notice => notice,
+                :auth_redirect_url => @redirect_url }
           end
           format.json { render :json => { :error => notice} }
         end

@@ -1,7 +1,7 @@
 class CreateCredentials < ActiveRecord::Migration
   def change
     create_table :credentials do |t|
-      t.integer :user_id, :null => false
+      t.references :user, :null => false
       t.string :type, :limit => 32, :null => false
       t.string :name, :limit => 256, :null => true
       
