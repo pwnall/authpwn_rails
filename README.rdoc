@@ -15,6 +15,11 @@ Note: the code inside the models and controllers is tucked away in the plug-in.
 The scaffold models and controllers are there as extension points. You will be
 able to update the plug-in without regenerating the scaffolds.
 
+== Migrating from authpwn 0.9 or older?
+
+See legacy/migrate_09_to_010.rb for a semi-automated way of migrating your
+database.
+
 == Note on Patches/Pull Requests
  
 * Fork the project.
