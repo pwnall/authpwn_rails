@@ -6,6 +6,6 @@ group :development do
   gem "bundler", "~> 1.0.0"
   gem "flexmock", "~> 0.9.0"
   gem "jeweler", "~> 1.6.0"
-  gem "rcov", ">= 0"
+  gem "rcov", ">= 0", :platform => :mri
   gem "sqlite3", ">= 1.3.3"
 end
