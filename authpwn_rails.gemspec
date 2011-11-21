@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "authpwn_rails"
-  s.version = "0.10.0"
+  s.version = "0.10.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
     "VERSION",
     "app/helpers/session_helper.rb",
     "authpwn_rails.gemspec",
+    "legacy/migrate_09_to_010.rb",
     "lib/authpwn_rails.rb",
     "lib/authpwn_rails/credential_model.rb",
     "lib/authpwn_rails/credentials.rb",
@@ -38,7 +39,7 @@ Gem::Specification.new do |s|
     "lib/authpwn_rails/facebook_session.rb",
     "lib/authpwn_rails/generators/all_generator.rb",
     "lib/authpwn_rails/generators/templates/001_create_users.rb",
-    "lib/authpwn_rails/generators/templates/002_create_credentials.rb",
+    "lib/authpwn_rails/generators/templates/003_create_credentials.rb",
     "lib/authpwn_rails/generators/templates/credential.rb",
     "lib/authpwn_rails/generators/templates/credentials.yml",
     "lib/authpwn_rails/generators/templates/session/forbidden.html.erb",
