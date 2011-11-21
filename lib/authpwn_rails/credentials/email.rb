@@ -27,4 +27,10 @@ module Authpwn::UserModel::InstanceMethods
   def email_credential
     credentials.find { |c| c.instance_of?(Credentials::Email) }
   end
+  
+  # The e-mail from the user's Email credential, or nil no credential exists.
+  def email
+    credential = self.email_credential
+    credential && credential.email
+  end
 end  # module Authpwn::UserModel::InstanceMethods

@@ -14,8 +14,8 @@ class AllGenerator < Rails::Generators::Base
   
   def create_credential_model
     copy_file 'credential.rb', File.join('app', 'models', 'credential.rb')
-    copy_file '002_create_credentials.rb',
-        File.join('db', 'migrate', '20100725000002_create_credentials.rb')
+    copy_file '003_create_credentials.rb',
+        File.join('db', 'migrate', '20100725000003_create_credentials.rb')
     copy_file 'credentials.yml',
         File.join('test', 'fixtures', 'credentials.yml')
   end

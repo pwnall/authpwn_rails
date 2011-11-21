@@ -5,7 +5,7 @@ ActiveRecord::Base.configurations = true
 ActiveRecord::Migration.verbose = false
 require 'authpwn_rails/generators/templates/001_create_users.rb'
 CreateUsers.migrate :up
-require 'authpwn_rails/generators/templates/002_create_credentials.rb'
+require 'authpwn_rails/generators/templates/003_create_credentials.rb'
 CreateCredentials.migrate :up
 
 require 'authpwn_rails/generators/templates/user.rb'
