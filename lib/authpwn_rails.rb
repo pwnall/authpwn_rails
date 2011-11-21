@@ -3,6 +3,7 @@ module Authpwn
 end
 
 require 'authpwn_rails/credential_model.rb'
+require 'authpwn_rails/credentials.rb'
 require 'authpwn_rails/facebook_session.rb'
 require 'authpwn_rails/session.rb'
 require 'authpwn_rails/session_controller.rb'
