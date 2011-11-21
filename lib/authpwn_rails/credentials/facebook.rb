@@ -13,6 +13,9 @@ class Facebook < ::Credential
   validates :user_id, :uniqueness => {
       :message => 'Your account is already associated to a Facebook user' }
 
+  # OAuth2 token issued by Facebook.
+  alias_attribute :access_token, :key
+  validates :key, :presence => true
 
   # FBGraph client loaded with this access token.
   def facebook_client
@@ -51,7 +54,7 @@ end  # class Credentials::Facebook
 end  # namespace Credentials
 
 # :nodoc: adds Facebook integration methods to the User model.
-class <<User
+module Authpwn::UserModel::ClassMethods
   # Fills out a new user's information based on a Facebook access token.
   def create_with_facebook_token(token)
     self.create! :email => "#{token.external_uid}@graph.facebook.com"
@@ -64,4 +67,11 @@ class <<User
   def for_facebook_token(access_token)
     Credentials::Facebook.for(access_token).user
   end
-end
+end  # module Authpwn::UserModel::ClassMethods
+
+# :nodoc: adds Facebook integration methods to the User model.
+module Authpwn::UserModel::InstanceMethods
+  def facebook_credential
+    credentials.find { |c| c.instance_of?(Credentials::Facebook) }
+  end
+end  # module Authpwn::UserModel::InstanceMethods

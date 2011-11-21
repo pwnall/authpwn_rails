@@ -28,7 +28,10 @@ class FacebookControllerTest < ActionController::TestCase
   end
   
   test "facebook token for existing user" do
-    set_session_current_facebook_token facebook_tokens(:john).access_token
+    flexmock(Credentials::Facebook).should_receive(:uid_from_token).
+        with(credentials(:john_facebook).key).
+        and_return(credentials(:john_facebook).facebook_uid)
+    set_session_current_facebook_token credentials(:john_facebook).key
     get :show, {}
     assert_response :success
     assert_equal @user, assigns(:current_user)
@@ -36,8 +39,10 @@ class FacebookControllerTest < ActionController::TestCase
   
   test "new facebook token" do    
     set_session_current_facebook_token @new_token
+    flexmock(Credentials::Facebook).should_receive(:uid_from_token).
+        with(@new_token).and_return('12345678')
     get :show, {}
     assert_response :success
-    assert !(@user == assigns(:current_user))
+    assert_not_equal @user, assigns(:current_user)
   end
 end

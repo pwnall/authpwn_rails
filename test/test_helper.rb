@@ -7,6 +7,7 @@ require 'active_support'
 
 require 'fbgraph_rails'
 require 'fbgraph_rails/controller'
+require 'flexmock/test_unit'
 require 'sqlite3'
 
 require 'authpwn_rails'

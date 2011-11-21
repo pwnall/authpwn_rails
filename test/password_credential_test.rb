@@ -58,4 +58,10 @@ class PasswordCredentialTest < ActiveSupport::TestCase
         Credentials::Password.authenticate_email('john@gmail.com', 'awesome'),
         'Bogus password'
   end
+  
+  test 'User#password_credential' do
+    assert_equal credentials(:john_password), users(:john).password_credential
+    assert_equal credentials(:jane_password), users(:jane).password_credential
+    assert_nil users(:bill).password_credential
+  end
 end
