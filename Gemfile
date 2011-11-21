@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 gem "fbgraph_rails", ">= 0.2.2"
-gem "rails", ">= 3.1.2"
+gem "rails", ">= 3.1.3"
 
 group :development do
   gem "bundler", "~> 1.0.0"
