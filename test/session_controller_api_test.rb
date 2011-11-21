@@ -59,7 +59,7 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_template :new
     assert_nil assigns(:current_user), 'current_user should not be set'
   
-    assert_select 'form' do
+    assert_select 'form[action="/session"]' do
       assert_select 'input#email'
       assert_select 'input#password'
       assert_select 'input[type=submit]'
