@@ -1,14 +1,18 @@
+require 'active_support'
+
 # :nodoc: namespace
 module Authpwn
+  extend ActiveSupport::Autoload
+  
+  autoload :CredentialModel, 'authpwn_rails/credential_model.rb'
+  autoload :SessionController, 'authpwn_rails/session_controller.rb'
+  autoload :UserModel, 'authpwn_rails/user_model.rb'
 end
 
-require 'authpwn_rails/credential_model.rb'
 require 'authpwn_rails/credentials.rb'
 require 'authpwn_rails/facebook_session.rb'
 require 'authpwn_rails/session.rb'
-require 'authpwn_rails/session_controller.rb'
 require 'authpwn_rails/test_extensions.rb'
-require 'authpwn_rails/user_model.rb'
 
 if defined?(Rails)
   require 'authpwn_rails/engine.rb'

@@ -52,26 +52,3 @@ class Facebook < ::Credential
 end  # class Credentials::Facebook 
 
 end  # namespace Credentials
-
-# :nodoc: adds Facebook integration methods to the User model.
-module Authpwn::UserModel::ClassMethods
-  # Fills out a new user's information based on a Facebook access token.
-  def create_with_facebook_token(token)
-    self.create! :email => "#{token.external_uid}@graph.facebook.com"
-  end
-  
-  # The user that owns a given Facebook OAuth2 token.
-  #
-  # A new user will be created if the token doesn't belong to any user. This
-  # is the case for a new visitor.
-  def for_facebook_token(access_token)
-    Credentials::Facebook.for(access_token).user
-  end
-end  # module Authpwn::UserModel::ClassMethods
-
-# :nodoc: adds Facebook integration methods to the User model.
-module Authpwn::UserModel::InstanceMethods
-  def facebook_credential
-    credentials.find { |c| c.instance_of?(Credentials::Facebook) }
-  end
-end  # module Authpwn::UserModel::InstanceMethods

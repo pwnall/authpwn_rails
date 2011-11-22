@@ -55,9 +55,3 @@ class Password < ::Credential
 end  # class Credentials::Password
 
 end  # namespace Credentials
-
-module Authpwn::UserModel::InstanceMethods
-  def password_credential
-    credentials.find { |c| c.instance_of?(Credentials::Password) }
-  end
-end
