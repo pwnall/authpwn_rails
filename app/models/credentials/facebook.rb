@@ -36,9 +36,9 @@ class Facebook < ::Credential
       User.transaction do
         user = User.create!
         credential = self.new
+        user.credentials << credential
         credential.facebook_uid = uid
         credential.access_token = access_token
-        credential.user = user
         credential.save!
       end
     end

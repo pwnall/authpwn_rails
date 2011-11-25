@@ -57,7 +57,9 @@ class FacebookCredentialTest < ActiveSupport::TestCase
     assert_equal '123456789', credential.facebook_uid 
     assert_equal @credential.key, credential.key
     assert !credential.new_record?, 'New credential not saved'
-    assert !credential.user.new_record?, "New credential's user not saved"    
+    assert !credential.user.new_record?, "New credential's user not saved"
+    assert_operator credential.user.credentials, :include?, credential,
+        "New user's credentials does not include Facebook credential"    
   end  
 
   test 'User#facebook_credential' do
