@@ -9,7 +9,6 @@ module Authpwn
   autoload :UserModel, 'authpwn_rails/user_model.rb'
 end
 
-require 'authpwn_rails/credentials.rb'
 require 'authpwn_rails/facebook_session.rb'
 require 'authpwn_rails/session.rb'
 require 'authpwn_rails/test_extensions.rb'
