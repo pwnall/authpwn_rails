@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "authpwn_rails"
-  s.version = "0.10.2"
+  s.version = "0.10.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
@@ -53,6 +53,7 @@ Gem::Specification.new do |s|
     "lib/authpwn_rails/session_controller.rb",
     "lib/authpwn_rails/test_extensions.rb",
     "lib/authpwn_rails/user_extensions/email_field.rb",
+    "lib/authpwn_rails/user_extensions/facebook_fields.rb",
     "lib/authpwn_rails/user_extensions/password_field.rb",
     "lib/authpwn_rails/user_model.rb",
     "test/cookie_controller_test.rb",
@@ -60,6 +61,7 @@ Gem::Specification.new do |s|
     "test/email_field_test.rb",
     "test/facebook_controller_test.rb",
     "test/facebook_credential_test.rb",
+    "test/facebook_fields_test.rb",
     "test/helpers/application_controller.rb",
     "test/helpers/autoload_path.rb",
     "test/helpers/db_setup.rb",
