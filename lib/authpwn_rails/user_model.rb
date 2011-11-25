@@ -19,12 +19,15 @@ module UserModel
     
     # Credentials used to authenticate the user.
     has_many :credentials, :dependent => :destroy, :inverse_of => :user
+    validates_associated :credentials
+    # This is safe, because credentials use attr_accessible.
+    accepts_nested_attributes_for :credentials, :allow_destroy => true
     
     # Automatically assign exuid.
     before_validation :set_default_exuid, :on => :create
     
     # Forms should not be able to touch any attribute.
-    attr_accessible
+    attr_accessible :credentials_attributes
   end
 
   # Class methods on models that include Authpwn::UserModel.
@@ -55,29 +58,6 @@ end  # namespace Authpwn::UserModel
 end  # namespace Authpwn
 
 
-# :nodoc: adds e-mail integration to the user model
-module Authpwn::UserModel::ClassMethods
-  # The user who has a certain e-mail, or nil if the e-mail is unclaimed.
-  def with_email(email)
-    credential = Credentials::Email.where(:name => email).includes(:user).first
-    credential && credential.user
-  end
-end  # module Authpwn::UserModel::ClassMethods
-
-# :nodoc: adds e-mail integration to the user model
-module Authpwn::UserModel::InstanceMethods
-  def email_credential
-    credentials.find { |c| c.instance_of?(Credentials::Email) }
-  end
-  
-  # The e-mail from the user's Email credential, or nil no credential exists.
-  def email
-    credential = self.email_credential
-    credential && credential.email
-  end
-end  # module Authpwn::UserModel::InstanceMethods
-
-
 # :nodoc: adds Facebook integration methods to the User model.
 module Authpwn::UserModel::ClassMethods
   # The user that owns a given Facebook OAuth2 token.
@@ -93,13 +73,5 @@ end  # module Authpwn::UserModel::ClassMethods
 module Authpwn::UserModel::InstanceMethods
   def facebook_credential
     credentials.find { |c| c.instance_of?(Credentials::Facebook) }
-  end
-end  # module Authpwn::UserModel::InstanceMethods
-
-
-# :nodoc: adds password integration methods to the User model.
-module Authpwn::UserModel::InstanceMethods
-  def password_credential
-    credentials.find { |c| c.instance_of?(Credentials::Password) }
   end
 end  # module Authpwn::UserModel::InstanceMethods

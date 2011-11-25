@@ -5,7 +5,8 @@ module Credentials
 class Password < ::Credential
   # Virtual attribute: the user's password.
   attr_accessor :password
-  validates :password, :confirmation => true, :presence => true
+  validates :password, :presence => { :on => :create },
+                       :confirmation => { :allow_nil => true }
 
   # Virtual attribute: confirmation for the user's password.
   attr_accessor :password_confirmation

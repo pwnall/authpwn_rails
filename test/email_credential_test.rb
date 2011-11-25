@@ -41,22 +41,4 @@ class EmailCredentialTest < ActiveSupport::TestCase
     @credential.email = credentials(:john_email).email
     assert !@credential.valid?
   end
-  
-  test 'User#email_credential' do
-    assert_equal credentials(:john_email), users(:john).email_credential
-    assert_equal credentials(:jane_email), users(:jane).email_credential
-    assert_nil users(:bill).email_credential
-  end
-
-  test 'User#email' do
-    assert_equal credentials(:john_email).email, users(:john).email
-    assert_equal credentials(:jane_email).email, users(:jane).email
-    assert_nil users(:bill).email
-  end
-
-  test 'User#withemail' do
-    assert_equal users(:john), User.with_email(credentials(:john_email).email)
-    assert_equal users(:jane), User.with_email(credentials(:jane_email).email) 
-    assert_nil User.with_email('nosuch@email.com')
-  end
 end

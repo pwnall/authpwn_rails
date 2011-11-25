@@ -3,7 +3,7 @@ require File.expand_path('../test_helper', __FILE__)
 class PasswordCredentialTest < ActiveSupport::TestCase  
   def setup
     @credential = Credentials::Password.new :password => 'awesome',
-        :password_confirmation => 'awesome'
+                                            :password_confirmation => 'awesome'
     @credential.user = users(:bill)
   end
   
@@ -58,11 +58,5 @@ class PasswordCredentialTest < ActiveSupport::TestCase
     assert_equal nil,
         Credentials::Password.authenticate_email('john@gmail.com', 'awesome'),
         'Bogus password'
-  end
-  
-  test 'User#password_credential' do
-    assert_equal credentials(:john_password), users(:john).password_credential
-    assert_equal credentials(:jane_password), users(:jane).password_credential
-    assert_nil users(:bill).password_credential
   end
 end
