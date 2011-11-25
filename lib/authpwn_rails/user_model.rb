@@ -52,26 +52,6 @@ module UserModel
       self.exuid ||= (Time.now.to_f * 1_000_000).to_i
     end
   end  # module Authpwn::UserModel::InstanceMethods
-  
 end  # namespace Authpwn::UserModel
 
 end  # namespace Authpwn
-
-
-# :nodoc: adds Facebook integration methods to the User model.
-module Authpwn::UserModel::ClassMethods
-  # The user that owns a given Facebook OAuth2 token.
-  #
-  # A new user will be created if the token doesn't belong to any user. This
-  # is the case for a new visitor.
-  def for_facebook_token(access_token)
-    Credentials::Facebook.for(access_token).user
-  end
-end  # module Authpwn::UserModel::ClassMethods
-
-# :nodoc: adds Facebook integration methods to the User model.
-module Authpwn::UserModel::InstanceMethods
-  def facebook_credential
-    credentials.find { |c| c.instance_of?(Credentials::Facebook) }
-  end
-end  # module Authpwn::UserModel::InstanceMethods

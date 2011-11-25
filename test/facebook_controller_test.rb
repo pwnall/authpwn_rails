@@ -15,10 +15,21 @@ class FacebookController < ApplicationController
   end
 end
 
+class UserWithFb2 < User
+  include Authpwn::UserExtensions::FacebookFields
+end
+
 class FacebookControllerTest < ActionController::TestCase
   setup do
+    @old_user_class = ::User
+    ::User = UserWithFb2
+    
     @user = users(:john)
     @new_token = 'facebook:new_token|boom'
+  end
+  
+  teardown do
+    ::User = @old_user_class
   end
 
   test "no facebook token" do

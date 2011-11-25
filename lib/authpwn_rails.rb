@@ -11,6 +11,7 @@ module Authpwn
   # Contains extensions to the User model.
   module UserExtensions
     autoload :EmailField, 'authpwn_rails/user_extensions/email_field.rb'
+    autoload :FacebookFields, 'authpwn_rails/user_extensions/facebook_fields.rb'
     autoload :PasswordField, 'authpwn_rails/user_extensions/password_field.rb'
   end
 end

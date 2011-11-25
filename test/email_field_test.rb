@@ -14,7 +14,6 @@ class EmailFieldTest < ActiveSupport::TestCase
   end
   
   test 'setup' do
-    @user.save!
     assert @user.valid?
   end
 

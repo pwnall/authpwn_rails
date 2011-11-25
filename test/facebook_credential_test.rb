@@ -61,17 +61,4 @@ class FacebookCredentialTest < ActiveSupport::TestCase
     assert_operator credential.user.credentials, :include?, credential,
         "New user's credentials does not include Facebook credential"    
   end  
-
-  test 'User#facebook_credential' do
-    user = users(:john)
-    assert_equal credentials(:john_facebook), user.facebook_credential
-  end
-  
-  test 'User#for_facebook_token' do
-    flexmock(Credentials::Facebook).should_receive(:uid_from_token).
-        with(credentials(:john_facebook).key).
-        and_return(credentials(:john_facebook).facebook_uid)
-    assert_equal users(:john),
-        User.for_facebook_token(credentials(:john_facebook).key)
-  end
 end
