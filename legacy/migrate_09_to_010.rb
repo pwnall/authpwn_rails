@@ -79,4 +79,5 @@ class DropFacebookTokens < ActiveRecord::Migration
     drop_table :facebook_tokens
   end
 end
+DropFacebookTokens.migrate :up
 reload!
