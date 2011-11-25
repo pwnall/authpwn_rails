@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "authpwn_rails"
-  s.version = "0.10.1"
+  s.version = "0.10.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
-  s.date = "2011-11-21"
+  s.date = "2011-11-25"
   s.description = "Works with Facebook."
   s.email = "victor@costan.us"
   s.extra_rdoc_files = [
@@ -27,14 +27,13 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "app/helpers/session_helper.rb",
+    "app/models/credentials/email.rb",
+    "app/models/credentials/facebook.rb",
+    "app/models/credentials/password.rb",
     "authpwn_rails.gemspec",
     "legacy/migrate_09_to_010.rb",
     "lib/authpwn_rails.rb",
     "lib/authpwn_rails/credential_model.rb",
-    "lib/authpwn_rails/credentials.rb",
-    "lib/authpwn_rails/credentials/email.rb",
-    "lib/authpwn_rails/credentials/facebook.rb",
-    "lib/authpwn_rails/credentials/password.rb",
     "lib/authpwn_rails/engine.rb",
     "lib/authpwn_rails/facebook_session.rb",
     "lib/authpwn_rails/generators/all_generator.rb",
@@ -53,17 +52,22 @@ Gem::Specification.new do |s|
     "lib/authpwn_rails/session.rb",
     "lib/authpwn_rails/session_controller.rb",
     "lib/authpwn_rails/test_extensions.rb",
+    "lib/authpwn_rails/user_extensions/email_field.rb",
+    "lib/authpwn_rails/user_extensions/password_field.rb",
     "lib/authpwn_rails/user_model.rb",
     "test/cookie_controller_test.rb",
     "test/email_credential_test.rb",
+    "test/email_field_test.rb",
     "test/facebook_controller_test.rb",
     "test/facebook_credential_test.rb",
     "test/helpers/application_controller.rb",
+    "test/helpers/autoload_path.rb",
     "test/helpers/db_setup.rb",
     "test/helpers/fbgraph.rb",
     "test/helpers/routes.rb",
     "test/helpers/view_helpers.rb",
     "test/password_credential_test.rb",
+    "test/password_field_test.rb",
     "test/session_controller_api_test.rb",
     "test/test_helper.rb",
     "test/user_test.rb"
