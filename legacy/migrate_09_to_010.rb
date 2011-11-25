@@ -20,12 +20,29 @@ Kernel.system "rake db:migrate:up VERSION=20100725000003 RAILS_ENV=#{Rails.env}"
 # Build up credentials.
 reload!
 User.all.each do |user|
-  Credentials::Email.create! :user => user, :email => user.attributes['email']
+  unless /\@graph\.facebook\.com$/ =~ user.email 
+    eml = Credentials::Email.new :email => user.attributes['email']
+    eml.user = user
+    eml.save!
+  end
 
-  pwd = Credentials::Password.new :user => user
-  pwd.password = pwd.password_confirmation = '_'
-  pwd.key = user.password_salt + '|' + user.password_hash
-  pwd.save!
+  if user.password_hash
+    pwd = Credentials::Password.new
+    pwd.user = user
+    pwd.password = pwd.password_confirmation = '_'
+    pwd.key = user.password_salt + '|' + user.password_hash
+    pwd.save!
+  end
+end
+class FacebookToken < ActiveRecord::Base
+  belongs_to :user
+end
+FacebookToken.all.each do |token|
+  cred = Credentials::Facebook.new
+  cred.user = token.user
+  cred.facebook_uid = token.external_uid
+  cred.key = token.access_token
+  cred.save!
 end
 
 # Update the columns in the User model.
@@ -57,5 +74,9 @@ class FinishUpgradingUserModel < ActiveRecord::Migration
   end
 end
 FinishUpgradingUserModel.migrate :up
+class DropFacebookTokens < ActiveRecord::Migration
+  def change
+    drop_table :facebook_tokens
+  end
+end
 reload!
-
