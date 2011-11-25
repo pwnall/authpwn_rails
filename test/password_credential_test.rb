@@ -3,7 +3,8 @@ require File.expand_path('../test_helper', __FILE__)
 class PasswordCredentialTest < ActiveSupport::TestCase  
   def setup
     @credential = Credentials::Password.new :password => 'awesome',
-        :password_confirmation => 'awesome', :user => users(:bill)
+        :password_confirmation => 'awesome'
+    @credential.user = users(:bill)
   end
   
   test 'setup' do

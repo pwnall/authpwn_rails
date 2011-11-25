@@ -2,8 +2,8 @@ require File.expand_path('../test_helper', __FILE__)
 
 class EmailCredentialTest < ActiveSupport::TestCase  
   def setup
-    @credential = Credentials::Email.new :email => 'dvdjohn@mit.edu',
-        :user => users(:bill)
+    @credential = Credentials::Email.new :email => 'dvdjohn@mit.edu'
+    @credential.user = users(:bill)
   end
   
   test 'setup' do

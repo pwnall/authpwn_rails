@@ -18,6 +18,9 @@ class Email < ::Credential
   def set_verified_to_false
     self.verified ||= '0' if self.key.nil?
   end
+
+  # Forms can only change the e-mail in the credential.
+  attr_accessible :email
 end  # class Credentials::Email 
 
 end  # namespace Credentials

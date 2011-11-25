@@ -51,7 +51,10 @@ class Password < ::Credential
   # Generates a random salt value.
   def self.random_salt
     [(0...12).map { |i| 1 + rand(255) }.pack('C*')].pack('m').strip
-  end  
+  end
+  
+  # Forms can only change the plain-text password fields.
+  attr_accessible :password, :password_confirmation  
 end  # class Credentials::Password
 
 end  # namespace Credentials

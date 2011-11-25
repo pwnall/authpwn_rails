@@ -3,9 +3,10 @@ require File.expand_path('../test_helper', __FILE__)
 class FacebookCredentialTest < ActiveSupport::TestCase  
   def setup
     @code = 'AAAEj8jKX2a8BAA4kNheRhOs6SlECVcZCE9o5pPKMytOjjoiNAoZBGZAwuL4KrrxXWesfJRhzDZCJiqrcQG3UdjRRNtyMJQMZD'
-    @credential = Credentials::Facebook.new :facebook_uid => '1181310542',
-        :key => 'AAAEj8jKX2a8BAOBMZCjxBe4dw7cRoD1JVxUgZAtB6ozJlR4Viazh6OAYcHB5kZAtUwgjpDy7a54ZA1DObLmBT9X99CLWYOj5Stqx8bHwnE7EzyBS1WxY',
-        :user => users(:bill)
+    @credential = Credentials::Facebook.new
+    @credential.facebook_uid = '1181310542'
+    @credential.key = 'AAAEj8jKX2a8BAOBMZCjxBe4dw7cRoD1JVxUgZAtB6ozJlR4Viazh6OAYcHB5kZAtUwgjpDy7a54ZA1DObLmBT9X99CLWYOj5Stqx8bHwnE7EzyBS1WxY'
+    @credential.user = users(:bill)
   end
   
   test 'setup' do

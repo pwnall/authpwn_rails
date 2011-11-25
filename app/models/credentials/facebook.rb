@@ -30,12 +30,16 @@ class Facebook < ::Credential
     uid = uid_from_token access_token
     credential = self.where(:name => uid.to_str).first
     if credential
-      credential.update_attributes! :key => access_token
+      credential.key = access_token
+      credential.save!
     else
       User.transaction do
         user = User.create!
-        credential = self.create! :name => uid, :key => access_token,
-                                  :user => user
+        credential = self.new
+        credential.facebook_uid = uid
+        credential.access_token = access_token
+        credential.user = user
+        credential.save!
       end
     end
     credential
@@ -49,6 +53,9 @@ class Facebook < ::Credential
   def self.uid_from_token(access_token)
     FBGraphRails.fbclient(access_token).selection.me.info!.id.to_s
   end
+  
+  # Forms should not be able to touch any attribute.
+  attr_accessible
 end  # class Credentials::Facebook 
 
 end  # namespace Credentials

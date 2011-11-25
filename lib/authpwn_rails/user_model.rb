@@ -20,7 +20,11 @@ module UserModel
     # Credentials used to authenticate the user.
     has_many :credentials, :dependent => :destroy, :inverse_of => :user
     
+    # Automatically assign exuid.
     before_validation :set_default_exuid, :on => :create
+    
+    # Forms should not be able to touch any attribute.
+    attr_accessible
   end
 
   # Class methods on models that include Authpwn::UserModel.
@@ -76,11 +80,6 @@ end  # module Authpwn::UserModel::InstanceMethods
 
 # :nodoc: adds Facebook integration methods to the User model.
 module Authpwn::UserModel::ClassMethods
-  # Fills out a new user's information based on a Facebook access token.
-  def create_with_facebook_token(token)
-    self.create! :email => "#{token.external_uid}@graph.facebook.com"
-  end
-  
   # The user that owns a given Facebook OAuth2 token.
   #
   # A new user will be created if the token doesn't belong to any user. This
