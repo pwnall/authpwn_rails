@@ -10,9 +10,26 @@ class EmailCredentialTest < ActiveSupport::TestCase
     assert @credential.valid?
   end
   
-  test 'verified required' do
-    @credential.verified = ''
+  test 'key required' do
+    @credential.key = ''
     assert !@credential.valid?
+  end
+
+  test 'key cannot be some random string' do
+    @credential.key = 'xoxo'
+    assert !@credential.valid?
+  end
+  
+  test 'verified set to true' do
+    @credential.verified = true
+    assert_equal '1', @credential.key, 'key'
+    assert_equal true, @credential.verified?, 'verified?'
+  end
+  
+  test 'verified set to false' do
+    @credential.verified = false
+    assert_equal '0', @credential.key, 'key'
+    assert_equal false, @credential.verified?, 'verified?'
   end
   
   test 'user presence' do
