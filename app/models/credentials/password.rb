@@ -44,12 +44,16 @@ class Password < ::Credential
                                     includes(:user => :credentials).first
     return { :reason => :invalid } unless email_cred
     user = email_cred.user
-    return { :reason => reason } if reason = user.auth_bounce_reason(email_cred)
+    if reason = user.auth_bounce_reason(email_cred)
+      return { :reason => reason }
+    end
     
     credential = email_cred.user.credentials.
                             find { |c| c.kind_of? Credentials::Password }
     if credential.authenticate(password)
-      return { :user => user }
+      if reason = user.auth_bounce_reason(credential)
+        return { :user => user }
+      end
     else
       return { :reason => :invalid }
     end
