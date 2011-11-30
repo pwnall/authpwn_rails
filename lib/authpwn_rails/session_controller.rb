@@ -54,8 +54,8 @@ module SessionController
     def create
       @redirect_url = params[:redirect_url] || session_url
       @email = params[:email]
-      self.current_user = Credentials::Password.authenticate_email(@email,
-          params[:password])
+      auth = Credentials::Password.authenticate_email @email, params[:password]
+      self.current_user = auth unless auth.kind_of? Symbol
           
       respond_to do |format|
         if current_user
@@ -69,12 +69,12 @@ module SessionController
                               :csrf => form_authenticity_token }
           end
         else
-          notice = 'Invalid e-mail or password'
+          notice = bounce_notice_text auth
           format.html do
             redirect_to new_session_url, :flash => { :notice => notice,
                 :auth_redirect_url => @redirect_url }
           end
-          format.json { render :json => { :error => notice} }
+          format.json { render :json => { :error => auth, :text => notice } }
         end
       end
     end
@@ -97,6 +97,16 @@ module SessionController
     def welcome
     end
     private :welcome
+
+    # Hook for customizing the bounce notification text.    
+    def bounce_notice_text(reason)
+      case reason
+      when :invalid
+        'Invalid e-mail or password'
+      when :blocked
+        'Account blocked. Please verify your e-mail address'
+      end
+    end
   end  # module Authpwn::SessionController::InstanceMethods
 
 end  # module Authpwn::SessionController

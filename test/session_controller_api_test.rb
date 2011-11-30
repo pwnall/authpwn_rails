@@ -106,7 +106,17 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
-    assert_not_nil flash[:notice]
+    assert_match(/Invalid/, flash[:notice])
+  end
+  
+  test "create does not log in blocked accounts" do
+    with_blocked_credential @email_credential do
+      post :create, :email => @email_credential.email, :password => 'password'
+    end
+    assert_redirected_to new_session_url
+    assert_nil assigns(:current_user), 'instance variable'
+    assert_nil session_current_user, 'session'
+    assert_match(/ blocked/, flash[:notice])
   end
 
   test "create by json does not log in with bad password" do
@@ -114,11 +124,25 @@ class SessionControllerApiTest < ActionController::TestCase
                   :format => 'json'
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
-    assert_match(/invalid/i , data['error'])
+    assert_equal 'invalid', data['error']
+    assert_match(/invalid/i , data['text'])
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
   end
   
+  test "create by json does not log in blocked accounts" do
+    with_blocked_credential @email_credential do
+      post :create, :email => @email_credential.email, :password => 'password',
+                    :format => 'json'
+    end
+    assert_response :ok
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal 'blocked', data['error']
+    assert_match(/blocked/i , data['text'])
+    assert_nil assigns(:current_user), 'instance variable'
+    assert_nil session_current_user, 'session'
+  end  
+
   test "create maintains redirect_url for bad logins" do
     url = 'http://authpwn.redirect.url'
     post :create, :email => @email_credential.email, :password => 'fail',

@@ -29,6 +29,24 @@ class Email < ::Credential
     new_verified_value ? true : false
   end
 
+  # Locates the user that owns an e-mail address, for authentication purposes.
+  #
+  # Presenting the correct e-mail is almost never sufficient for authentication
+  # purposes. This method will most likely used to kick off an authentication
+  # process, such as in Password#authenticate_email.
+  #
+  # Returns the authenticated User instance, or a symbol indicating the reason
+  # why the (potentially valid) password was rejected.
+  def self.authenticate(email)
+    # This method is likely to be used to kick off a complex authentication
+    # process, so it makes sense to pre-fetch the user's other credentials.
+    credential = Credentials::Email.where(:name => email).
+                                    includes(:user => :credentials).first
+    return :invalid unless credential
+    user = credential.user
+    user.auth_bounce_reason(credential) || user
+  end
+
   # Forms can only change the e-mail in the credential.
   attr_accessible :email
 end  # class Credentials::Email 

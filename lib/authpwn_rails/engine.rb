@@ -15,6 +15,7 @@ class Engine < Rails::Engine
       
       RSpec.configure do |c|
         c.include Authpwn::TestExtensions
+        c.include Authpwn::ControllerTestExtensions
       end
     rescue LoadError
       # No RSpec, no extensions.

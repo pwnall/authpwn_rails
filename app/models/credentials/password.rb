@@ -14,12 +14,21 @@ class Password < ::Credential
   # A user can have a single password
   validates :user_id, :uniqueness => true
 
-  # Compares the given password against the user's stored password.
+  # Compares a plain-text password against the password hash in this credential.
   #
   # Returns +true+ for a match, +false+ otherwise.
-  def authenticate(password)
+  def check_password(password)
     return false unless key
     key == self.class.hash_password(password, key.split('|', 2).first)
+  end
+  
+  # Compares a plain-text password against the password hash in this credential.
+  #
+  # Returns the authenticated User instance, or a symbol indicating the reason
+  # why the (potentially valid) password was rejected.
+  def authenticate(password)
+    return :invalid unless check_password(password)
+    user.auth_bounce_reason(self) || user
   end
   
   # Password virtual attribute.
@@ -36,27 +45,14 @@ class Password < ::Credential
 
   # Authenticates a user given an e-mail / password pair.
   #
-  # Returns a hash with one of the following keys:
-  #   :user:: the authenticated User instance
-  #   :reason:: reason why the (potentially valid) credential was rejected
+  # Returns the authenticated User instance, or a symbol indicating the reason
+  # why the (potentially valid) credential was rejected.
   def self.authenticate_email(email, password)
-    email_cred = Credentials::Email.where(:name => email).
-                                    includes(:user => :credentials).first
-    return { :reason => :invalid } unless email_cred
-    user = email_cred.user
-    if reason = user.auth_bounce_reason(email_cred)
-      return { :reason => reason }
-    end
+    user = Credentials::Email.authenticate email
+    return user if user.is_a? Symbol
     
-    credential = email_cred.user.credentials.
-                            find { |c| c.kind_of? Credentials::Password }
-    if credential.authenticate(password)
-      if reason = user.auth_bounce_reason(credential)
-        return { :user => user }
-      end
-    else
-      return { :reason => :invalid }
-    end
+    credential = user.credentials.find { |c| c.kind_of? Credentials::Password }
+    credential ? credential.authenticate(password) : :invalid
   end
 
   # Computes a password hash from a raw password and a salt.
