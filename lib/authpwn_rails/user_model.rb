@@ -42,6 +42,14 @@ module UserModel
   
   # Included in models that include Authpwn::UserModel.
   module InstanceMethods
+    # Checks if a credential is acceptable for authenticating a user.
+    #
+    # Returns nil if the credential is acceptable, or a String containing a
+    # user-visible reason why the credential is not acceptable. 
+    def auth_bounce_reason(crdential)
+      nil
+    end
+    
     # Use e-mails instead of exposing ActiveRecord IDs.
     def to_param
       exuid

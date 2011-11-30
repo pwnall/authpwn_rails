@@ -34,14 +34,25 @@ class Password < ::Credential
     @password = @password_confirmation = nil
   end
 
-  # The authenticated user or nil.
+  # Authenticates a user given an e-mail / password pair.
+  #
+  # Returns a hash with one of the following keys:
+  #   :user:: the authenticated User instance
+  #   :reason:: reason why the (potentially valid) credential was rejected
   def self.authenticate_email(email, password)
     email_cred = Credentials::Email.where(:name => email).
                                     includes(:user => :credentials).first
-    return nil unless email_cred    
+    return { :reason => :invalid } unless email_cred
+    user = email_cred.user
+    return { :reason => reason } if reason = user.auth_bounce_reason(email_cred)
+    
     credential = email_cred.user.credentials.
                             find { |c| c.kind_of? Credentials::Password }
-    credential.authenticate(password) ? email_cred.user : nil
+    if credential.authenticate(password)
+      return { :user => user }
+    else
+      return { :reason => :invalid }
+    end
   end
 
   # Computes a password hash from a raw password and a salt.
