@@ -27,11 +27,11 @@ class TokenCredentialTest < ActiveSupport::TestCase
   end
   
   test 'spend does nothing' do
-    @credential.spend
-    assert @credential.valid?
+    credential = credentials(:jane_token)
+    assert_equal Credentials::Token, credential.class, 'bad setup'
     
     assert_no_difference 'Credential.count' do
-      credentials(:john_token).spend
+      credential.spend
     end
   end
   
@@ -39,6 +39,7 @@ class TokenCredentialTest < ActiveSupport::TestCase
     token = Credentials::Token.random_for users(:john)
     assert token.valid?, 'valid token'
     assert_equal users(:john), token.user
+    assert_equal Credentials::Token, token.class
     assert !token.new_record?, 'saved token'
     assert_operator users(:john).credentials, :include?, token
   end

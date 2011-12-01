@@ -8,7 +8,7 @@ class OneTimeToken < Token
   # One-time tokens will become invalid after they are spent.
   #
   # Returns the token instance.
-  def spend!
+  def spend
     destroy
   end
 end  # class Credentials::Token
