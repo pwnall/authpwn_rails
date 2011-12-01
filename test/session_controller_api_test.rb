@@ -12,6 +12,7 @@ class SessionControllerApiTest < ActionController::TestCase
   setup do
     @user = users(:john)
     @email_credential = credentials(:john_email)
+    @token_credential = credentials(:john_token)
   end
   
   test "show renders welcome without a user" do
@@ -159,6 +160,75 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_nil session_current_user, 'session'
     assert_not_nil flash[:notice]
   end
+
+  test "token logs in with good token" do
+    assert_difference 'Credential.count', -1, 'one-time credential is spent' do
+      get :token, :code => @token_credential.code
+    end
+    assert_redirected_to session_url
+    assert_equal @user, assigns(:current_user), 'instance variable'
+    assert_equal @user, session_current_user, 'session'
+  end
+
+  test "token by json logs in with good account details" do
+    assert_difference 'Credential.count', -1, 'one-time credential is spent' do
+      get :token, :code => @token_credential.code, :format => 'json'
+    end
+    assert_response :ok
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal @user.exuid, data['user']['exuid']
+    assert_equal session[:_csrf_token], data['csrf']
+    assert_equal @user, assigns(:current_user), 'instance variable'
+    assert_equal @user, session_current_user, 'session'
+  end
+  
+  test "token does not log in with random token" do
+    assert_no_difference 'Credential.count', 'no credential is spent' do
+      get :token, :code => 'no-such-token'
+    end
+    assert_redirected_to new_session_url
+    assert_nil assigns(:current_user), 'instance variable'
+    assert_nil session_current_user, 'session'
+    assert_match(/Invalid/, flash[:notice])
+  end
+  
+  test "token does not log in blocked accounts" do
+    with_blocked_credential @token_credential do
+      assert_no_difference 'Credential.count', 'no credential is spent' do
+        get :token, :code => @token_credential.code
+      end
+    end
+    assert_redirected_to new_session_url
+    assert_nil assigns(:current_user), 'instance variable'
+    assert_nil session_current_user, 'session'
+    assert_match(/ blocked/, flash[:notice])
+  end
+
+  test "token by json does not log in with random token" do
+    assert_no_difference 'Credential.count', 'no credential is spent' do
+      get :token, :code => 'no-such-token', :format => 'json'
+    end
+    assert_response :ok
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal 'invalid', data['error']
+    assert_match(/invalid/i , data['text'])
+    assert_nil assigns(:current_user), 'instance variable'
+    assert_nil session_current_user, 'session'
+  end
+  
+  test "token by json does not log in blocked accounts" do
+    with_blocked_credential @token_credential do
+      assert_no_difference 'Credential.count', 'no credential is spent' do
+        get :token, :code => @token_credential.code, :format => 'json'
+      end
+    end
+    assert_response :ok
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal 'blocked', data['error']
+    assert_match(/blocked/i , data['text'])
+    assert_nil assigns(:current_user), 'instance variable'
+    assert_nil session_current_user, 'session'
+  end  
 
   test "logout" do
     set_session_current_user @user

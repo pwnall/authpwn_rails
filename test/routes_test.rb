@@ -15,5 +15,9 @@ class RoutesTest < ActionController::TestCase
                    {:controller => 'session', :action => 'create'})
     assert_routing({:path => "/session", :method => :delete},
                    {:controller => 'session', :action => 'destroy'})
+    
+    code = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
+    assert_routing({:path => "/session/token/#{code}", :method => :get},
+        {:controller => 'session', :action => 'token', :code => code})
   end
 end

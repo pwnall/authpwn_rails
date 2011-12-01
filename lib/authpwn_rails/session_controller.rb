@@ -79,6 +79,33 @@ module SessionController
       end
     end
   
+    # GET /session/token/token-code
+    def token
+      auth = Credentials::Token.authenticate params[:code]
+      self.current_user = auth unless auth.kind_of? Symbol
+          
+      respond_to do |format|
+        if current_user
+          format.html { redirect_to session_url }
+          format.json do
+            user_data = current_user.as_json
+            if current_user.class.include_root_in_json
+              user_data = user_data['user']
+            end
+            render :json => { :user => user_data,
+                              :csrf => form_authenticity_token }
+          end
+        else
+          notice = bounce_notice_text auth
+          format.html do
+            redirect_to new_session_url, :flash => { :notice => notice,
+                :auth_redirect_url => session_url }
+          end
+          format.json { render :json => { :error => auth, :text => notice } }
+        end
+      end
+    end
+
     # DELETE /session
     def destroy
       self.current_user = nil

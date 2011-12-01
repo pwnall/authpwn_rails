@@ -36,7 +36,11 @@ class Token < ::Credential
                                     includes(:user => :credentials).first
     return :invalid unless credential
     user = credential.user
-    user.auth_bounce_reason(credential) || user
+    if bounce = user.auth_bounce_reason(credential)
+      return bounce
+    end
+    credential.spend
+    user
   end
   
   # Creates a new random token for a user.

@@ -36,6 +36,30 @@ class OneTimeTokenCredentialTest < ActiveSupport::TestCase
     assert credential.frozen?, 'not destroyed'
   end
   
+  test 'authenticate spends the token' do
+    john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
+    bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
+    assert_difference 'Credential.count', -1, 'token spent' do
+      assert_equal users(:john), Credentials::Token.authenticate(john)
+    end
+    assert_no_difference 'Credential.count', 'no token spent' do
+      assert_equal :invalid, Credentials::Token.authenticate(bogus)
+    end
+  end
+  
+  test 'authenticate calls User#auth_bounce_reason' do
+    john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
+    jane = '6TXe1vv7BgOw0BkJ1hzUKO6G08fLk4sVfJ3wPDZHS-c'
+    bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
+
+    with_blocked_credential credentials(:john_token), :reason do
+      assert_no_difference 'Credential.count', 'no token spent' do
+        assert_equal :reason, Credentials::Token.authenticate(john)
+      end
+    end
+  end
+  
+  
   test 'random_for' do
     token = Credentials::OneTimeToken.random_for users(:john)
     assert token.valid?, 'valid token'
