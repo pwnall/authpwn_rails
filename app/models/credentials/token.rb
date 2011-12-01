@@ -1,3 +1,5 @@
+require 'securerandom'
+
 # :namespace
 module Credentials
   
@@ -5,14 +7,18 @@ module Credentials
 class Token < ::Credential
   # The secret token code.
   alias_attribute :code, :name
-  validates :code, :format => /^[A-Za-z0-9\_\-]+$/, :presence => true
+  # Token names are random, so we can expect they'll be unique across the entire
+  # namespace. We need this check to enforce name uniqueness across different
+  # token types. 
+  validates :name, :format => /^[A-Za-z0-9\_\-]+$/, :presence => true,
+                   :uniqueness => true 
 
   # Updates the token's state to reflect that it was used for authentication.
   #
   # One-time tokens will become invalid after they are spent.
   #
   # Returns the token instance.
-  def spend!
+  def spend
     self
   end
 
@@ -35,12 +41,15 @@ class Token < ::Credential
   
   # Creates a new random token for a user.
   def self.random_for(user)
-    user.credentials << self.new(:code => random_code)
+    token = self.new(:code => random_code)
+    user.credentials << token
+    token.save!
+    token
   end
 
   # Generates a random token code.
   def self.random_code
-    SecureRandom.urlsafe_base64
+    SecureRandom.urlsafe_base64(32)
   end
 end  # class Credentials::Token
 
