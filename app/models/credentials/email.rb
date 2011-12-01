@@ -49,6 +49,6 @@ class Email < ::Credential
 
   # Forms can only change the e-mail in the credential.
   attr_accessible :email
-end  # class Credentials::Email 
+end  # class Credentials::Email
 
 end  # namespace Credentials
