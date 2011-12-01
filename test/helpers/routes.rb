@@ -8,7 +8,7 @@ class ActionController::TestCase
       end
       resource :facebook, :controller => 'facebook'
       # NOTE: this route should be kept in sync with the session template.
-      resource :session, :controller => 'session'
+      authpwn_session
       root :to => 'session#index'
     end
     ApplicationController.send :include, @routes.url_helpers
