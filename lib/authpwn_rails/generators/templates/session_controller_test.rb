@@ -3,6 +3,7 @@ require 'test_helper'
 class SessionControllerTest < ActionController::TestCase
   setup do
     @user = users(:john)
+    @token_credential = credentials(:john_token)
   end
   
   test "user home page" do
@@ -32,5 +33,21 @@ class SessionControllerTest < ActionController::TestCase
     get :show, :format => 'json'
 
     assert_equal({}, ActiveSupport::JSON.decode(response.body))
+  end
+  
+  test "user signup page" do
+    get :new
+    assert_template :new
+  
+    assert_select 'form[action="/session"]' do
+      assert_select 'input#email'
+      assert_select 'input#password'
+      assert_select 'input[type=submit]'
+    end
+  end
+  
+  test "e-mail confirmation link" do
+    get :token, :code => @token_credential.code
+    assert_redirected_to session_url
   end
 end

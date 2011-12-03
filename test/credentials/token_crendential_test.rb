@@ -44,7 +44,16 @@ class TokenCredentialTest < ActiveSupport::TestCase
     assert_operator users(:john).credentials, :include?, token
   end
   
-  test 'authenticate' do
+  test 'with_code' do
+    john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
+    jane = '6TXe1vv7BgOw0BkJ1hzUKO6G08fLk4sVfJ3wPDZHS-c'
+    bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
+    assert_equal credentials(:john_token), Credentials::Token.with_code(john)
+    assert_equal credentials(:jane_token), Credentials::Token.with_code(jane)
+    assert_nil Credentials::Token.with_code(bogus)
+  end
+  
+  test 'class authenticate' do
     john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
     jane = '6TXe1vv7BgOw0BkJ1hzUKO6G08fLk4sVfJ3wPDZHS-c'
     bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
@@ -53,7 +62,7 @@ class TokenCredentialTest < ActiveSupport::TestCase
     assert_equal :invalid, Credentials::Token.authenticate(bogus)
   end
   
-  test 'authenticate calls User#auth_bounce_reason' do
+  test 'class authenticate calls User#auth_bounce_reason' do
     john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
     jane = '6TXe1vv7BgOw0BkJ1hzUKO6G08fLk4sVfJ3wPDZHS-c'
     bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
@@ -62,6 +71,18 @@ class TokenCredentialTest < ActiveSupport::TestCase
       assert_equal :reason, Credentials::Token.authenticate(john)
       assert_equal users(:jane), Credentials::Token.authenticate(jane)
       assert_equal :invalid, Credentials::Token.authenticate(bogus)
+    end
+  end
+
+  test 'instance authenticate' do
+    assert_equal users(:john), credentials(:john_token).authenticate
+    assert_equal users(:jane), credentials(:jane_token).authenticate
+  end
+  
+  test 'instance authenticate calls User#auth_bounce_reason' do
+    with_blocked_credential credentials(:john_token), :reason do
+      assert_equal :reason, credentials(:john_token).authenticate
+      assert_equal users(:jane), credentials(:jane_token).authenticate
     end
   end
 end

@@ -42,7 +42,7 @@ class OneTimeTokenCredentialTest < ActiveSupport::TestCase
     assert_difference 'Credential.count', -1, 'token spent' do
       assert_equal users(:john), Credentials::Token.authenticate(john)
     end
-    assert_no_difference 'Credential.count', 'no token spent' do
+    assert_no_difference 'Credential.count', 'token mistakenly spent' do
       assert_equal :invalid, Credentials::Token.authenticate(bogus)
     end
   end
@@ -59,6 +59,19 @@ class OneTimeTokenCredentialTest < ActiveSupport::TestCase
     end
   end
   
+  test 'instance authenticate spends the token' do
+    assert_difference 'Credential.count', -1, 'token spent' do
+      assert_equal users(:john), credentials(:john_token).authenticate
+    end
+  end
+  
+  test 'instance authenticate calls User#auth_bounce_reason' do
+    with_blocked_credential credentials(:john_token), :reason do
+      assert_no_difference 'Credential.count', 'token mistakenly spent' do
+        assert_equal :reason, credentials(:john_token).authenticate
+      end
+    end
+  end
   
   test 'random_for' do
     token = Credentials::OneTimeToken.random_for users(:john)

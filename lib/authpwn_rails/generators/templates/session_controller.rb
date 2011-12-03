@@ -26,6 +26,22 @@ class SessionController < ApplicationController
     end
   end
   
+  # A user is logged in, based on a token.
+  def home_with_token(token)
+    respond_to do |format|
+      format.html do
+        case token
+        when Credentials::OneTimeToken
+          redirect_to session_url, :notice => 'E-mail address confirmed'
+        end
+      end
+      format.json do
+        # Rely on default behavior.
+      end
+    end
+  end
+  private :home_with_token
+  
   # You shouldn't extend the session controller, so you can benefit from future
   # features, like Facebook / Twitter / OpenID integration. But, if you must,
   # you can do it here.

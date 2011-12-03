@@ -7,9 +7,12 @@ class ActionController::TestCase
         collection { get :bouncer }
       end
       resource :facebook, :controller => 'facebook'
+      authpwn_session :controller => 'bare_session',
+                      :method_names => 'bare_session'
+      root :to => 'session#index'
+
       # NOTE: this route should be kept in sync with the session template.
       authpwn_session
-      root :to => 'session#index'
     end
     ApplicationController.send :include, @routes.url_helpers
   end

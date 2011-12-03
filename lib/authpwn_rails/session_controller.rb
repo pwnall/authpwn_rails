@@ -81,27 +81,34 @@ module SessionController
   
     # GET /session/token/token-code
     def token
-      auth = Credentials::Token.authenticate params[:code]
-      self.current_user = auth unless auth.kind_of? Symbol
+      if token = Credentials::Token.with_code(params[:code])
+        auth = token.authenticate
+      else
+        auth = :invalid
+      end
           
-      respond_to do |format|
-        if current_user
-          format.html { redirect_to session_url }
-          format.json do
-            user_data = current_user.as_json
-            if current_user.class.include_root_in_json
-              user_data = user_data['user']
-            end
-            render :json => { :user => user_data,
-                              :csrf => form_authenticity_token }
-          end
-        else
+      respond_to do |format|        
+        if auth.is_a? Symbol
           notice = bounce_notice_text auth
           format.html do
             redirect_to new_session_url, :flash => { :notice => notice,
                 :auth_redirect_url => session_url }
           end
           format.json { render :json => { :error => auth, :text => notice } }
+        else
+          self.current_user = auth
+          home_with_token token
+          unless performed?
+            format.html { redirect_to session_url }
+            format.json do
+              user_data = current_user.as_json
+              if current_user.class.include_root_in_json
+                user_data = user_data['user']
+              end
+              render :json => { :user => user_data,
+                                :csrf => form_authenticity_token }
+            end
+          end
         end
       end
     end
@@ -124,6 +131,11 @@ module SessionController
     def welcome
     end
     private :welcome
+    
+    # Hook for setting up the home view after token-based authentication.
+    def home_with_token(token)
+    end
+    private :home_with_token
 
     # Hook for customizing the bounce notification text.    
     def bounce_notice_text(reason)

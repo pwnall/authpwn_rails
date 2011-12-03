@@ -5,9 +5,14 @@ require 'authpwn_rails/generators/templates/session_controller.rb'
 # Run the tests in the generator, to make sure they pass.
 require 'authpwn_rails/generators/templates/session_controller_test.rb'
 
+class BareSessionController < ApplicationController
+  include Authpwn::SessionController
+  self.view_paths = File.expand_path('../fixtures', __FILE__)
+end
+
 # Tests the methods injected by authpwn_session_controller.
 class SessionControllerApiTest < ActionController::TestCase
-  tests SessionController
+  tests BareSessionController
   
   setup do
     @user = users(:john)
@@ -16,40 +21,38 @@ class SessionControllerApiTest < ActionController::TestCase
   end
   
   test "show renders welcome without a user" do
+    flexmock(@controller).should_receive(:welcome).once.and_return(nil)
     get :show
     assert_template :welcome
     assert_nil assigns(:current_user)
-    assert_equal User.count, assigns(:user_count),
-                 'welcome controller method not called'
   end
 
   test "show json renders empty object without a user" do
+    flexmock(@controller).should_receive(:welcome).once.and_return(nil)
     get :show, :format => 'json'
     assert_response :ok
     assert_equal({}, ActiveSupport::JSON.decode(response.body))
-    assert_equal User.count, assigns(:user_count),
-                 'welcome controller method not called'
   end
   
   test "show renders home with a user" do
+    flexmock(@controller).should_receive(:home).once.and_return(nil)
     set_session_current_user @user
     get :show
     assert_template :home
     assert_equal @user, assigns(:current_user)
-    assert_equal @user, assigns(:user), 'home controller method not called'
   end
   
   test "show json renders user when logged in" do
     set_session_current_user @user
+    flexmock(@controller).should_receive(:home).once.and_return(nil)
     get :show, :format => 'json'
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal @user.exuid, data['user']['exuid']
     assert_equal session[:_csrf_token], data['csrf']
-    assert_equal @user, assigns(:user), 'home controller method not called'
   end
   
-  test "new redirects homes with a user" do
+  test "new redirects to session#show when a user is logged in" do
     set_session_current_user @user
     get :new
     assert_redirected_to session_url
@@ -59,12 +62,6 @@ class SessionControllerApiTest < ActionController::TestCase
     get :new
     assert_template :new
     assert_nil assigns(:current_user), 'current_user should not be set'
-  
-    assert_select 'form[action="/session"]' do
-      assert_select 'input#email'
-      assert_select 'input#password'
-      assert_select 'input[type=submit]'
-    end
   end
   
   test "new renders redirect_url when present in flash" do
@@ -79,9 +76,9 @@ class SessionControllerApiTest < ActionController::TestCase
   
   test "create logs in with good account details" do
     post :create, :email => @email_credential.email, :password => 'password'
-    assert_redirected_to session_url
     assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
+    assert_redirected_to session_url
   end
 
   test "create by json logs in with good account details" do
@@ -162,6 +159,8 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "token logs in with good token" do
+    flexmock(@controller).should_receive(:home_with_token).once.
+                          with(@token_credential).and_return(nil)
     assert_difference 'Credential.count', -1, 'one-time credential is spent' do
       get :token, :code => @token_credential.code
     end
@@ -170,7 +169,9 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_equal @user, session_current_user, 'session'
   end
 
-  test "token by json logs in with good account details" do
+  test "token by json logs in with good token" do
+    flexmock(@controller).should_receive(:home_with_token).once.
+                          with(@token_credential).and_return(nil)
     assert_difference 'Credential.count', -1, 'one-time credential is spent' do
       get :token, :code => @token_credential.code, :format => 'json'
     end
