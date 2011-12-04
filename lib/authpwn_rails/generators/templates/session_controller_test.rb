@@ -3,7 +3,7 @@ require 'test_helper'
 class SessionControllerTest < ActionController::TestCase
   setup do
     @user = users(:john)
-    @token_credential = credentials(:john_token)
+    @token_credential = credentials(:john_email_token)
   end
   
   test "user home page" do
@@ -46,8 +46,9 @@ class SessionControllerTest < ActionController::TestCase
     end
   end
   
-  test "e-mail confirmation link" do
+  test "e-mail verification link" do
     get :token, :code => @token_credential.code
     assert_redirected_to session_url
+    assert credentials(:john_email).verified?, 'email not verified'
   end
 end

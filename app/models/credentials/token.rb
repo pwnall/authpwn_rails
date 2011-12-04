@@ -3,7 +3,9 @@ require 'securerandom'
 # :namespace
 module Credentials
   
-# Associates a one-time token or API token with the account.
+# Associates a secret token code with the account.
+#
+# Subclasses of this class are in the tokens namespace.
 class Token < ::Credential
   # The secret token code.
   alias_attribute :code, :name
@@ -50,7 +52,7 @@ class Token < ::Credential
   
   # Updates the token's state to reflect that it was used for authentication.
   #
-  # One-time tokens will become invalid after they are spent.
+  # Tokens may become invalid after they are spent.
   #
   # Returns the token instance.
   def spend
@@ -58,8 +60,20 @@ class Token < ::Credential
   end
 
   # Creates a new random token for a user.
-  def self.random_for(user)
-    token = self.new(:code => random_code)
+  #
+  # Args:
+  #   user:: the User who will be authenticated by the token
+  #   key:: optional data associated with the token
+  #   klass:: class that will be instantiated (should be a subclass of Token)
+  #
+  # Returns a newly created and saved token with a random code.
+  def self.random_for(user, key = nil, klass = nil)
+    klass ||= self
+    if key.nil?
+      token = self.new(:code => random_code)
+    else
+      token = self.new(:code => random_code, :key => key)
+    end
     user.credentials << token
     token.save!
     token

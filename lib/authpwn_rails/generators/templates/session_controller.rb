@@ -31,8 +31,9 @@ class SessionController < ApplicationController
     respond_to do |format|
       format.html do
         case token
-        when Credentials::OneTimeToken
+        when Tokens::EmailVerification
           redirect_to session_url, :notice => 'E-mail address confirmed'
+        # Handle other token types here.
         end
       end
       format.json do
