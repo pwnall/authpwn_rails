@@ -46,11 +46,16 @@ class TokenCredentialTest < ActiveSupport::TestCase
   
   test 'with_code' do
     john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
+    john2 = 'bDSU4tzfjuob79e3R0ykLcOGTBBYvuBWWJ9V06tQrCE'
     jane = '6TXe1vv7BgOw0BkJ1hzUKO6G08fLk4sVfJ3wPDZHS-c'
     bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
     assert_equal credentials(:john_token), Credentials::Token.with_code(john)
     assert_equal credentials(:jane_token), Credentials::Token.with_code(jane)
+    assert_equal credentials(:john_email_token),
+                 Credentials::Token.with_code(john2)
     assert_nil Credentials::Token.with_code(bogus)
+    assert_nil Credentials::Token.with_code('john@gmail.com')
+    assert_nil Credentials::Token.with_code(credentials(:jane_email).name)
   end
   
   test 'class authenticate' do

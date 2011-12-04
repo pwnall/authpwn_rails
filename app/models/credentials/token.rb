@@ -29,10 +29,20 @@ class Token < ::Credential
   
   # The token matching a secret code.
   def self.with_code(code)
-    # After using this method, it's likely that the user's other tokens (e.g.,
-    # email or Facebook OAuth token) will be required, so we pre-fetch them.
-    Credentials::Token.where(:name => code).
-                       includes(:user => :credentials).first
+    # NOTE 1: The where query must be performed off the root type, otherwise
+    #         Rails will try to guess the right values for the 'type' column,
+    #         and will sometimes get them wrong.
+    # NOTE 2: After using this method, it's likely that the user's other tokens
+    #         (e.g., email or Facebook OAuth token) will be required, so we
+    #         pre-fetch them.
+    credential = Credential.where(:name => code).
+                            includes(:user => :credentials).first
+    
+    if credential.is_a? Credentials::Token
+      credential
+    else
+      nil
+    end
   end
   
   # Authenticates a user using this token.
