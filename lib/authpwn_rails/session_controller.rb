@@ -87,18 +87,20 @@ module SessionController
         auth = :invalid
       end
           
-      respond_to do |format|        
-        if auth.is_a? Symbol
-          notice = bounce_notice_text auth
+      if auth.is_a? Symbol
+        notice = bounce_notice_text auth
+        respond_to do |format|        
           format.html do
             redirect_to new_session_url, :flash => { :notice => notice,
                 :auth_redirect_url => session_url }
           end
           format.json { render :json => { :error => auth, :text => notice } }
-        else
-          self.current_user = auth
-          home_with_token token
-          unless performed?
+        end
+      else
+        self.current_user = auth
+        home_with_token token
+        unless performed?
+          respond_to do |format|
             format.html { redirect_to session_url }
             format.json do
               user_data = current_user.as_json
