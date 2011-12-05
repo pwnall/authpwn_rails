@@ -51,9 +51,18 @@ class SessionControllerTest < ActionController::TestCase
   test "e-mail verification link" do
     get :token, :code => @token_credential.code
     assert_redirected_to session_url
-    assert @email_credential.reload.verified?, 'email not verified'
+    assert @email_credential.reload.verified?, 'Email not verified'
   end
   
+  test "password reset link" do
+    password_credential = credentials(:jane_password)
+    get :token, :code => credentials(:jane_password_token).code
+    assert_redirected_to change_password_session_url
+    assert_nil Credential.where(:id => password_credential.id).first,
+               'Password not cleared'
+  end
+  
+
   test "password change form" do
     set_session_current_user @user
     get :password_change
