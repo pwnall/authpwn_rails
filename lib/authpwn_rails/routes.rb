@@ -31,6 +31,12 @@ module MapperMixin
                          :as => :"new_#{methods}"
     post "/#{paths}", :controller => controller, :action => 'create'
     delete "/#{paths}", :controller => controller, :action => 'destroy'
+    
+    get "/#{paths}/reset_password", :controller => controller,
+                                    :action => 'password_reset',
+                                    :as => "reset_password_#{methods}"
+    post "/#{paths}/reset_password", :controller => controller,
+                                     :action => 'reset_password'
   end
 end
 

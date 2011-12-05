@@ -37,9 +37,11 @@ class AllGenerator < Rails::Generators::Base
               File.join('app', 'views', 'session', 'home.html.erb')
     copy_file File.join('session', 'new.html.erb'),
               File.join('app', 'views', 'session', 'new.html.erb')
+    copy_file File.join('session', 'password_reset.html.erb'),
+              File.join('app', 'views', 'session', 'password_reset.html.erb')
     copy_file File.join('session', 'welcome.html.erb'),
               File.join('app', 'views', 'session', 'welcome.html.erb')
-  end  
+  end
 end  # class Authpwn::AllGenerator
 
 end  # namespace Authpwn

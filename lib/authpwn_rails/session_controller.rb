@@ -124,6 +124,48 @@ module SessionController
       end
     end
   
+    # GET /session/reset_password
+    def password_reset
+      unless current_user
+        bounce_user
+        return
+      end
+
+      respond_to do |format|
+        format.html do
+          @credential = current_user.password_credential
+          # Renders session/password_reset.html.erb
+        end
+      end
+    end
+    
+    # POST /session/reset_password
+    def reset_password
+      unless current_user
+        bounce_user
+        return
+      end
+      
+      @credential = current_user.password_credential
+      if @credential.new_record?
+        success = true
+      else
+        # An old password is set, must verify it.
+        if @credential.check_password params[:old_password]
+          success = true
+        else
+          success = false
+          flash[:notice] = 'Incorrect old password. Please try again.'
+        end
+      end
+      success &&= @credential.update_attributes params[:credential]
+      if success
+        redirect session_url, :notice => 'Password updated'
+      else
+        render :action => 'password_reset'
+      end
+    end
+
     # Hook for setting up the home view.
     def home
     end
