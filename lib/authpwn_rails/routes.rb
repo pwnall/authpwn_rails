@@ -32,11 +32,11 @@ module MapperMixin
     post "/#{paths}", :controller => controller, :action => 'create'
     delete "/#{paths}", :controller => controller, :action => 'destroy'
     
-    get "/#{paths}/reset_password", :controller => controller,
-                                    :action => 'password_reset',
-                                    :as => "reset_password_#{methods}"
-    post "/#{paths}/reset_password", :controller => controller,
-                                     :action => 'reset_password'
+    get "/#{paths}/change_password", :controller => controller,
+                                    :action => 'password_change',
+                                    :as => "change_password_#{methods}"
+    post "/#{paths}/change_password", :controller => controller,
+                                     :action => 'change_password'
   end
 end
 

@@ -1,5 +1,3 @@
-<p>This is a sample login form. You should customize it for your users.</p>
-
 <% if flash[:notice] %>
 <p class="notice"><%= flash[:notice] %></p>
 <% end %>
@@ -14,12 +12,16 @@
 <%= form_tag session_path do %>
   <div class="field">
     <%= label_tag :email, 'Email Address' %><br />
-    <%= email_field_tag :email, @email %>
+    <span class="value">
+      <%= email_field_tag :email, @email %>
+    </span>
   </div>
   
   <div class="field">
     <%= label_tag :password %><br />
-    <%= password_field_tag :password %>
+    <span class="value">
+      <%= password_field_tag :password %>
+    </span>
   </div>
   
   <div class="actions">

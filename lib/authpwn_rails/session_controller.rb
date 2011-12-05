@@ -124,8 +124,8 @@ module SessionController
       end
     end
   
-    # GET /session/reset_password
-    def password_reset
+    # GET /session/change_password
+    def password_change
       unless current_user
         bounce_user
         return
@@ -133,36 +133,49 @@ module SessionController
 
       respond_to do |format|
         format.html do
-          @credential = current_user.password_credential
-          # Renders session/password_reset.html.erb
+          @credential = current_user.credentials.
+                                     find { |c| c.is_a? Credentials::Password }
+          unless @credential
+            @credential = Credentials::Password.new
+            @credential.user = current_user
+          end
+          # Renders session/password_change.html.erb
         end
       end
     end
     
-    # POST /session/reset_password
-    def reset_password
+    # POST /session/change_password
+    def change_password
       unless current_user
         bounce_user
         return
       end
       
-      @credential = current_user.password_credential
-      if @credential.new_record?
-        success = true
-      else
+      @credential = current_user.credentials.
+                                 find { |c| c.is_a? Credentials::Password }
+      if @credential
         # An old password is set, must verify it.
         if @credential.check_password params[:old_password]
-          success = true
+          success = @credential.update_attributes params[:credential]
         else
           success = false
           flash[:notice] = 'Incorrect old password. Please try again.'
         end
-      end
-      success &&= @credential.update_attributes params[:credential]
-      if success
-        redirect session_url, :notice => 'Password updated'
       else
-        render :action => 'password_reset'
+        @credential = Credentials::Password.new params[:credential]
+        @credential.user = current_user
+        success = @credential.save
+      end
+      respond_to do |format|
+        if success
+          format.html do
+            redirect_to session_url, :notice => 'Password updated'
+          end
+          format.json { head :ok }
+        else
+          format.html { render :action => :password_change }
+          format.json { render :json => { :error => :invalid } }
+        end
       end
     end
 

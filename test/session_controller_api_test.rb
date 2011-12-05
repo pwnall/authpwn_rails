@@ -7,7 +7,7 @@ require 'authpwn_rails/generators/templates/session_controller_test.rb'
 
 class BareSessionController < ApplicationController
   include Authpwn::SessionController
-  self.view_paths = File.expand_path('../fixtures', __FILE__)
+  self.append_view_path File.expand_path('../fixtures', __FILE__)
 end
 
 # Tests the methods injected by authpwn_session_controller.
@@ -17,6 +17,7 @@ class SessionControllerApiTest < ActionController::TestCase
   setup do
     @user = users(:john)
     @email_credential = credentials(:john_email)
+    @password_credential = credentials(:john_password)
     @token_credential = credentials(:john_token)
   end
   
@@ -245,5 +246,151 @@ class SessionControllerApiTest < ActionController::TestCase
     
     assert_response :ok
     assert_nil assigns(:current_user)
+  end
+  
+  test "password_change bounces without logged in user" do
+    get :password_change
+    assert_response :forbidden
+  end
+
+  test "password_change renders correct form" do
+    set_session_current_user @user
+    get :password_change
+    assert_response :ok
+    assert_template :password_change
+    assert_equal @password_credential, assigns(:credential)
+  end
+
+  test "change_password bounces without logged in user" do
+    post :change_password, :old_password => 'password',
+         :credential => { :password => 'hacks',
+                          :password_confirmation => 'hacks'} 
+    assert_response :forbidden
+  end
+
+  test "change_password works with correct input" do
+    set_session_current_user @user
+    post :change_password, :old_password => 'password',
+         :credential => { :password => 'hacks',
+                          :password_confirmation => 'hacks'} 
+    assert_redirected_to session_url
+    assert_equal @password_credential, assigns(:credential)
+    assert_equal @user, Credentials::Password.authenticate_email(
+         @email_credential.email, 'hacks'), 'password not changed'
+  end
+
+  test "change_password rejects bad old password" do
+    set_session_current_user @user
+    post :change_password, :old_password => '_password',
+         :credential => { :password => 'hacks',
+                          :password_confirmation => 'hacks'} 
+    assert_response :ok
+    assert_template :password_change
+    assert_equal @password_credential, assigns(:credential)
+    assert_equal @user, Credentials::Password.authenticate_email(
+         @email_credential.email, 'password'), 'password wrongly changed'
+  end
+
+  test "change_password rejects un-confirmed password" do
+    set_session_current_user @user
+    post :change_password, :old_password => 'password',
+         :credential => { :password => 'hacks',
+                          :password_confirmation => 'hacks_'} 
+    assert_response :ok
+    assert_template :password_change
+    assert_equal @password_credential, assigns(:credential)
+    assert_equal @user, Credentials::Password.authenticate_email(
+         @email_credential.email, 'password'), 'password wrongly changed'
+  end
+
+  test "change_password works for password recovery" do
+    set_session_current_user @user
+    @password_credential.destroy
+    post :change_password,
+         :credential => { :password => 'hacks',
+                          :password_confirmation => 'hacks'} 
+    assert_redirected_to session_url
+    assert_equal @user, Credentials::Password.authenticate_email(
+         @email_credential.email, 'hacks'), 'password not changed'
+  end
+
+  test "change_password rejects un-confirmed password on recovery" do
+    set_session_current_user @user
+    @password_credential.destroy
+    assert_no_difference 'Credential.count' do
+      post :change_password,
+           :credential => { :password => 'hacks',
+                            :password_confirmation => 'hacks_'} 
+    end
+    assert_response :ok
+    assert_template :password_change
+  end
+
+  test "change_password by json bounces without logged in user" do
+    post :change_password, :format => 'json', :old_password => 'password',
+         :credential => { :password => 'hacks',
+                          :password_confirmation => 'hacks'} 
+    assert_response :ok
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal 'Please sign in', data['error']
+  end
+
+  test "change_password by json works with correct input" do
+    set_session_current_user @user
+    post :change_password, :format => 'json', :old_password => 'password',
+         :credential => { :password => 'hacks',
+                          :password_confirmation => 'hacks'} 
+    assert_response :ok
+    assert_equal @user, Credentials::Password.authenticate_email(
+         @email_credential.email, 'hacks'), 'password not changed'
+  end
+
+  test "change_password by json rejects bad old password" do
+    set_session_current_user @user
+    post :change_password, :format => 'json', :old_password => '_password',
+         :credential => { :password => 'hacks',
+                          :password_confirmation => 'hacks'} 
+    assert_response :ok
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal 'invalid', data['error']
+    assert_equal @password_credential, assigns(:credential)
+    assert_equal @user, Credentials::Password.authenticate_email(
+         @email_credential.email, 'password'), 'password wrongly changed'
+  end
+
+  test "change_password by json rejects un-confirmed password" do
+    set_session_current_user @user
+    post :change_password, :format => 'json', :old_password => 'password',
+         :credential => { :password => 'hacks',
+                          :password_confirmation => 'hacks_'} 
+    assert_response :ok
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal 'invalid', data['error']
+    assert_equal @user, Credentials::Password.authenticate_email(
+         @email_credential.email, 'password'), 'password wrongly changed'
+  end
+
+  test "change_password by json works for password recovery" do
+    set_session_current_user @user
+    @password_credential.destroy
+    post :change_password, :format => 'json',
+         :credential => { :password => 'hacks',
+                          :password_confirmation => 'hacks'} 
+    assert_response :ok
+    assert_equal @user, Credentials::Password.authenticate_email(
+         @email_credential.email, 'hacks'), 'password not changed'
+  end
+
+  test "change_password by json rejects un-confirmed password on recovery" do
+    set_session_current_user @user
+    @password_credential.destroy
+    assert_no_difference 'Credential.count' do
+      post :change_password, :format => 'json',
+           :credential => { :password => 'hacks',
+                            :password_confirmation => 'hacks_'} 
+    end
+    assert_response :ok
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal 'invalid', data['error']
   end
 end

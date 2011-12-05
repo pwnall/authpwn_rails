@@ -3,6 +3,8 @@ require 'test_helper'
 class SessionControllerTest < ActionController::TestCase
   setup do
     @user = users(:john)
+    @email_credential = credentials(:john_email)
+    @password_credential = credentials(:john_password)
     @token_credential = credentials(:john_email_token)
   end
   
@@ -39,9 +41,9 @@ class SessionControllerTest < ActionController::TestCase
     get :new
     assert_template :new
   
-    assert_select 'form[action="/session"]' do
-      assert_select 'input#email'
-      assert_select 'input#password'
+    assert_select 'form[action=?]', session_path do
+      assert_select 'input[name="email"]'
+      assert_select 'input[name="password"]'
       assert_select 'input[type=submit]'
     end
   end
@@ -49,6 +51,33 @@ class SessionControllerTest < ActionController::TestCase
   test "e-mail verification link" do
     get :token, :code => @token_credential.code
     assert_redirected_to session_url
-    assert credentials(:john_email).verified?, 'email not verified'
+    assert @email_credential.reload.verified?, 'email not verified'
+  end
+  
+  test "password change form" do
+    set_session_current_user @user
+    get :password_change
+    
+    assert_select 'form[action=?][method="post"]',
+                  change_password_session_path do
+      assert_select 'input[name="old_password"]'
+      assert_select 'input[name=?]', 'credential[password]'
+      assert_select 'input[name=?]', 'credential[password_confirmation]'
+      assert_select 'input[type=submit]'
+    end
+  end
+
+  test "password reset form" do
+    set_session_current_user @user
+    @password_credential.destroy
+    get :password_change
+    
+    assert_select 'form[action=?][method="post"]',
+                  change_password_session_path do
+      assert_select 'input[name="old_password"]', :count => 0
+      assert_select 'input[name=?]', 'credential[password]'
+      assert_select 'input[name=?]', 'credential[password_confirmation]'
+      assert_select 'input[type=submit]'
+    end
   end
 end
