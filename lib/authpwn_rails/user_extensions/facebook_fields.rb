@@ -28,35 +28,33 @@ module FacebookFields
     end
   end
   
-  module InstanceMethods
-    # Credentials::Facebook instance associated with this user.
-    def facebook_credential
-      credentials.find { |c| c.instance_of?(Credentials::Facebook) }
-    end
-    
-    # FBGraph client loaded with this access token.
-    #
-    # Returns nil if this user has no Facebook credential.
-    def facebook_client
-      credential = self.facebook_credential
-      credential && credential.facebook_client
-    end
+  # Credentials::Facebook instance associated with this user.
+  def facebook_credential
+    credentials.find { |c| c.instance_of?(Credentials::Facebook) }
+  end
+  
+  # FBGraph client loaded with this access token.
+  #
+  # Returns nil if this user has no Facebook credential.
+  def facebook_client
+    credential = self.facebook_credential
+    credential && credential.facebook_client
+  end
 
-    # The facebook user ID from the user's Facebook credential.
-    #
-    # Returns nil if this user has no Facebook credential.
-    def facebook_uid
-      credential = self.facebook_credential
-      credential && credential.facebook_uid
-    end
-    
-    # The facebook OAuth2 access token from the user's Facebook credential.
-    #
-    # Returns nil if this user has no Facebook credential.
-    def facebook_access_token
-      credential = self.facebook_credential
-      credential && credential.access_token
-    end
+  # The facebook user ID from the user's Facebook credential.
+  #
+  # Returns nil if this user has no Facebook credential.
+  def facebook_uid
+    credential = self.facebook_credential
+    credential && credential.facebook_uid
+  end
+  
+  # The facebook OAuth2 access token from the user's Facebook credential.
+  #
+  # Returns nil if this user has no Facebook credential.
+  def facebook_access_token
+    credential = self.facebook_credential
+    credential && credential.access_token
   end
 end  # module Authpwn::UserExtensions::FacebookFields
   

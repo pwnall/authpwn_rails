@@ -14,52 +14,92 @@ module SessionController
     authenticates_using_session
   end
 
-  # Included in controllers that include Authpwn::SessionController.
-  module InstanceMethods
-    # GET /session/new
-    def new
-      @email = params[:email]
-      @redirect_url = flash[:auth_redirect_url]
-      redirect_to session_url if current_user
-    end
-  
-    # GET /session
-    def show
-      @user = current_user || User.new
-      if @user.new_record?
-        welcome
-        unless performed?
-          respond_to do |format|
-            format.html { render :action => :welcome }
-            format.json { render :json => {} }
-          end
+  # GET /session/new
+  def new
+    @email = params[:email]
+    @redirect_url = flash[:auth_redirect_url]
+    redirect_to session_url if current_user
+  end
+
+  # GET /session
+  def show
+    @user = current_user || User.new
+    if @user.new_record?
+      welcome
+      unless performed?
+        respond_to do |format|
+          format.html { render :action => :welcome }
+          format.json { render :json => {} }
         end
-      else      
-        home
-        unless performed?
-          respond_to do |format|
-            format.html { render :action => :home }
-            format.json do
-              user_data = @user.as_json
-              user_data = user_data['user'] if @user.class.include_root_in_json
-              render :json => { :user => user_data,
-                                :csrf => form_authenticity_token }
-            end
+      end
+    else      
+      home
+      unless performed?
+        respond_to do |format|
+          format.html { render :action => :home }
+          format.json do
+            user_data = @user.as_json
+            user_data = user_data['user'] if @user.class.include_root_in_json
+            render :json => { :user => user_data,
+                              :csrf => form_authenticity_token }
           end
         end
       end
     end
-    
-    # POST /session
-    def create
-      @redirect_url = params[:redirect_url] || session_url
-      @email = params[:email]
-      auth = Credentials::Password.authenticate_email @email, params[:password]
-      self.current_user = auth unless auth.kind_of? Symbol
-          
-      respond_to do |format|
-        if current_user
-          format.html { redirect_to @redirect_url }
+  end
+  
+  # POST /session
+  def create
+    @redirect_url = params[:redirect_url] || session_url
+    @email = params[:email]
+    auth = Credentials::Password.authenticate_email @email, params[:password]
+    self.current_user = auth unless auth.kind_of? Symbol
+        
+    respond_to do |format|
+      if current_user
+        format.html { redirect_to @redirect_url }
+        format.json do
+          user_data = current_user.as_json
+          if current_user.class.include_root_in_json
+            user_data = user_data['user']
+          end
+          render :json => { :user => user_data,
+                            :csrf => form_authenticity_token }
+        end
+      else
+        notice = bounce_notice_text auth
+        format.html do
+          redirect_to new_session_url, :flash => { :notice => notice,
+              :auth_redirect_url => @redirect_url }
+        end
+        format.json { render :json => { :error => auth, :text => notice } }
+      end
+    end
+  end
+  
+  # GET /session/token/token-code
+  def token
+    if token = Credentials::Token.with_code(params[:code])
+      auth = token.authenticate
+    else
+      auth = :invalid
+    end
+        
+    if auth.is_a? Symbol
+      notice = bounce_notice_text auth
+      respond_to do |format|        
+        format.html do
+          redirect_to new_session_url, :flash => { :notice => notice,
+              :auth_redirect_url => session_url }
+        end
+        format.json { render :json => { :error => auth, :text => notice } }
+      end
+    else
+      self.current_user = auth
+      home_with_token token
+      unless performed?
+        respond_to do |format|
+          format.html { redirect_to session_url }
           format.json do
             user_data = current_user.as_json
             if current_user.class.include_root_in_json
@@ -68,143 +108,99 @@ module SessionController
             render :json => { :user => user_data,
                               :csrf => form_authenticity_token }
           end
-        else
-          notice = bounce_notice_text auth
-          format.html do
-            redirect_to new_session_url, :flash => { :notice => notice,
-                :auth_redirect_url => @redirect_url }
-          end
-          format.json { render :json => { :error => auth, :text => notice } }
         end
       end
     end
-  
-    # GET /session/token/token-code
-    def token
-      if token = Credentials::Token.with_code(params[:code])
-        auth = token.authenticate
-      else
-        auth = :invalid
-      end
-          
-      if auth.is_a? Symbol
-        notice = bounce_notice_text auth
-        respond_to do |format|        
-          format.html do
-            redirect_to new_session_url, :flash => { :notice => notice,
-                :auth_redirect_url => session_url }
-          end
-          format.json { render :json => { :error => auth, :text => notice } }
-        end
-      else
-        self.current_user = auth
-        home_with_token token
-        unless performed?
-          respond_to do |format|
-            format.html { redirect_to session_url }
-            format.json do
-              user_data = current_user.as_json
-              if current_user.class.include_root_in_json
-                user_data = user_data['user']
-              end
-              render :json => { :user => user_data,
-                                :csrf => form_authenticity_token }
-            end
-          end
-        end
-      end
+  end
+
+  # DELETE /session
+  def destroy
+    self.current_user = nil
+    respond_to do |format|
+      format.html { redirect_to session_url }
+      format.json { head :ok }
+    end
+  end
+
+  # GET /session/change_password
+  def password_change
+    unless current_user
+      bounce_user
+      return
     end
 
-    # DELETE /session
-    def destroy
-      self.current_user = nil
-      respond_to do |format|
-        format.html { redirect_to session_url }
-        format.json { head :ok }
+    respond_to do |format|
+      format.html do
+        @credential = current_user.credentials.
+                                   find { |c| c.is_a? Credentials::Password }
+        unless @credential
+          @credential = Credentials::Password.new
+          @credential.user = current_user
+        end
+        # Renders session/password_change.html.erb
       end
     end
+  end
   
-    # GET /session/change_password
-    def password_change
-      unless current_user
-        bounce_user
-        return
+  # POST /session/change_password
+  def change_password
+    unless current_user
+      bounce_user
+      return
+    end
+    
+    @credential = current_user.credentials.
+                               find { |c| c.is_a? Credentials::Password }
+    if @credential
+      # An old password is set, must verify it.
+      if @credential.check_password params[:old_password]
+        success = @credential.update_attributes params[:credential]
+      else
+        success = false
+        flash[:notice] = 'Incorrect old password. Please try again.'
       end
-
-      respond_to do |format|
+    else
+      @credential = Credentials::Password.new params[:credential]
+      @credential.user = current_user
+      success = @credential.save
+    end
+    respond_to do |format|
+      if success
         format.html do
-          @credential = current_user.credentials.
-                                     find { |c| c.is_a? Credentials::Password }
-          unless @credential
-            @credential = Credentials::Password.new
-            @credential.user = current_user
-          end
-          # Renders session/password_change.html.erb
+          redirect_to session_url, :notice => 'Password updated'
         end
-      end
-    end
-    
-    # POST /session/change_password
-    def change_password
-      unless current_user
-        bounce_user
-        return
-      end
-      
-      @credential = current_user.credentials.
-                                 find { |c| c.is_a? Credentials::Password }
-      if @credential
-        # An old password is set, must verify it.
-        if @credential.check_password params[:old_password]
-          success = @credential.update_attributes params[:credential]
-        else
-          success = false
-          flash[:notice] = 'Incorrect old password. Please try again.'
-        end
+        format.json { head :ok }
       else
-        @credential = Credentials::Password.new params[:credential]
-        @credential.user = current_user
-        success = @credential.save
-      end
-      respond_to do |format|
-        if success
-          format.html do
-            redirect_to session_url, :notice => 'Password updated'
-          end
-          format.json { head :ok }
-        else
-          format.html { render :action => :password_change }
-          format.json { render :json => { :error => :invalid } }
-        end
+        format.html { render :action => :password_change }
+        format.json { render :json => { :error => :invalid } }
       end
     end
+  end
 
-    # Hook for setting up the home view.
-    def home
-    end
-    private :home
-    
-    # Hook for setting up the welcome view.
-    def welcome
-    end
-    private :welcome
-    
-    # Hook for setting up the home view after token-based authentication.
-    def home_with_token(token)
-    end
-    private :home_with_token
+  # Hook for setting up the home view.
+  def home
+  end
+  private :home
+  
+  # Hook for setting up the welcome view.
+  def welcome
+  end
+  private :welcome
+  
+  # Hook for setting up the home view after token-based authentication.
+  def home_with_token(token)
+  end
+  private :home_with_token
 
-    # Hook for customizing the bounce notification text.    
-    def bounce_notice_text(reason)
-      case reason
-      when :invalid
-        'Invalid e-mail or password'
-      when :blocked
-        'Account blocked. Please verify your e-mail address'
-      end
+  # Hook for customizing the bounce notification text.    
+  def bounce_notice_text(reason)
+    case reason
+    when :invalid
+      'Invalid e-mail or password'
+    when :blocked
+      'Account blocked. Please verify your e-mail address'
     end
-  end  # module Authpwn::SessionController::InstanceMethods
-
+  end
 end  # module Authpwn::SessionController
 
 end  # namespace Authpwn

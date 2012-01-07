@@ -25,31 +25,29 @@ module EmailField
     end
   end
   
-  module InstanceMethods
-    # Credentials::Email instance associated with this user.
-    def email_credential
-      credentials.find { |c| c.instance_of?(Credentials::Email) }
+  # Credentials::Email instance associated with this user.
+  def email_credential
+    credentials.find { |c| c.instance_of?(Credentials::Email) }
+  end
+  
+  # The e-mail from the user's Email credential.
+  #
+  # Returns nil if this user has no Email credential.
+  def email
+    credential = self.email_credential
+    credential && credential.email
+  end
+  
+  # Sets the e-mail on the user's Email credential.
+  #
+  # Creates a new Credentials::Email instance if necessary.
+  def email=(new_email)
+    if credential = self.email_credential
+      credential.email = new_email
+    else
+      credentials << Credentials::Email.new(:email => new_email)
     end
-    
-    # The e-mail from the user's Email credential.
-    #
-    # Returns nil if this user has no Email credential.
-    def email
-      credential = self.email_credential
-      credential && credential.email
-    end
-    
-    # Sets the e-mail on the user's Email credential.
-    #
-    # Creates a new Credentials::Email instance if necessary.
-    def email=(new_email)
-      if credential = self.email_credential
-        credential.email = new_email
-      else
-        credentials << Credentials::Email.new(:email => new_email)
-      end
-      new_email
-    end
+    new_email
   end
 end  # module Authpwn::UserExtensions::EmailField
   
