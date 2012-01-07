@@ -37,6 +37,9 @@ module MapperMixin
                                     :as => "change_password_#{methods}"
     post "/#{paths}/change_password", :controller => controller,
                                      :action => 'change_password'
+    post "/#{paths}/reset_password", :controller => controller,
+                                     :action => 'reset_password', 
+                                     :as => "reset_password_#{methods}"
   end
 end
 

@@ -44,7 +44,8 @@ class SessionControllerTest < ActionController::TestCase
     assert_select 'form[action=?]', session_path do
       assert_select 'input[name="email"]'
       assert_select 'input[name="password"]'
-      assert_select 'input[type=submit]'
+      assert_select 'button[name="login"]'
+      assert_select 'button[name="reset_password"]'
     end
   end
   

@@ -50,6 +50,9 @@ module SessionController
   
   # POST /session
   def create
+    # Workaround for lack of browser support for the formaction attribute.
+    return reset_password if params[:reset_password]
+    
     @redirect_url = params[:redirect_url] || session_url
     @email = params[:email]
     auth = Credentials::Password.authenticate_email @email, params[:password]
@@ -75,6 +78,11 @@ module SessionController
         format.json { render :json => { :error => auth, :text => notice } }
       end
     end
+  end
+  
+  # POST /session/reset_password
+  def reset_password
+    
   end
   
   # GET /session/token/token-code

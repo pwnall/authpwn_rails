@@ -42,6 +42,24 @@ class AllGenerator < Rails::Generators::Base
     copy_file File.join('session', 'welcome.html.erb'),
               File.join('app', 'views', 'session', 'welcome.html.erb')
   end
+
+  def create_session_mailer
+    copy_file 'session_mailer.rb',
+              File.join('app', 'mailers', 'session_mailer.rb')
+    copy_file File.join('session_mailer_test.rb'),
+              File.join('test', 'functional', 'session_mailer_test.rb')
+    copy_file File.join('session', 'forbidden.html.erb'),
+              File.join('app', 'views', 'session', 'forbidden.html.erb')
+  end
+
+  def create_session_mailer_views
+    copy_file File.join('session_mailer', 'reset_password_email.html.erb'),
+              File.join('app', 'views', 'session_mailer',
+                        'reset_password.html_email.erb')
+    copy_file File.join('session_mailer', 'reset_password_email.text.erb'),
+              File.join('app', 'views', 'session_mailer',
+                        'reset_password_email.text.erb')
+  end
 end  # class Authpwn::AllGenerator
 
 end  # namespace Authpwn

@@ -6,6 +6,7 @@ module Authpwn
   
   autoload :CredentialModel, 'authpwn_rails/credential_model.rb'
   autoload :SessionController, 'authpwn_rails/session_controller.rb'
+  autoload :SessionMailer, 'authpwn_rails/session_mailer.rb'
   autoload :UserModel, 'authpwn_rails/user_model.rb'
 
   # Contains extensions to the User model.
