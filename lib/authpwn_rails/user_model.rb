@@ -40,26 +40,23 @@ module UserModel
     end
   end  # module Authpwn::UserModel::ClassMethods
   
-  # Included in models that include Authpwn::UserModel.
-  module InstanceMethods
-    # Checks if a credential is acceptable for authenticating a user.
-    #
-    # Returns nil if the credential is acceptable, or a String containing a
-    # user-visible reason why the credential is not acceptable. 
-    def auth_bounce_reason(crdential)
-      nil
-    end
-    
-    # Use e-mails instead of exposing ActiveRecord IDs.
-    def to_param
-      exuid
-    end
-    
-    # :nodoc: sets exuid to a (hopefully) unique value before validations occur. 
-    def set_default_exuid
-      self.exuid ||= (Time.now.to_f * 1_000_000).to_i
-    end
-  end  # module Authpwn::UserModel::InstanceMethods
+  # Checks if a credential is acceptable for authenticating a user.
+  #
+  # Returns nil if the credential is acceptable, or a String containing a
+  # user-visible reason why the credential is not acceptable. 
+  def auth_bounce_reason(crdential)
+    nil
+  end
+  
+  # Use e-mails instead of exposing ActiveRecord IDs.
+  def to_param
+    exuid
+  end
+  
+  # :nodoc: sets exuid to a (hopefully) unique value before validations occur. 
+  def set_default_exuid
+    self.exuid ||= (Time.now.to_f * 1_000_000).to_i
+  end
 end  # namespace Authpwn::UserModel
 
 end  # namespace Authpwn

@@ -27,12 +27,6 @@ module CredentialModel
     
   end  # module Authpwn::FacebookTokenModel::ClassMethods
 
-  
-  # Included in models that include Authpwn::FacebookTokenModel.
-  module InstanceMethods
-    
-  end  # module Authpwn::FacebookTokenModel::InstanceMethods
-  
 end  # namespace Authpwn::FacebookTokenModel
 
 end  # namespace Authpwn
