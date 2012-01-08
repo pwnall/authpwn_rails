@@ -82,7 +82,33 @@ module SessionController
   
   # POST /session/reset_password
   def reset_password
+    @email = params[:email]
+    credential = Credentials::Email.with @email
     
+    if user = (credential && credential.user)
+      token = Tokens::PasswordReset.random_for user
+      token_url = token_session_url token.code
+      ::SessionMailer.reset_password_email(@email, token, root_url, token_url).
+                      deliver
+    end
+     
+    respond_to do |format|
+      if user
+        format.html do
+          redirect_to session_url, :notice =>
+              'Please check your e-mail for instructions'
+        end
+        format.json { render :json => { } }
+      else
+        notice = 'Invalid e-mail'
+        format.html do
+          redirect_to new_session_url, :notice => notice
+        end
+        format.json do
+          render :json => { :error => :not_found, :text => notice }
+        end
+      end
+    end
   end
   
   # GET /session/token/token-code

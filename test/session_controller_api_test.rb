@@ -393,4 +393,19 @@ class SessionControllerApiTest < ActionController::TestCase
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'invalid', data['error']
   end
+  
+  test "reset_password fpr good e-mail" do
+    assert_difference 'Credential.count', 1 do
+      post :reset_password, :email => @email_credential.email
+    end
+    
+    token = Credential.last
+    assert_operator token, :kind_of?, Tokens::PasswordReset
+    assert_equal @user, token.user, 'password reset token user'
+    
+    assert !ActionMailer::Base.deliveries.empty?, 'email generated'
+    email = ActionMailer::Base.deliveries.last
+    assert_equal [@email_credential.email], email.to
+    assert_match token.code, email.encoded
+  end
 end

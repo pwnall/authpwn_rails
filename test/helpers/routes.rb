@@ -9,6 +9,8 @@ class ActionController::TestCase
       resource :facebook, :controller => 'facebook'
       authpwn_session :controller => 'bare_session',
                       :method_names => 'bare_session'
+      authpwn_session :controller => 'bare_session2',
+                      :method_names => 'bare_session2'
       root :to => 'session#index'
 
       # NOTE: this route should be kept in sync with the session template.

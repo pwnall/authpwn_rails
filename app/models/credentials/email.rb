@@ -38,13 +38,21 @@ class Email < ::Credential
   # Returns the authenticated User instance, or a symbol indicating the reason
   # why the (potentially valid) password was rejected.
   def self.authenticate(email)
+    credential = with email
+    return :invalid unless credential
+    user = credential.user
+    user.auth_bounce_reason(credential) || user
+  end
+  
+  # Locates the credential holding an e-mail address.
+  #
+  # Returns the User matching the given e-mail, or nil if the e-mail is not
+  # associated with any user.
+  def self.with(email)
     # This method is likely to be used to kick off a complex authentication
     # process, so it makes sense to pre-fetch the user's other credentials.
     credential = Credentials::Email.where(:name => email).
                                     includes(:user => :credentials).first
-    return :invalid unless credential
-    user = credential.user
-    user.auth_bounce_reason(credential) || user
   end
 
   # Forms can only change the e-mail in the credential.

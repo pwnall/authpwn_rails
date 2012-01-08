@@ -8,14 +8,14 @@ module SessionMailer
   # Creates an e-mail containing a password reset token.
   #
   # Params:
+  #   email:: the email to send the token to
   #   token:: the password reset token
   #   root_url:: url to the server's home page
   #   token_url:: the password reset url, including the secret token
-  def reset_password_email(token, root_url, token_url)
-    @token, @root_url, @token_url = token, root_url, token_url
+  def reset_password_email(email, token, root_url, token_url)
+    @email, @token, @root_url, @token_url = email, token, root_url, token_url
 
-    mail :to => @token.user.email,
-         :subject => reset_password_subject(token, root_url),
+    mail :to => email, :subject => reset_password_subject(token, root_url),
          :from => reset_password_from(token, root_url) do |format|
       format.html  # session_mailer/reset_password.html.erb
       format.text  # session_mailer/reset_password.text.erb
