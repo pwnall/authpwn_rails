@@ -95,7 +95,7 @@ module SessionController
     respond_to do |format|
       if user
         format.html do
-          redirect_to session_url, :notice =>
+          redirect_to new_session_url, :notice =>
               'Please check your e-mail for instructions'
         end
         format.json { render :json => { } }

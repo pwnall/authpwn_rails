@@ -394,7 +394,9 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_equal 'invalid', data['error']
   end
   
-  test "reset_password fpr good e-mail" do
+  test "reset_password for good e-mail" do
+    ActionMailer::Base.deliveries = []
+    
     assert_difference 'Credential.count', 1 do
       post :reset_password, :email => @email_credential.email
     end
@@ -407,5 +409,61 @@ class SessionControllerApiTest < ActionController::TestCase
     email = ActionMailer::Base.deliveries.last
     assert_equal [@email_credential.email], email.to
     assert_match token.code, email.encoded
+    
+    assert_redirected_to new_session_url
+  end
+  
+  test "reset_password for good e-mail by json" do
+    ActionMailer::Base.deliveries = []
+    
+    assert_difference 'Credential.count', 1 do
+      post :reset_password, :email => @email_credential.email, :format => 'json'
+    end
+    
+    token = Credential.last
+    assert_operator token, :kind_of?, Tokens::PasswordReset
+    assert_equal @user, token.user, 'password reset token user'
+
+    assert !ActionMailer::Base.deliveries.empty?, 'email generated'
+
+    assert_response :ok
+    assert_equal '{}', response.body
+  end
+
+  test "reset_password for invalid e-mail" do
+    ActionMailer::Base.deliveries = []
+
+    assert_no_difference 'Credential.count' do
+      post :reset_password, :email => 'no@such.email'
+    end
+    assert ActionMailer::Base.deliveries.empty?, 'no email generated'
+
+    assert_redirected_to new_session_url
+  end
+  
+  test "reset_password for invalid e-mail by json" do
+    ActionMailer::Base.deliveries = []
+
+    assert_no_difference 'Credential.count' do
+      post :reset_password, :email => 'no@such.email', :format => 'json'
+    end
+    assert ActionMailer::Base.deliveries.empty?, 'no email generated'
+
+    assert_response :ok
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal 'not_found', data['error']
+  end
+
+  test "create delegation to reset_password" do
+    ActionMailer::Base.deliveries = []
+    
+    assert_difference 'Credential.count', 1 do
+      post :create, :email => @email_credential.email, :password => '',
+                    :reset_password => :requested
+    end
+    
+    token = Credential.last
+    assert_operator token, :kind_of?, Tokens::PasswordReset
+    assert_equal @user, token.user, 'password reset token user'
   end
 end

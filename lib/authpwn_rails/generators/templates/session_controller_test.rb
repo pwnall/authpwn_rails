@@ -90,4 +90,18 @@ class SessionControllerTest < ActionController::TestCase
       assert_select 'input[type=submit]'
     end
   end
+  
+  test "password reset request" do
+    ActionMailer::Base.deliveries = []
+
+    assert_difference 'Credential.count', 1 do
+      post :reset_password, :email => @email_credential.email
+    end
+    
+    assert !ActionMailer::Base.deliveries.empty?, 'email generated'
+    email = ActionMailer::Base.deliveries.last
+    assert_equal [@email_credential.email], email.to
+    
+    assert_redirected_to new_session_url
+  end
 end

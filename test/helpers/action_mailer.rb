@@ -4,4 +4,5 @@ class ActionMailer::Base
       '../../../lib/authpwn_rails/generators/templates', __FILE__)
 
   self.delivery_method = :test
+  self.perform_deliveries = true
 end
