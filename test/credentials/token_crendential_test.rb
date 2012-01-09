@@ -58,6 +58,15 @@ class TokenCredentialTest < ActiveSupport::TestCase
     assert_nil Credentials::Token.with_code(credentials(:jane_email).name)
   end
   
+  test 'find_by_param' do
+    assert_equal credentials(:john_token), Credentials::Token.
+        find_by_param(credentials(:john_token).to_param)
+    assert_equal credentials(:jane_token), Credentials::Token.
+        find_by_param(credentials(:jane_token).to_param)
+    assert_equal nil, Credentials::Token.find_by_param('bogus token')
+    assert_equal nil, Credentials::Token.find_by_param(nil)
+  end
+  
   test 'class authenticate' do
     john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
     jane = '6TXe1vv7BgOw0BkJ1hzUKO6G08fLk4sVfJ3wPDZHS-c'

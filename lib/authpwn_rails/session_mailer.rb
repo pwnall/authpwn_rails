@@ -10,26 +10,26 @@ module SessionMailer
   # Params:
   #   email:: the email to send the token to
   #   token:: the password reset token
-  #   root_url:: url to the server's home page
-  #   token_url:: the password reset url, including the secret token
-  def reset_password_email(email, token, root_url, token_url)
-    @email, @token, @root_url, @token_url = email, token, root_url, token_url
+  #   host:: the server's hostname (e.g. "localhost:3000")
+  def reset_password_email(email, token, host)
+    @email, @token, @host = email, token, host
 
-    mail :to => email, :subject => reset_password_subject(token, root_url),
-         :from => reset_password_from(token, root_url) do |format|
-      format.html  # session_mailer/reset_password.html.erb
-      format.text  # session_mailer/reset_password.text.erb
-    end
+    mail :to => email, :subject => reset_password_subject(token, host),
+         :from => reset_password_from(token, host)
   end
   
   # The subject line in a password reset e-mail.
-  def reset_password_subject(token, root_url)
-    "#{root_url} password reset"
+  #
+  # The authpwn generator encourages applications to override this method.
+  def reset_password_subject(token, server_hostname)
+    "#{server_hostname} password reset"
   end
   
   # The sender e-mail address for a password reset e-mail.
-  def reset_password_from(token, root_url)
-    "#{root_url} staff <admin@site.com>"
+  #
+  # The authpwn generator encourages applications to override this method.
+  def reset_password_from(token, server_hostname)
+    %Q|"#{server_hostname} staff" <admin@#{server_hostname}>|
   end
 end  # namespace Authpwn::SessionMailer
 

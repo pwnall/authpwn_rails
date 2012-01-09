@@ -93,6 +93,14 @@ class Token < ::Credential
   def self.random_code
     SecureRandom.urlsafe_base64(32)
   end
+  
+  # Use codes instead of exposing ActiveRecord IDs.
+  def to_param
+    code
+  end
+  class <<self
+    alias_method :find_by_param, :with_code
+  end
 end  # class Credentials::Token
 
 end  # namespace Credentials

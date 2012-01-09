@@ -17,6 +17,7 @@ class ActionController::TestCase
       authpwn_session
     end
     ApplicationController.send :include, @routes.url_helpers
+    ActionMailer::Base.send :include, @routes.url_helpers
   end
   
   setup :setup_routes
