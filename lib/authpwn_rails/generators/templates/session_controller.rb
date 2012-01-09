@@ -46,6 +46,5 @@ class SessionController < ApplicationController
   private :home_with_token
   
   # You shouldn't extend the session controller, so you can benefit from future
-  # features, like Facebook / Twitter / OpenID integration. But, if you must,
-  # you can do it here.
+  # features. But, if you must, you can do it here.
 end
