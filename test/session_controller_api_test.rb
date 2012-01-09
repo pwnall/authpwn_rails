@@ -408,6 +408,8 @@ class SessionControllerApiTest < ActionController::TestCase
     
     assert !ActionMailer::Base.deliveries.empty?, 'email generated'
     email = ActionMailer::Base.deliveries.last
+    assert_equal '"mail.test.host staff" <admin@mail.test.host>',
+                 email['from'].to_s
     assert_equal [@email_credential.email], email.to
     assert_match 'http://mail.test.host:1234/', email.encoded
     assert_match token.code, email.encoded

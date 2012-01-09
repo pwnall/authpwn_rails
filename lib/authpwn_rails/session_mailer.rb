@@ -14,8 +14,9 @@ module SessionMailer
   def reset_password_email(email, token, host)
     @email, @token, @host = email, token, host
 
-    mail :to => email, :subject => reset_password_subject(token, host),
-         :from => reset_password_from(token, host)
+    hostname = host.split(':', 2).first  # Strip out any port.
+    mail :to => email, :subject => reset_password_subject(token, hostname),
+         :from => reset_password_from(token, hostname)
   end
   
   # The subject line in a password reset e-mail.
