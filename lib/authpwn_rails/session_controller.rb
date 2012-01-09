@@ -87,7 +87,8 @@ module SessionController
     
     if user = (credential && credential.user)
       token = Tokens::PasswordReset.random_for user
-      ::SessionMailer.reset_password_email(@email, token, request.host).deliver
+      ::SessionMailer.reset_password_email(@email, token,
+                                           request.host_with_port).deliver
     end
      
     respond_to do |format|
