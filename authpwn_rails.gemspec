@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "authpwn_rails"
-  s.version = "0.10.5"
+  s.version = "0.10.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
-  s.date = "2012-01-07"
+  s.date = "2012-01-11"
   s.description = "Works with Facebook."
   s.email = "victor@costan.us"
   s.extra_rdoc_files = [
@@ -30,6 +30,10 @@ Gem::Specification.new do |s|
     "app/models/credentials/email.rb",
     "app/models/credentials/facebook.rb",
     "app/models/credentials/password.rb",
+    "app/models/credentials/token.rb",
+    "app/models/tokens/email_verification.rb",
+    "app/models/tokens/one_time.rb",
+    "app/models/tokens/password_reset.rb",
     "authpwn_rails.gemspec",
     "legacy/migrate_09_to_010.rb",
     "lib/authpwn_rails.rb",
@@ -44,34 +48,55 @@ Gem::Specification.new do |s|
     "lib/authpwn_rails/generators/templates/session/forbidden.html.erb",
     "lib/authpwn_rails/generators/templates/session/home.html.erb",
     "lib/authpwn_rails/generators/templates/session/new.html.erb",
+    "lib/authpwn_rails/generators/templates/session/password_change.html.erb",
     "lib/authpwn_rails/generators/templates/session/welcome.html.erb",
     "lib/authpwn_rails/generators/templates/session_controller.rb",
     "lib/authpwn_rails/generators/templates/session_controller_test.rb",
+    "lib/authpwn_rails/generators/templates/session_mailer.rb",
+    "lib/authpwn_rails/generators/templates/session_mailer/email_verification_email.html.erb",
+    "lib/authpwn_rails/generators/templates/session_mailer/email_verification_email.text.erb",
+    "lib/authpwn_rails/generators/templates/session_mailer/reset_password_email.html.erb",
+    "lib/authpwn_rails/generators/templates/session_mailer/reset_password_email.text.erb",
+    "lib/authpwn_rails/generators/templates/session_mailer_test.rb",
     "lib/authpwn_rails/generators/templates/user.rb",
     "lib/authpwn_rails/generators/templates/users.yml",
+    "lib/authpwn_rails/routes.rb",
     "lib/authpwn_rails/session.rb",
     "lib/authpwn_rails/session_controller.rb",
+    "lib/authpwn_rails/session_mailer.rb",
     "lib/authpwn_rails/test_extensions.rb",
     "lib/authpwn_rails/user_extensions/email_field.rb",
     "lib/authpwn_rails/user_extensions/facebook_fields.rb",
     "lib/authpwn_rails/user_extensions/password_field.rb",
     "lib/authpwn_rails/user_model.rb",
     "test/cookie_controller_test.rb",
-    "test/email_credential_test.rb",
-    "test/email_field_test.rb",
+    "test/credentials/email_credential_test.rb",
+    "test/credentials/email_verification_token_test.rb",
+    "test/credentials/facebook_credential_test.rb",
+    "test/credentials/one_time_token_credential_test.rb",
+    "test/credentials/password_credential_test.rb",
+    "test/credentials/password_reset_token_test.rb",
+    "test/credentials/token_crendential_test.rb",
     "test/facebook_controller_test.rb",
-    "test/facebook_credential_test.rb",
-    "test/facebook_fields_test.rb",
+    "test/fixtures/bare_session/forbidden.html.erb",
+    "test/fixtures/bare_session/home.html.erb",
+    "test/fixtures/bare_session/new.html.erb",
+    "test/fixtures/bare_session/password_change.html.erb",
+    "test/fixtures/bare_session/welcome.html.erb",
+    "test/helpers/action_mailer.rb",
     "test/helpers/application_controller.rb",
     "test/helpers/autoload_path.rb",
     "test/helpers/db_setup.rb",
     "test/helpers/fbgraph.rb",
     "test/helpers/routes.rb",
     "test/helpers/view_helpers.rb",
-    "test/password_credential_test.rb",
-    "test/password_field_test.rb",
+    "test/routes_test.rb",
     "test/session_controller_api_test.rb",
+    "test/session_mailer_api_test.rb",
     "test/test_helper.rb",
+    "test/user_extensions/email_field_test.rb",
+    "test/user_extensions/facebook_fields_test.rb",
+    "test/user_extensions/password_field_test.rb",
     "test/user_test.rb"
   ]
   s.homepage = "http://github.com/pwnall/authpwn_rails"
@@ -90,7 +115,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<flexmock>, ["~> 0.9.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.0"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
-      s.add_development_dependency(%q<sqlite3>, [">= 1.3.3"])
+      s.add_development_dependency(%q<sqlite3>, [">= 1.3.5"])
     else
       s.add_dependency(%q<fbgraph_rails>, [">= 0.2.2"])
       s.add_dependency(%q<rails>, [">= 3.2.0.rc2"])
@@ -98,7 +123,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<flexmock>, ["~> 0.9.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.0"])
       s.add_dependency(%q<rcov>, [">= 0"])
-      s.add_dependency(%q<sqlite3>, [">= 1.3.3"])
+      s.add_dependency(%q<sqlite3>, [">= 1.3.5"])
     end
   else
     s.add_dependency(%q<fbgraph_rails>, [">= 0.2.2"])
@@ -107,7 +132,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<flexmock>, ["~> 0.9.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.0"])
     s.add_dependency(%q<rcov>, [">= 0"])
-    s.add_dependency(%q<sqlite3>, [">= 1.3.3"])
+    s.add_dependency(%q<sqlite3>, [">= 1.3.5"])
   end
 end
 
