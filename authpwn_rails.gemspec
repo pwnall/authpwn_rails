@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "authpwn_rails"
-  s.version = "0.10.6"
+  s.version = "0.10.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
-  s.date = "2012-01-11"
+  s.date = "2012-01-12"
   s.description = "Works with Facebook."
   s.email = "victor@costan.us"
   s.extra_rdoc_files = [
