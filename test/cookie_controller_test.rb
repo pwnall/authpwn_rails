@@ -49,6 +49,7 @@ class CookieControllerTest < ActionController::TestCase
     get :bouncer
     assert_response :forbidden
     assert_template 'session/forbidden'
+    assert_select 'a[href="/session"][data-method="delete"]', 'Log out'
   end
 
   test "valid user_id bounced in json" do

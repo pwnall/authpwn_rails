@@ -13,7 +13,7 @@ class SessionControllerTest < ActionController::TestCase
     get :show
     
     assert_equal @user, assigns(:user)
-    assert_select 'a', 'Log out'
+    assert_select 'a[href="/session"][data-method="delete"]', 'Log out'
   end
   
   test "user logged in JSON request" do
