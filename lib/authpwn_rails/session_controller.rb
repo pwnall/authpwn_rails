@@ -11,7 +11,8 @@ module SessionController
   extend ActiveSupport::Concern
   
   included do
-    authenticates_using_session
+    skip_filter :authenticate_using_session
+    authenticates_using_session :except => [:create, :reset_password, :token]
   end
 
   # GET /session/new
@@ -87,8 +88,7 @@ module SessionController
     
     if user = (credential && credential.user)
       token = Tokens::PasswordReset.random_for user
-      ::SessionMailer.reset_password_email(@email, token,
-                                           request.host_with_port).deliver
+      ::SessionMailer.reset_password_email(@email, token, root_url).deliver
     end
      
     respond_to do |format|

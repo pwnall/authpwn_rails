@@ -1,5 +1,19 @@
 require 'securerandom'
 
+# :nodoc: Backport urlsafe_base64 to 1.8.7.
+unless SecureRandom.respond_to? :urlsafe_base64
+  SecureRandom.class_eval do
+    # :nodoc: lifted from 1.9.3 securerandom.rb, line 190
+    def self.urlsafe_base64(n=nil, padding=false)
+      s = [random_bytes(n)].pack("m*")
+      s.delete!("\n")
+      s.tr!("+/", "-_")
+      s.delete!("=") if !padding
+      s
+    end
+  end
+end
+
 # :namespace
 module Credentials
   
@@ -88,10 +102,13 @@ class Token < ::Credential
     token.save!
     token
   end
-
-  # Generates a random token code.
-  def self.random_code
-    SecureRandom.urlsafe_base64(32)
+  
+  if SecureRandom.respond_to? :urlsafe_base64
+    # Generates a random token code.
+    def self.random_code
+      SecureRandom.urlsafe_base64(32)
+    end
+  else
   end
   
   # Use codes instead of exposing ActiveRecord IDs.

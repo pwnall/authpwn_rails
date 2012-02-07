@@ -30,7 +30,7 @@ module ControllerInstanceMethods
   end  
 
   def authenticate_using_session
-    return true if current_user
+    return if current_user
     user_param = session[:user_exuid]
     user = user_param && User.find_by_param(user_param)
     self.current_user = user if user

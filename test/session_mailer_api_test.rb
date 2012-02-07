@@ -11,7 +11,7 @@ class SessionMailerApiTest < ActionMailer::TestCase
     @reset_token = credentials(:jane_password_token)
     @verification_token = credentials(:john_email_token)
     @verification_email = credentials(:john_email).email
-    @host = 'test.host'
+    @root_url = 'hxxp://test.host:8808'
 
     # The generator template has the same return value for reset_password_from
     # and email_verification_from, so we need these stubs to ensure that the
@@ -44,24 +44,26 @@ class SessionMailerApiTest < ActionMailer::TestCase
   end
 
   test 'email verification email contents' do
-    email = SessionMailer.email_verification_email(@verification_token, @host).
-                          deliver
+    email = SessionMailer.email_verification_email(@verification_token,
+                                                   @root_url).deliver
     assert !ActionMailer::Base.deliveries.empty?
     
     assert_equal 'test.host e-mail verification', email.subject
     assert_equal ['email_check@test.host'], email.from
     assert_equal [@verification_email], email.to
     assert_match @verification_token.code, email.encoded
+    assert_match 'hxxp://test.host:8808/session/token/', email.encoded
   end
 
   test 'password reset email contents' do
     email = SessionMailer.reset_password_email(@reset_email, @reset_token,
-                                               @host).deliver
+                                               @root_url).deliver
     assert !ActionMailer::Base.deliveries.empty?
     
     assert_equal 'test.host password reset', email.subject
     assert_equal ['reset@test.host'], email.from
     assert_equal [@reset_email], email.to
     assert_match @reset_token.code, email.encoded    
+    assert_match 'hxxp://test.host:8808/session/token/', email.encoded
   end
 end
