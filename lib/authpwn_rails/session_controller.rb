@@ -71,12 +71,12 @@ module SessionController
                             :csrf => form_authenticity_token }
         end
       else
-        notice = bounce_notice_text auth
+        error_text = bounce_notice_text auth
         format.html do
-          redirect_to new_session_url, :flash => { :notice => notice,
+          redirect_to new_session_url, :flash => { :alert => error_text,
               :auth_redirect_url => @redirect_url }
         end
-        format.json { render :json => { :error => auth, :text => notice } }
+        format.json { render :json => { :error => auth, :text => error_text } }
       end
     end
   end
@@ -94,14 +94,14 @@ module SessionController
     respond_to do |format|
       if user
         format.html do
-          redirect_to new_session_url, :notice =>
+          redirect_to new_session_url, :alert =>
               'Please check your e-mail for instructions'
         end
         format.json { render :json => { } }
       else
-        notice = 'Invalid e-mail'
+        error_text = 'Invalid e-mail'
         format.html do
-          redirect_to new_session_url, :notice => notice
+          redirect_to new_session_url, :alert => error_text
         end
         format.json do
           render :json => { :error => :not_found, :text => notice }
@@ -119,13 +119,13 @@ module SessionController
     end
         
     if auth.is_a? Symbol
-      notice = bounce_notice_text auth
-      respond_to do |format|        
+      error_text = bounce_notice_text auth
+      respond_to do |format|
         format.html do
-          redirect_to new_session_url, :flash => { :notice => notice,
+          redirect_to new_session_url, :flash => { :alert => error_text,
               :auth_redirect_url => session_url }
         end
-        format.json { render :json => { :error => auth, :text => notice } }
+        format.json { render :json => { :error => auth, :text => error_text } }
       end
     else
       self.current_user = auth
@@ -190,7 +190,7 @@ module SessionController
         success = @credential.update_attributes params[:credential]
       else
         success = false
-        flash[:notice] = 'Incorrect old password. Please try again.'
+        flash[:alert] = 'Incorrect old password. Please try again.'
       end
     else
       @credential = Credentials::Password.new params[:credential]

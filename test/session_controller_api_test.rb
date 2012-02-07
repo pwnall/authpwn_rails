@@ -105,7 +105,7 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
-    assert_match(/Invalid/, flash[:notice])
+    assert_match(/Invalid/, flash[:alert])
   end
   
   test "create does not log in blocked accounts" do
@@ -115,7 +115,7 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
-    assert_match(/ blocked/, flash[:notice])
+    assert_match(/ blocked/, flash[:alert])
   end
 
   test "create by json does not log in with bad password" do
@@ -147,7 +147,7 @@ class SessionControllerApiTest < ActionController::TestCase
     post :create, :email => @email_credential.email, :password => 'fail',
                   :redirect_url => url
     assert_redirected_to new_session_url
-    assert_not_nil flash[:notice]
+    assert_match(/Invalid /, flash[:alert])
     assert_equal url, flash[:auth_redirect_url]
   end
 
@@ -156,7 +156,7 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
-    assert_not_nil flash[:notice]
+    assert_match(/Invalid /, flash[:alert])
   end
 
   test "token logs in with good token" do
@@ -191,7 +191,7 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
-    assert_match(/Invalid/, flash[:notice])
+    assert_match(/Invalid/, flash[:alert])
   end
   
   test "token does not log in blocked accounts" do
@@ -203,7 +203,7 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
-    assert_match(/ blocked/, flash[:notice])
+    assert_match(/ blocked/, flash[:alert])
   end
 
   test "token by json does not log in with random token" do
