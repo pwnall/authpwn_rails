@@ -23,6 +23,17 @@ class UserTest < ActiveSupport::TestCase
     @user.exuid = ''
     assert !@user.valid?
   end
+  
+  test 'exuid randomness' do
+    exuids = []
+    1000.times do
+      @user.exuid = nil
+      @user.set_default_exuid
+      exuids << @user.exuid
+      @user.save!  # Catch range errors.
+    end
+    assert_equal exuids.length, exuids.uniq.length, 'UIDs are not random enough'
+  end
     
   test 'to_param' do
     assert_equal '56789', users(:john).to_param
