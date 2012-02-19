@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "authpwn_rails"
-  s.version = "0.10.9"
+  s.version = "0.10.10"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
-  s.date = "2012-02-07"
+  s.date = "2012-02-19"
   s.description = "Works with Facebook."
   s.email = "victor@costan.us"
   s.extra_rdoc_files = [
@@ -102,7 +102,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/pwnall/authpwn_rails"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.15"
+  s.rubygems_version = "1.8.16"
   s.summary = "User authentication for Rails 3 applications."
 
   if s.respond_to? :specification_version then
