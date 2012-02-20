@@ -22,6 +22,7 @@ end
 class FacebookControllerTest < ActionController::TestCase
   setup do
     @old_user_class = ::User
+    Object.send :remove_const, :User
     ::User = UserWithFb2
     
     @user = users(:john)
@@ -29,6 +30,7 @@ class FacebookControllerTest < ActionController::TestCase
   end
   
   teardown do
+    Object.send :remove_const, :User
     ::User = @old_user_class
   end
 
