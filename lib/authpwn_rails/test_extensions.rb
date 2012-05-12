@@ -32,6 +32,10 @@ module TestExtensions
   end
 end  # module Authpwn::TestExtensions
 
+class ActiveSupport::TestCase
+  include Authpwn::TestExtensions
+end
+
 # Included in controller test cases.
 module ControllerTestExtensions
   # Sets the authenticated user in the test session.
@@ -48,12 +52,6 @@ end  # module Authpwn::ControllerTestExtensions
 
 end  # namespace Authpwn
 
-# :nodoc: extend Test::Unit
-class ActiveSupport::TestCase
-  include Authpwn::TestExtensions
-end
-
-# :nodoc: extend Test::Unit
 class ActionController::TestCase
   include Authpwn::ControllerTestExtensions
 end

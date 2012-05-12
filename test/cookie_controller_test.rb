@@ -75,4 +75,8 @@ class CookieControllerTest < ActionController::TestCase
     data = ActiveSupport::JSON.decode response.body
     assert_match(/sign in/i, data['error'])
   end
+  
+  test "auth_controller? is false" do
+    assert_equal false, @controller.auth_controller?
+  end
 end

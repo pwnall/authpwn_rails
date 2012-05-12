@@ -210,6 +210,14 @@ module SessionController
     end
   end
 
+  # True for controllers belonging to the authentication implementation.
+  #
+  # Controllers that return true here are responsible for performing their own
+  # authorization.
+  def auth_controller?
+    true
+  end
+
   # Hook for setting up the home view.
   def home
   end

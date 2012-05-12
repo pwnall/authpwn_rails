@@ -10,7 +10,15 @@ class ActionController::Base
   def self.authenticates_using_session(options = {})
     include Authpwn::ControllerInstanceMethods
     before_filter :authenticate_using_session, options   
-  end  
+  end
+  
+  # True for controllers belonging to the authentication implementation.
+  #
+  # Controllers that return true here are responsible for performing their own
+  # authorization.
+  def auth_controller?
+    false
+  end
 end
 
 # :nodoc: namespace

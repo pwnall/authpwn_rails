@@ -470,4 +470,8 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_operator token, :kind_of?, Tokens::PasswordReset
     assert_equal @user, token.user, 'password reset token user'
   end
+  
+  test "auth_controller? is true" do
+    assert_equal true, @controller.auth_controller?
+  end
 end

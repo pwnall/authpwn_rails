@@ -58,4 +58,8 @@ class FacebookControllerTest < ActionController::TestCase
     assert_response :success
     assert_not_equal @user, assigns(:current_user)
   end
+  
+  test "auth_controller? is false" do
+    assert_equal false, @controller.auth_controller?
+  end  
 end
