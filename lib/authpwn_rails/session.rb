@@ -26,17 +26,14 @@ module Authpwn
 
 # Included in controllers that call authenticates_using_session.
 module ControllerInstanceMethods
-  attr_reader :current_user
-  
-  def current_user=(user)
-    @current_user = user
-    if user
-      session[:user_exuid] = user.to_param
-    else
-      session.delete :user_exuid
-    end
-  end  
+  include Authpwn::CurrentUser
 
+  # Filter that implements authenticates_using_session.
+  #
+  # If your ApplicationController contains authenticates_using_session, you
+  # can opt out in individual controllers using skip_before_filter.
+  #
+  #     skip_before_filter :authenticate_using_session
   def authenticate_using_session
     return if current_user
     user_param = session[:user_exuid]

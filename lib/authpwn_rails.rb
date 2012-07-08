@@ -17,7 +17,9 @@ module Authpwn
   end
 end
 
+require 'authpwn_rails/current_user.rb'
 require 'authpwn_rails/facebook_session.rb'
+require 'authpwn_rails/http_basic.rb'
 require 'authpwn_rails/routes.rb'
 require 'authpwn_rails/session.rb'
 require 'authpwn_rails/test_extensions.rb'

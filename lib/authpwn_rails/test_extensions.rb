@@ -48,6 +48,38 @@ module ControllerTestExtensions
     return nil unless user_param = request.session[:user_exuid]
     User.find_by_param user_param
   end
+
+  # Sets the HTTP Authentication header.
+  #
+  # If no password is provided, the user's password is set to "password". This
+  # change is normally reverted at the end of the test, as long as
+  # transactional fixtures are not disabled.
+  #
+  # Tests that need to disable transactional fixures should specify the user's
+  # password.
+  def set_http_basic_user(user, password = nil)
+    unless password
+      password = 'password'
+      credential = Credentials::Password.where(:user_id => user.id).first
+      if credential
+        credential.update_attributes! :password => password
+      else
+        credential = Credentials::Password.new :password => password
+        credential.user_id = user.id
+        credential.save!
+      end
+    end
+
+    credential = Credentials::Email.where(:user_id => user.id).first
+    unless credential
+      raise RuntimeError, "Can't specify an user without an e-mail"
+    end
+    email = credential.email
+
+    request.env['HTTP_AUTHORIZATION'] =
+        "Basic #{::Base64.strict_encode64("#{email}:#{password}")}"
+    user
+  end
 end  # module Authpwn::ControllerTestExtensions
 
 end  # namespace Authpwn

@@ -6,6 +6,9 @@ class ActionController::TestCase
       resource :cookie, :controller => 'cookie' do
         collection { get :bouncer }
       end
+      resource :http_basic, :controller => 'http_basic' do
+        collection { get :bouncer }
+      end
       resource :facebook, :controller => 'facebook'
       authpwn_session :controller => 'bare_session',
                       :method_names => 'bare_session'
