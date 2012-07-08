@@ -52,4 +52,12 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 1, @user.credentials.length
     assert_equal 'test@email.com', @user.credentials.first.name
   end
+
+  test 'authenticate_email' do
+    assert_equal users(:john),
+        User.authenticate_signin('john@gmail.com', 'password')
+    assert_equal :invalid,
+        User.authenticate_signin('john@gmail.com', 'pa55w0rd'),
+        "Jane's password on John's account"
+  end
 end

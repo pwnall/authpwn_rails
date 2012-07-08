@@ -118,6 +118,15 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_match(/ blocked/, flash[:alert])
   end
 
+  test "create uses User.authenticate_signin" do
+    flexmock(User).should_receive(:authenticate_signin).
+        with('em@ail.com', 'fail').and_return @email_credential.user
+    post :create, :email => 'em@ail.com', :password => 'fail'
+    assert_equal @user, assigns(:current_user), 'instance variable'
+    assert_equal @user, session_current_user, 'session'
+    assert_redirected_to session_url
+  end
+  
   test "create by json does not log in with bad password" do
     post :create, :email => @email_credential.email, :password => 'fail',
                   :format => 'json'
@@ -275,8 +284,8 @@ class SessionControllerApiTest < ActionController::TestCase
                           :password_confirmation => 'hacks'} 
     assert_redirected_to session_url
     assert_equal @password_credential, assigns(:credential)
-    assert_equal @user, Credentials::Password.authenticate_email(
-         @email_credential.email, 'hacks'), 'password not changed'
+    assert_equal @user, User.authenticate_signin(@email_credential.email,
+        'hacks'), 'password not changed'
   end
 
   test "change_password rejects bad old password" do
@@ -287,8 +296,8 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_response :ok
     assert_template :password_change
     assert_equal @password_credential, assigns(:credential)
-    assert_equal @user, Credentials::Password.authenticate_email(
-         @email_credential.email, 'password'), 'password wrongly changed'
+    assert_equal @user, User.authenticate_signin(@email_credential.email,
+        'password'), 'password wrongly changed'
   end
 
   test "change_password rejects un-confirmed password" do
@@ -299,8 +308,8 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_response :ok
     assert_template :password_change
     assert_equal @password_credential, assigns(:credential)
-    assert_equal @user, Credentials::Password.authenticate_email(
-         @email_credential.email, 'password'), 'password wrongly changed'
+    assert_equal @user, User.authenticate_signin( @email_credential.email,
+        'password'), 'password wrongly changed'
   end
 
   test "change_password works for password recovery" do
@@ -310,8 +319,8 @@ class SessionControllerApiTest < ActionController::TestCase
          :credential => { :password => 'hacks',
                           :password_confirmation => 'hacks'} 
     assert_redirected_to session_url
-    assert_equal @user, Credentials::Password.authenticate_email(
-         @email_credential.email, 'hacks'), 'password not changed'
+    assert_equal @user, User.authenticate_signin(@email_credential.email,
+        'hacks'), 'password not changed'
   end
 
   test "change_password rejects un-confirmed password on recovery" do
@@ -341,8 +350,8 @@ class SessionControllerApiTest < ActionController::TestCase
          :credential => { :password => 'hacks',
                           :password_confirmation => 'hacks'} 
     assert_response :ok
-    assert_equal @user, Credentials::Password.authenticate_email(
-         @email_credential.email, 'hacks'), 'password not changed'
+    assert_equal @user, User.authenticate_signin(@email_credential.email,
+        'hacks'), 'password not changed'
   end
 
   test "change_password by json rejects bad old password" do
@@ -354,8 +363,8 @@ class SessionControllerApiTest < ActionController::TestCase
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'invalid', data['error']
     assert_equal @password_credential, assigns(:credential)
-    assert_equal @user, Credentials::Password.authenticate_email(
-         @email_credential.email, 'password'), 'password wrongly changed'
+    assert_equal @user, User.authenticate_signin(@email_credential.email,
+        'password'), 'password wrongly changed'
   end
 
   test "change_password by json rejects un-confirmed password" do
@@ -366,8 +375,8 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'invalid', data['error']
-    assert_equal @user, Credentials::Password.authenticate_email(
-         @email_credential.email, 'password'), 'password wrongly changed'
+    assert_equal @user, User.authenticate_signin( @email_credential.email,
+        'password'), 'password wrongly changed'
   end
 
   test "change_password by json works for password recovery" do
@@ -377,7 +386,7 @@ class SessionControllerApiTest < ActionController::TestCase
          :credential => { :password => 'hacks',
                           :password_confirmation => 'hacks'} 
     assert_response :ok
-    assert_equal @user, Credentials::Password.authenticate_email(
+    assert_equal @user, User.authenticate_signin(
          @email_credential.email, 'hacks'), 'password not changed'
   end
 

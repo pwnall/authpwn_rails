@@ -40,6 +40,20 @@ module UserModel
     def find_by_param(param)
       where(:exuid => param).first
     end
+
+    # Authenticates a user given the information on a signup form.
+    #
+    # The method's parameter names are an acknowledgement to the email and
+    # password fields on automatically-generated forms.
+    #
+    # The easiest method of accepting other login information is to override this
+    # method, locate the user's email, and supply it in a call to super.
+    #
+    # Returns an authenticated user, or a symbol indicating the reason why the
+    # authentication failed.
+    def authenticate_signin(email, password)
+      Credentials::Password.authenticate_email email, password
+    end
   end  # module Authpwn::UserModel::ClassMethods
   
   # Checks if a credential is acceptable for authenticating a user.

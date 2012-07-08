@@ -56,7 +56,7 @@ module SessionController
     
     @redirect_url = params[:redirect_url] || session_url
     @email = params[:email]
-    auth = Credentials::Password.authenticate_email @email, params[:password]
+    auth = User.authenticate_signin @email, params[:password]
     self.current_user = auth unless auth.kind_of? Symbol
         
     respond_to do |format|

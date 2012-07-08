@@ -33,7 +33,8 @@ class Email < ::Credential
   #
   # Presenting the correct e-mail is almost never sufficient for authentication
   # purposes. This method will most likely used to kick off an authentication
-  # process, such as in Password#authenticate_email.
+  # process, such as in User#authenticate_signin and
+  # Password#authenticate_email.
   #
   # Returns the authenticated User instance, or a symbol indicating the reason
   # why the (potentially valid) password was rejected.

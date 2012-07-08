@@ -46,11 +46,22 @@ class HttpBasicControllerTest < ActionController::TestCase
   end
 
   test "invalid user credentials in header" do
-    set_http_basic_user @user, 'password'
+    set_http_basic_user @user, 'fail'
     get :show
     assert_nil assigns(:current_user)
     assert_equal 'No user', response.body
   end
+
+  test "uses User.authenticate_signin" do
+    flexmock(User).should_receive(:authenticate_signin).
+        with('jane@gmail.com', 'fail').and_return @user
+    set_http_basic_user @user, 'fail'
+    get :show
+    assert_equal @user, assigns(:current_user)
+    assert_equal "User: #{ActiveRecord::Fixtures.identify(:jane)}",
+                 response.body
+  end
+  
 
   test "reset user credentials in header" do
     set_http_basic_user @user, 'pa55w0rd'

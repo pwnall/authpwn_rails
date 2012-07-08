@@ -29,7 +29,7 @@ module HttpBasicControllerInstanceMethods
   def authenticate_using_http_basic
     return if current_user
     authenticate_with_http_basic do |email, password|
-      auth = Credentials::Password.authenticate_email email, password
+      auth = User.authenticate_signin email, password
       self.current_user = auth unless auth.kind_of? Symbol
     end
   end
