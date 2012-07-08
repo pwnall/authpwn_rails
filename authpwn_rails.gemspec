@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "authpwn_rails"
-  s.version = "0.10.11"
+  s.version = "0.10.12"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
-  s.date = "2012-05-12"
+  s.date = "2012-07-08"
   s.description = "Works with Facebook."
   s.email = "victor@costan.us"
   s.extra_rdoc_files = [
@@ -38,6 +38,7 @@ Gem::Specification.new do |s|
     "legacy/migrate_09_to_010.rb",
     "lib/authpwn_rails.rb",
     "lib/authpwn_rails/credential_model.rb",
+    "lib/authpwn_rails/current_user.rb",
     "lib/authpwn_rails/engine.rb",
     "lib/authpwn_rails/facebook_session.rb",
     "lib/authpwn_rails/generators/all_generator.rb",
@@ -60,6 +61,7 @@ Gem::Specification.new do |s|
     "lib/authpwn_rails/generators/templates/session_mailer_test.rb",
     "lib/authpwn_rails/generators/templates/user.rb",
     "lib/authpwn_rails/generators/templates/users.yml",
+    "lib/authpwn_rails/http_basic.rb",
     "lib/authpwn_rails/routes.rb",
     "lib/authpwn_rails/session.rb",
     "lib/authpwn_rails/session_controller.rb",
@@ -90,6 +92,7 @@ Gem::Specification.new do |s|
     "test/helpers/fbgraph.rb",
     "test/helpers/routes.rb",
     "test/helpers/view_helpers.rb",
+    "test/http_basic_controller_test.rb",
     "test/routes_test.rb",
     "test/session_controller_api_test.rb",
     "test/session_mailer_api_test.rb",
@@ -110,37 +113,37 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<fbgraph_rails>, [">= 0.2.2"])
-      s.add_runtime_dependency(%q<rails>, [">= 3.2.3"])
-      s.add_development_dependency(%q<bundler>, [">= 1.1.0"])
+      s.add_runtime_dependency(%q<rails>, [">= 3.2.6"])
+      s.add_development_dependency(%q<bundler>, [">= 1.1.4"])
       s.add_development_dependency(%q<flexmock>, [">= 0.9.0"])
-      s.add_development_dependency(%q<jeweler>, [">= 1.8.0"])
+      s.add_development_dependency(%q<jeweler>, [">= 1.8.4"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
       s.add_development_dependency(%q<simplecov>, [">= 0"])
       s.add_development_dependency(%q<mysql2>, [">= 0.3.11"])
-      s.add_development_dependency(%q<pg>, [">= 0.13.2"])
+      s.add_development_dependency(%q<pg>, [">= 0.14.0"])
       s.add_development_dependency(%q<sqlite3>, [">= 1.3.6"])
     else
       s.add_dependency(%q<fbgraph_rails>, [">= 0.2.2"])
-      s.add_dependency(%q<rails>, [">= 3.2.3"])
-      s.add_dependency(%q<bundler>, [">= 1.1.0"])
+      s.add_dependency(%q<rails>, [">= 3.2.6"])
+      s.add_dependency(%q<bundler>, [">= 1.1.4"])
       s.add_dependency(%q<flexmock>, [">= 0.9.0"])
-      s.add_dependency(%q<jeweler>, [">= 1.8.0"])
+      s.add_dependency(%q<jeweler>, [">= 1.8.4"])
       s.add_dependency(%q<rcov>, [">= 0"])
       s.add_dependency(%q<simplecov>, [">= 0"])
       s.add_dependency(%q<mysql2>, [">= 0.3.11"])
-      s.add_dependency(%q<pg>, [">= 0.13.2"])
+      s.add_dependency(%q<pg>, [">= 0.14.0"])
       s.add_dependency(%q<sqlite3>, [">= 1.3.6"])
     end
   else
     s.add_dependency(%q<fbgraph_rails>, [">= 0.2.2"])
-    s.add_dependency(%q<rails>, [">= 3.2.3"])
-    s.add_dependency(%q<bundler>, [">= 1.1.0"])
+    s.add_dependency(%q<rails>, [">= 3.2.6"])
+    s.add_dependency(%q<bundler>, [">= 1.1.4"])
     s.add_dependency(%q<flexmock>, [">= 0.9.0"])
-    s.add_dependency(%q<jeweler>, [">= 1.8.0"])
+    s.add_dependency(%q<jeweler>, [">= 1.8.4"])
     s.add_dependency(%q<rcov>, [">= 0"])
     s.add_dependency(%q<simplecov>, [">= 0"])
     s.add_dependency(%q<mysql2>, [">= 0.3.11"])
-    s.add_dependency(%q<pg>, [">= 0.13.2"])
+    s.add_dependency(%q<pg>, [">= 0.14.0"])
     s.add_dependency(%q<sqlite3>, [">= 1.3.6"])
   end
 end
