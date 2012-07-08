@@ -52,6 +52,14 @@ class HttpBasicControllerTest < ActionController::TestCase
     assert_equal 'No user', response.body
   end
 
+  test "reset user credentials in header" do
+    set_http_basic_user @user, 'pa55w0rd'
+    set_http_basic_user nil
+    get :show
+    assert_nil assigns(:current_user)
+    assert_equal 'No user', response.body
+  end
+
   test "mocked user credentials in header" do
     set_http_basic_user @user
     get :show

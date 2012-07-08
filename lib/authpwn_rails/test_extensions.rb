@@ -58,7 +58,12 @@ module ControllerTestExtensions
   # Tests that need to disable transactional fixures should specify the user's
   # password.
   def set_http_basic_user(user, password = nil)
-    unless password
+    if user.nil?
+      request.env.delete 'HTTP_AUTHORIZATION'
+      return self
+    end
+
+    if password.nil?
       password = 'password'
       credential = Credentials::Password.where(:user_id => user.id).first
       if credential
@@ -78,7 +83,7 @@ module ControllerTestExtensions
 
     request.env['HTTP_AUTHORIZATION'] =
         "Basic #{::Base64.strict_encode64("#{email}:#{password}")}"
-    user
+    self
   end
 end  # module Authpwn::ControllerTestExtensions
 
