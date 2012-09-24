@@ -1,10 +1,4 @@
 language: ruby
-before_script:
-  - "sudo apt-get install -y ruby rubygems"
-  - "sudo -i gem install json"
-  - "sudo script/git_user/setup git $USER"
-  - "mysql -e 'create database gitty_test;'"
-  - "rake db:migrate"
 env:
   - DB=mysql
   - DB=pg DB_USER=postgres
