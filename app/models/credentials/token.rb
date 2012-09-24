@@ -16,18 +16,18 @@ end
 
 # :namespace
 module Credentials
-  
+
 # Associates a secret token code with the account.
 #
 # Subclasses of this class are in the tokens namespace.
 class Token < ::Credential
   # The secret token code.
   alias_attribute :code, :name
-  # Token names are random, so we can expect they'll be unique across the entire
-  # namespace. We need this check to enforce name uniqueness across different
-  # token types. 
+  # Token names are random, so we can expect they'll be unique across the
+  # entire namespace. We need this check to enforce name uniqueness across
+  # different token types.
   validates :name, :format => /^[A-Za-z0-9\_\-]+$/, :presence => true,
-                   :uniqueness => true 
+                   :uniqueness => true
 
   # Authenticates a user using a secret token code.
   #
@@ -40,7 +40,7 @@ class Token < ::Credential
     credential = self.with_code code
     credential ? credential.authenticate : :invalid
   end
-  
+
   # The token matching a secret code.
   def self.with_code(code)
     # NOTE 1: The where query must be performed off the root type, otherwise
@@ -51,14 +51,14 @@ class Token < ::Credential
     #         pre-fetch them.
     credential = Credential.where(:name => code).
                             includes(:user => :credentials).first
-    
+
     if credential.is_a? Credentials::Token
       credential
     else
       nil
     end
   end
-  
+
   # Authenticates a user using this token.
   #
   # The token will be spent on successful authentication. One-time tokens are
@@ -73,7 +73,7 @@ class Token < ::Credential
     spend
     user
   end
-  
+
   # Updates the token's state to reflect that it was used for authentication.
   #
   # Tokens may become invalid after they are spent.
@@ -85,12 +85,12 @@ class Token < ::Credential
 
   # Creates a new random token for a user.
   #
-  # Args:
-  #   user:: the User who will be authenticated by the token
-  #   key:: optional data associated with the token
-  #   klass:: class that will be instantiated (should be a subclass of Token)
-  #
-  # Returns a newly created and saved token with a random code.
+  # @param [User] user the user who will be authenticated by the token
+  # @param [String] key data associated with the token
+  # @param [Class] klass the ActiveRecord class that will be instantiated;
+  #     it should be a subclass of Token
+  # @return [Credentials::Token] a newly created and saved token with a random
+  #     code
   def self.random_for(user, key = nil, klass = nil)
     klass ||= self
     if key.nil?
@@ -102,15 +102,12 @@ class Token < ::Credential
     token.save!
     token
   end
-  
-  if SecureRandom.respond_to? :urlsafe_base64
-    # Generates a random token code.
-    def self.random_code
-      SecureRandom.urlsafe_base64(32)
-    end
-  else
+
+  # Generates a random token code.
+  def self.random_code
+    SecureRandom.urlsafe_base64(32)
   end
-  
+
   # Use codes instead of exposing ActiveRecord IDs.
   def to_param
     code
