@@ -4,7 +4,10 @@ class ActionController::TestCase
     @routes = ActionController::Routing::RouteSet.new
     @routes.draw do
       resource :cookie, :controller => 'cookie' do
-        collection { get :bouncer }
+        collection do
+          get :bouncer
+          put :update
+        end
       end
       resource :http_basic, :controller => 'http_basic' do
         collection { get :bouncer }
@@ -22,6 +25,6 @@ class ActionController::TestCase
     ApplicationController.send :include, @routes.url_helpers
     ActionMailer::Base.send :include, @routes.url_helpers
   end
-  
+
   setup :setup_routes
 end

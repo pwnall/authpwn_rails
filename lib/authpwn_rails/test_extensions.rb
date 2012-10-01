@@ -6,7 +6,7 @@ module TestExtensions
   # Stubs User#auth_bounce_reason to block a given credential.
   #
   # The default implementation of User#auth_bounce_reason always returns nil.
-  # Your application's implementation might differ. Either way, the method is 
+  # Your application's implementation might differ. Either way, the method is
   # replaced for the duration of the block, such that it returns :block if
   # the credential matches the given argument, and nil otherwise.
   def with_blocked_credential(blocked_credential, reason = :blocked, &block)
@@ -19,7 +19,7 @@ module TestExtensions
         credential == blocked_credential ? reason : nil
       end
     end
-    
+
     begin
       yield
     ensure
@@ -40,13 +40,23 @@ end
 module ControllerTestExtensions
   # Sets the authenticated user in the test session.
   def set_session_current_user(user)
-    request.session[:user_exuid] = user ? user.to_param : nil
+    if user
+      # Avoid database inserts, if at all possible.
+      if token = Tokens::SessionUid.where(:user_id => user.id).first
+        token.spend  # Only bump updated_at if necessary.
+      else
+        token = Tokens::SessionUid.random_for user, '127.0.0.1', 'UnitTests'
+      end
+      request.session[:authpwn_suid] = token.suid
+    else
+      request.session.delete :authpwn_suid
+    end
   end
-  
+
   # The authenticated user in the test session.
   def session_current_user
-    return nil unless user_param = request.session[:user_exuid]
-    User.find_by_param user_param
+    return nil unless suid = request.session[:authpwn_suid]
+    Credentials::Token.with_code(suid).user
   end
 
   # Sets the HTTP Authentication header.

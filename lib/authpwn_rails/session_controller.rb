@@ -9,7 +9,7 @@ module Authpwn
 # Session.
 module SessionController
   extend ActiveSupport::Concern
-  
+
   included do
     skip_filter :authenticate_using_session
     authenticates_using_session :except => [:create, :reset_password, :token]
@@ -33,7 +33,7 @@ module SessionController
           format.json { render :json => {} }
         end
       end
-    else      
+    else
       home
       unless performed?
         respond_to do |format|
@@ -48,17 +48,17 @@ module SessionController
       end
     end
   end
-  
+
   # POST /session
   def create
     # Workaround for lack of browser support for the formaction attribute.
     return reset_password if params[:reset_password]
-    
+
     @redirect_url = params[:redirect_url] || session_url
     @email = params[:email]
     auth = User.authenticate_signin @email, params[:password]
-    self.current_user = auth unless auth.kind_of? Symbol
-        
+    self.set_session_current_user auth unless auth.kind_of? Symbol
+
     respond_to do |format|
       if current_user
         format.html { redirect_to @redirect_url }
@@ -80,17 +80,17 @@ module SessionController
       end
     end
   end
-  
+
   # POST /session/reset_password
   def reset_password
     @email = params[:email]
     credential = Credentials::Email.with @email
-    
+
     if user = (credential && credential.user)
       token = Tokens::PasswordReset.random_for user
       ::SessionMailer.reset_password_email(@email, token, root_url).deliver
     end
-     
+
     respond_to do |format|
       if user
         format.html do
@@ -109,7 +109,7 @@ module SessionController
       end
     end
   end
-  
+
   # GET /session/token/token-code
   def token
     if token = Credentials::Token.with_code(params[:code])
@@ -117,7 +117,7 @@ module SessionController
     else
       auth = :invalid
     end
-        
+
     if auth.is_a? Symbol
       error_text = bounce_notice_text auth
       respond_to do |format|
@@ -128,7 +128,7 @@ module SessionController
         format.json { render :json => { :error => auth, :text => error_text } }
       end
     else
-      self.current_user = auth
+      self.set_session_current_user auth
       home_with_token token
       unless performed?
         respond_to do |format|
@@ -148,7 +148,7 @@ module SessionController
 
   # DELETE /session
   def destroy
-    self.current_user = nil
+    self.set_session_current_user nil
     respond_to do |format|
       format.html { redirect_to session_url }
       format.json { head :ok }
@@ -174,14 +174,14 @@ module SessionController
       end
     end
   end
-  
+
   # POST /session/change_password
   def change_password
     unless current_user
       bounce_user
       return
     end
-    
+
     @credential = current_user.credentials.
                                find { |c| c.is_a? Credentials::Password }
     if @credential
@@ -222,18 +222,18 @@ module SessionController
   def home
   end
   private :home
-  
+
   # Hook for setting up the welcome view.
   def welcome
   end
   private :welcome
-  
+
   # Hook for setting up the home view after token-based authentication.
   def home_with_token(token)
   end
   private :home_with_token
 
-  # Hook for customizing the bounce notification text.    
+  # Hook for customizing the bounce notification text.
   def bounce_notice_text(reason)
     case reason
     when :invalid
