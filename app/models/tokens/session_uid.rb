@@ -8,6 +8,15 @@ class SessionUid < Credentials::Token
   # The IP address and User-Agent string of the browser using this session.
   store :key, :accessors => [:browser_ip, :browser_ua]
 
+  # The User-Agent header of the browser that received this suid.
+  validates :browser_ua, :presence => true
+
+  # The IP of the computer that received this suid.
+  validates :browser_ip, :presence => true
+
+  # Decent compromise between convenience and security.
+  self.expires_after = 14.days
+
   # Creates a new session UID token for a user.
   #
   # @param [User] user the user authenticated using this session
@@ -15,7 +24,7 @@ class SessionUid < Credentials::Token
   # @param [String] browser_ua the User-Agent of the browser used for this
   #                            session
   def self.random_for(user, browser_ip, browser_ua)
-    browser_ua = browser_ua[1, 1536] if browser_ua.length > 1536
+    browser_ua = browser_ua[0, 1536] if browser_ua.length > 1536
     key = { :browser_ip => browser_ip, :browser_ua => browser_ua }
     super user, key, self
   end
@@ -36,15 +45,15 @@ class SessionUid < Credentials::Token
   #
   # Note that update_interval controls the precision of the inactivity period
   # computation.
-  cattr_accessor :expire_after
-  self.expire_after = 1.month
+  cattr_accessor :expires_after
+  self.expires_after = 1.month
 
   # Garbage-collects database records of expired sessions.
   #
   # This method should be called periodically to keep the size of the session
   # table under control.
   def self.remove_expired
-    self.where('updated_at < ?', Time.now - expire_after).delete_all
+    self.where('updated_at < ?', Time.now - expires_after).delete_all
     self
   end
 end  # class Tokens::SessionUid

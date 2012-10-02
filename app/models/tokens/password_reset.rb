@@ -1,8 +1,11 @@
 # :namespace
 module Tokens
-  
+
 # Lets the user to change their password without knowing the old one.
 class PasswordReset < OneTime
+  # Decent compromise between convenience and security.
+  self.expires_after = 3.days
+
   # Blanks the user's old password, so the new password form won't ask for it.
   #
   # Returns the token instance.
@@ -14,7 +17,7 @@ class PasswordReset < OneTime
       super
     end
   end
-  
+
   # The credential that is removed by this token.
   #
   # This method might return nil if a user initiates password recovery multiple

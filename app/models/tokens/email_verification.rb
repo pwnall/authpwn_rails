@@ -12,6 +12,9 @@ class EmailVerification < OneTime
   alias_attribute :email, :key
   validates :email, :presence => true
 
+  # Decent compromise between convenience and security.
+  self.expires_after = 3.days
+
   # Creates a token with a random code that verifies the given e-mail address.
   def self.random_for(email_credential)
     super email_credential.user, email_credential.email, self

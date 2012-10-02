@@ -108,6 +108,14 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_match(/Invalid/, flash[:alert])
   end
 
+  test "create does not log in with expired password" do
+    post :create, :email => @email_credential.email, :password => 'fail'
+    assert_redirected_to new_session_url
+    assert_nil assigns(:current_user), 'instance variable'
+    assert_nil session_current_user, 'session'
+    assert_match(/Invalid/, flash[:alert])
+  end
+
   test "create does not log in blocked accounts" do
     with_blocked_credential @email_credential do
       post :create, :email => @email_credential.email, :password => 'password'

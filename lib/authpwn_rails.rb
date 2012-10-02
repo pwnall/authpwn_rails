@@ -3,8 +3,10 @@ require 'active_support'
 # :nodoc: namespace
 module Authpwn
   extend ActiveSupport::Autoload
-  
+
   autoload :CredentialModel, 'authpwn_rails/credential_model.rb'
+  autoload :CurrentUser, 'authpwn_rails/current_user.rb'
+  autoload :Expires, 'authpwn_rails/expires.rb'
   autoload :SessionController, 'authpwn_rails/session_controller.rb'
   autoload :SessionMailer, 'authpwn_rails/session_mailer.rb'
   autoload :UserModel, 'authpwn_rails/user_model.rb'
@@ -17,7 +19,6 @@ module Authpwn
   end
 end
 
-require 'authpwn_rails/current_user.rb'
 require 'authpwn_rails/facebook_session.rb'
 require 'authpwn_rails/http_basic.rb'
 require 'authpwn_rails/routes.rb'

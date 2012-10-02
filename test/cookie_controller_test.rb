@@ -2,7 +2,7 @@ require File.expand_path('../test_helper', __FILE__)
 
 # Mock controller used for testing session handling.
 class CookieController < ApplicationController
-  authenticates_using_session
+  authenticates_using_session :except => :update
 
   def show
     if current_user
@@ -13,7 +13,12 @@ class CookieController < ApplicationController
   end
 
   def update
-    set_session_current_user params[:ex_uid]
+    if params[:exuid].blank?
+      set_session_current_user nil
+    else
+      set_session_current_user User.find_by_param(params[:exuid])
+    end
+    render :text => ''
   end
 
   def bouncer
@@ -65,12 +70,13 @@ class CookieControllerTest < ActionController::TestCase
 
   test "valid suid in session is discarded if the session is old" do
     request.session[:authpwn_suid] = @token.suid
-    @token.updated_at = Time.now - 5.minutes
+    @token.updated_at = Time.now - 3.months
     @token.save!
     get :show
     assert_response :success
     assert_nil assigns(:current_user), 'current_user set'
-    assert_nil Credential.with_code(@token.suid), 'session token not destroyed'
+    assert_nil Credentials::Token.with_code(@token.suid),
+               'session token not destroyed'
   end
 
   test "invalid suid in session" do
@@ -79,6 +85,112 @@ class CookieControllerTest < ActionController::TestCase
     get :show
     assert_response :success
     assert_nil assigns(:current_user)
+  end
+
+  test "set_session_current_user creates new token by default" do
+    assert_difference 'Credential.count', 1 do
+      put :update, :exuid => @user.exuid
+    end
+    assert_response :success
+    assert_not_equal @token.suid, request.session[:authpwn_suid]
+
+    get :show
+    assert_response :success
+    assert_equal @user, assigns(:current_user)
+  end
+
+  test "set_session_current_user reuses existing token when suitable" do
+    request.session[:authpwn_suid] = @token.suid
+    assert_no_difference 'Credential.count', 'existing token not reused' do
+      put :update, :exuid => @user.exuid
+    end
+    assert_response :success
+    assert_equal @token.suid, request.session[:authpwn_suid]
+
+    get :show
+    assert_response :success
+    assert_equal @user, assigns(:current_user)
+  end
+
+  test "set_session_current_user refreshes old token" do
+    @token.updated_at = Time.now - 1.day
+    request.session[:authpwn_suid] = @token.suid
+    assert_no_difference 'Credential.count', 'existing token not reused' do
+      put :update, :exuid => @user.exuid
+    end
+    assert_response :success
+    assert_operator @token.reload.updated_at, :>=, Time.now - 1.hour,
+        'Old token not refreshed'
+
+    get :show
+    assert_response :success
+    assert_equal @user, assigns(:current_user)
+  end
+
+  test "set_session_current_user creates new token if old token is invalid" do
+    @token.destroy
+    request.session[:authpwn_suid] = @token.suid
+    assert_difference 'Credential.count', 1, 'session token not created' do
+      put :update, :exuid => @user.exuid
+    end
+    assert_response :success
+    assert_not_equal @token.suid, request.session[:authpwn_suid]
+
+    get :show
+    assert_response :success
+    assert_equal @user, assigns(:current_user)
+  end
+
+  test "set_session_current_user switches users correctly" do
+    old_token = credentials(:jane_session_token)
+    request.session[:authpwn_suid] = old_token.suid
+    assert_no_difference 'Credential.count',
+        "old user's token not destroyed or no new token created" do
+      put :update, :exuid => @user.exuid
+    end
+    assert_response :success
+    assert_nil Credentials::Token.with_code(old_token.suid),
+               "old user's token not destroyed"
+    assert_not_equal @token.suid, request.session[:authpwn_suid]
+
+    get :show
+    assert_response :success
+    assert_equal @user, assigns(:current_user)
+  end
+
+  test "set_session_current_user reuses token when switching users" do
+    @token.destroy
+    request.session[:authpwn_suid] = credentials(:jane_session_token).suid
+    assert_no_difference 'Credential.count',
+        "old user's token not destroyed or new user's token not created" do
+      put :update, :exuid => @user.exuid
+    end
+    assert_response :success
+
+    get :show
+    assert_response :success
+    assert_equal @user, assigns(:current_user)
+  end
+
+  test "set_session_current_user logs off a user correctly" do
+    request.session[:authpwn_suid] = @token.suid
+    assert_difference 'Credential.count', -1, 'token not destroyed' do
+      put :update, :exuid => ''
+    end
+    assert_response :success
+    assert_nil request.session[:authpwn_suid]
+
+    get :show
+    assert_response :success
+    assert_equal nil, assigns(:current_user)
+  end
+
+  test "set_session_current_user behaves when no user is logged off" do
+    assert_no_difference 'Credential.count' do
+      put :update, :exuid => ''
+    end
+    assert_response :success
+    assert_nil request.session[:authpwn_suid]
   end
 
   test "valid user_id bounced" do

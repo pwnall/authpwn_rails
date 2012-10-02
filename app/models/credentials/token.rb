@@ -29,6 +29,12 @@ class Token < ::Credential
   validates :name, :format => /^[A-Za-z0-9\_\-]+$/, :presence => true,
                    :uniqueness => true
 
+  # Tokens can expire. This is a good idea most of the time, because token
+  # codes are supposed to be used quickly.
+  include Authpwn::Expires
+  # Force individual token sub-classes to set their own expiration times.
+  self.expires_after = -1.hour  # Tokens will already be expired when created.
+
   # Authenticates a user using a secret token code.
   #
   # The token will be spent on successful authentication. One-time tokens are
@@ -67,6 +73,10 @@ class Token < ::Credential
   # Returns the authenticated User instance, or a symbol indicating the reason
   # why the (potentially valid) token code was rejected.
   def authenticate
+    if expired?
+      destroy
+      return :invalid
+    end
     if bounce = user.auth_bounce_reason(self)
       return bounce
     end

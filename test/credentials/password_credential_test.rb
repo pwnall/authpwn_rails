@@ -1,61 +1,79 @@
 require File.expand_path('../../test_helper', __FILE__)
 
-class PasswordCredentialTest < ActiveSupport::TestCase  
+class PasswordCredentialTest < ActiveSupport::TestCase
   def setup
     @credential = Credentials::Password.new :password => 'awesome',
                                             :password_confirmation => 'awesome'
     @credential.user = users(:bill)
   end
-  
+
+  def teardown
+    # Undo configuration changes.
+    Credentials::Password.expires_after = nil
+  end
+
   test 'setup' do
     assert @credential.valid?
   end
-    
+
   test 'key not required' do
     @credential.key = nil
     assert @credential.valid?
   end
-  
+
   test 'user presence' do
     @credential.user = nil
     assert !@credential.valid?
   end
-  
+
   test 'user uniqueness' do
     @credential.user = users(:john)
     assert !@credential.valid?
   end
-  
+
   test 'password confirmation' do
     @credential.password_confirmation = 'not awesome'
     assert !@credential.valid?
   end
-  
+
   test 'password required' do
     @credential.password = @credential.password_confirmation = nil
     assert !@credential.valid?
   end
-  
+
   test 'check_password' do
     assert_equal true, @credential.check_password('awesome')
     assert_equal false, @credential.check_password('not awesome'),
                  'Bogus password'
     assert_equal false, @credential.check_password('password'),
-                 "Another user's password" 
+                 "Another user's password"
   end
-  
+
+  test 'expired?' do
+    Credentials::Password.expires_after = 1.month
+    @credential.updated_at = Time.now
+    assert_equal false, @credential.expired?
+    @credential.updated_at = Time.now - 1.year
+    assert_equal true, @credential.expired?
+    Credentials::Password.expires_after = nil
+    assert_equal false, @credential.expired?
+  end
+
   test 'authenticate' do
     assert_equal users(:bill), @credential.authenticate('awesome')
     assert_equal :invalid, @credential.authenticate('not awesome')
+    Credentials::Password.expires_after = 1.month
+    @credential.updated_at = Time.now - 1.year
+    assert_equal :expired, @credential.authenticate('awesome')
   end
-  
+
   test 'authenticate calls User#auth_bounce_reason' do
     user = @credential.user
     flexmock(user).should_receive(:auth_bounce_reason).and_return(:reason)
     assert_equal :reason, @credential.authenticate('awesome')
     assert_equal :invalid, @credential.authenticate('not awesome')
   end
-    
+
   test 'authenticate_email' do
     assert_equal users(:john),
         Credentials::Password.authenticate_email('john@gmail.com', 'password')
