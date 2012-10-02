@@ -11,7 +11,7 @@ class AllGenerator < Rails::Generators::Base
         File.join('db', 'migrate', '20100725000001_create_users.rb')
     copy_file 'users.yml', File.join('test', 'fixtures', 'users.yml')
   end
-  
+
   def create_credential_model
     copy_file 'credential.rb', File.join('app', 'models', 'credential.rb')
     copy_file '003_create_credentials.rb',
@@ -19,17 +19,17 @@ class AllGenerator < Rails::Generators::Base
     copy_file 'credentials.yml',
         File.join('test', 'fixtures', 'credentials.yml')
   end
-  
+
   def create_session_controller
     copy_file 'session_controller.rb',
-              File.join('app', 'controllers', 'session_controller.rb')    
+              File.join('app', 'controllers', 'session_controller.rb')
     copy_file File.join('session_controller_test.rb'),
               File.join('test', 'functional', 'session_controller_test.rb')
 
     route "authpwn_session"
     route "root :to => 'session#show'"
   end
-  
+
   def create_session_views
     copy_file File.join('session', 'forbidden.html.erb'),
               File.join('app', 'views', 'session', 'forbidden.html.erb')
@@ -57,6 +57,11 @@ class AllGenerator < Rails::Generators::Base
     copy_file File.join('session_mailer', 'reset_password_email.text.erb'),
               File.join('app', 'views', 'session_mailer',
                         'reset_password_email.text.erb')
+  end
+
+  def create_initializer
+    copy_file 'initializer.rb',
+              File.join('config', 'initializers', 'authpwn.rb')
   end
 end  # class Authpwn::AllGenerator
 

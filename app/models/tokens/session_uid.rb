@@ -33,20 +33,13 @@ class SessionUid < Credentials::Token
   #
   # When a session UID is used to authenticate a user, its updated_at time is
   # refreshed if it differs from the current time by this much.
-  cattr_accessor :update_interval, :instance_writer => false
-  self.update_interval = 1.hour
+  class_attribute :updates_after, :instance_writer => false
+  self.updates_after = 1.hour
 
   # Updates the time associated with the session.
   def spend
-    self.touch if Time.now - updated_at >= update_interval
+    self.touch if Time.now - updated_at >= updates_after
   end
-
-  # Period of inactivity after which session UIDs become invalid.
-  #
-  # Note that update_interval controls the precision of the inactivity period
-  # computation.
-  cattr_accessor :expires_after
-  self.expires_after = 1.month
 
   # Garbage-collects database records of expired sessions.
   #

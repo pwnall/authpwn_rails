@@ -238,6 +238,8 @@ module SessionController
     case reason
     when :invalid
       'Invalid e-mail or password'
+    when :expired
+      'Password expired. Please click "Forget password"'
     when :blocked
       'Account blocked. Please verify your e-mail address'
     end

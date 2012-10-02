@@ -63,7 +63,6 @@ class SessionControllerTest < ActionController::TestCase
                'Password not cleared'
   end
 
-
   test "password change form" do
     set_session_current_user @user
     get :password_change

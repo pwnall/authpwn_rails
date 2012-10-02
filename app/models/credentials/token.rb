@@ -32,8 +32,6 @@ class Token < ::Credential
   # Tokens can expire. This is a good idea most of the time, because token
   # codes are supposed to be used quickly.
   include Authpwn::Expires
-  # Force individual token sub-classes to set their own expiration times.
-  self.expires_after = -1.hour  # Tokens will already be expired when created.
 
   # Authenticates a user using a secret token code.
   #

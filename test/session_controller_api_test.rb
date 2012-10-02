@@ -109,11 +109,13 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "create does not log in with expired password" do
-    post :create, :email => @email_credential.email, :password => 'fail'
+    @password_credential.updated_at = Time.now - 2.years
+    @password_credential.save!
+    post :create, :email => @email_credential.email, :password => 'password'
     assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
-    assert_match(/Invalid/, flash[:alert])
+    assert_match(/expired/, flash[:alert])
   end
 
   test "create does not log in blocked accounts" do
@@ -142,6 +144,19 @@ class SessionControllerApiTest < ActionController::TestCase
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'invalid', data['error']
     assert_match(/invalid/i , data['text'])
+    assert_nil assigns(:current_user), 'instance variable'
+    assert_nil session_current_user, 'session'
+  end
+
+  test "create by json does not log in with expired password" do
+    @password_credential.updated_at = Time.now - 2.years
+    @password_credential.save!
+    post :create, :email => @email_credential.email, :password => 'password',
+                  :format => 'json'
+    assert_response :ok
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal 'expired', data['error']
+    assert_match(/expired/i , data['text'])
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
   end

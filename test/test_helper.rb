@@ -21,3 +21,6 @@ require 'helpers/autoload_path.rb'
 require 'helpers/db_setup.rb'
 require 'helpers/fbgraph.rb'
 require 'helpers/routes.rb'
+
+# Simulate Rails' initializer loading.
+require 'authpwn_rails/generators/templates/initializer.rb'

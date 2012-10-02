@@ -5,11 +5,11 @@ class PasswordCredentialTest < ActiveSupport::TestCase
     @credential = Credentials::Password.new :password => 'awesome',
                                             :password_confirmation => 'awesome'
     @credential.user = users(:bill)
+    @_password_expires = Credentials::Password.expires_after
   end
 
   def teardown
-    # Undo configuration changes.
-    Credentials::Password.expires_after = nil
+    Credentials::Password.expires_after = @_password_expires
   end
 
   test 'setup' do
@@ -50,16 +50,16 @@ class PasswordCredentialTest < ActiveSupport::TestCase
   end
 
   test 'expired?' do
-    Credentials::Password.expires_after = 1.month
     @credential.updated_at = Time.now
     assert_equal false, @credential.expired?
-    @credential.updated_at = Time.now - 1.year
+    @credential.updated_at = Time.now - 2.years
     assert_equal true, @credential.expired?
     Credentials::Password.expires_after = nil
     assert_equal false, @credential.expired?
   end
 
   test 'authenticate' do
+    @credential.updated_at = Time.now
     assert_equal users(:bill), @credential.authenticate('awesome')
     assert_equal :invalid, @credential.authenticate('not awesome')
     Credentials::Password.expires_after = 1.month
@@ -70,6 +70,7 @@ class PasswordCredentialTest < ActiveSupport::TestCase
   test 'authenticate calls User#auth_bounce_reason' do
     user = @credential.user
     flexmock(user).should_receive(:auth_bounce_reason).and_return(:reason)
+    @credential.updated_at = Time.now
     assert_equal :reason, @credential.authenticate('awesome')
     assert_equal :invalid, @credential.authenticate('not awesome')
   end
