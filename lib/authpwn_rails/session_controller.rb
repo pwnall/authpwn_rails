@@ -13,6 +13,10 @@ module SessionController
   included do
     skip_filter :authenticate_using_session
     authenticates_using_session :except => [:create, :reset_password, :token]
+
+    #
+    class_attribute :auto_purge_tokens
+    self.auto_purge_tokens = true
   end
 
   # GET /session/new
@@ -57,7 +61,11 @@ module SessionController
     @redirect_url = params[:redirect_url] || session_url
     @email = params[:email]
     auth = User.authenticate_signin @email, params[:password]
-    self.set_session_current_user auth unless auth.kind_of? Symbol
+    unless auth.kind_of? Symbol
+      self.set_session_current_user auth
+
+      Token::SessionUid.remove_expired
+    end
 
     respond_to do |format|
       if current_user
