@@ -19,6 +19,11 @@ class SessionControllerApiTest < ActionController::TestCase
     @email_credential = credentials(:john_email)
     @password_credential = credentials(:john_password)
     @token_credential = credentials(:john_token)
+    @_auto_purge_sessions = BareSessionController.auto_purge_sessions
+  end
+
+  teardown do
+    BareSessionController.auto_purge_sessions = @_auto_purge_sessions
   end
 
   test "show renders welcome without a user" do
@@ -82,6 +87,28 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_redirected_to session_url
   end
 
+  test "create purges sessions when logging in" do
+    BareSessionController.auto_purge_sessions = true
+    old_token = credentials(:jane_session_token)
+    old_token.updated_at = Time.now - 1.year
+    old_token.save!
+    post :create, :email => @email_credential.email, :password => 'password'
+    assert_equal @user, session_current_user, 'session'
+    assert_nil Credentials::Token.with_code(old_token.code),
+               'old session not purged'
+  end
+
+  test "create does not purge sessions if auto_purge_sessions is false" do
+    BareSessionController.auto_purge_sessions = false
+    old_token = credentials(:jane_session_token)
+    old_token.updated_at = Time.now - 1.year
+    old_token.save!
+    post :create, :email => @email_credential.email, :password => 'password'
+    assert_equal @user, session_current_user, 'session'
+    assert_equal old_token, Credentials::Token.with_code(old_token.code),
+               'old session purged'
+  end
+
   test "create by json logs in with good account details" do
     post :create, :email => @email_credential.email, :password => 'password',
                   :format => 'json'
@@ -91,6 +118,19 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_equal session[:_csrf_token], data['csrf']
     assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
+  end
+
+  test "create by json purges sessions when logging in" do
+    BareSessionController.auto_purge_sessions = true
+    old_token = credentials(:jane_session_token)
+    old_token.updated_at = Time.now - 1.year
+    old_token.save!
+    post :create, :email => @email_credential.email, :password => 'password',
+                  :format => 'json'
+    assert_response :ok
+    assert_equal @user, session_current_user, 'session'
+    assert_nil Credentials::Token.with_code(old_token.code),
+               'old session not purged'
   end
 
   test "create redirects properly with good account details" do
@@ -116,6 +156,17 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
     assert_match(/expired/, flash[:alert])
+  end
+
+  test "create does not purge sessions if not logged in" do
+    BareSessionController.auto_purge_sessions = true
+    old_token = credentials(:jane_session_token)
+    old_token.updated_at = Time.now - 1.year
+    old_token.save!
+    post :create, :email => @email_credential.email, :password => 'fail'
+    assert_nil session_current_user, 'session'
+    assert_equal old_token, Credentials::Token.with_code(old_token.code),
+               'old session purged'
   end
 
   test "create does not log in blocked accounts" do

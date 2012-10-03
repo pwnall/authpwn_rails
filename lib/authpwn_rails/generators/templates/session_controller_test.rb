@@ -16,6 +16,18 @@ class SessionControllerTest < ActionController::TestCase
     assert_select 'a[href="/session"][data-method="delete"]', 'Log out'
   end
 
+
+  test "user login works and purges old sessions" do
+    old_token = credentials(:jane_session_token)
+    old_token.updated_at = Time.now - 1.year
+    old_token.save!
+    post :create, :email => @email_credential.email, :password => 'password'
+    assert_equal @user, session_current_user, 'session'
+    assert_redirected_to session_url
+    assert_nil Credentials::Token.with_code(old_token.code),
+               'old session not purged'
+  end
+
   test "user logged in JSON request" do
     set_session_current_user @user
     get :show, :format => 'json'

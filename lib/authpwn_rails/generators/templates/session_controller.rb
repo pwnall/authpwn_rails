@@ -47,6 +47,13 @@ class SessionController < ApplicationController
   end
   private :home_with_token
 
+  # If true, every successful login results in a SQL query that removes expired
+  # session tokens from the database, to keep its size down.
+  #
+  # For better performance, set this to false and periodically call
+  # Tokens::SessionUid.remove_expired in background thread.
+  self.auto_purge_sessions = true
+
   # You shouldn't extend the session controller, so you can benefit from future
   # features. But, if you must, you can do it here.
 end

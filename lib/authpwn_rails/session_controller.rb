@@ -14,9 +14,9 @@ module SessionController
     skip_filter :authenticate_using_session
     authenticates_using_session :except => [:create, :reset_password, :token]
 
-    #
-    class_attribute :auto_purge_tokens
-    self.auto_purge_tokens = true
+    # If set, every successful login will cause a database purge.
+    class_attribute :auto_purge_sessions
+    self.auto_purge_sessions = true
   end
 
   # GET /session/new
@@ -63,8 +63,7 @@ module SessionController
     auth = User.authenticate_signin @email, params[:password]
     unless auth.kind_of? Symbol
       self.set_session_current_user auth
-
-      Token::SessionUid.remove_expired
+      Tokens::SessionUid.remove_expired if auto_purge_sessions
     end
 
     respond_to do |format|
