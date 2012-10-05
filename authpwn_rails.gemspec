@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "authpwn_rails"
-  s.version = "0.12.0"
+  s.version = "0.12.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
-  s.date = "2012-09-24"
+  s.date = "2012-10-05"
   s.description = "Works with Facebook."
   s.email = "victor@costan.us"
   s.extra_rdoc_files = [
@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
     "app/models/tokens/email_verification.rb",
     "app/models/tokens/one_time.rb",
     "app/models/tokens/password_reset.rb",
+    "app/models/tokens/session_uid.rb",
     "authpwn_rails.gemspec",
     "legacy/migrate_011_to_012.rb",
     "legacy/migrate_09_to_010.rb",
@@ -41,12 +42,14 @@ Gem::Specification.new do |s|
     "lib/authpwn_rails/credential_model.rb",
     "lib/authpwn_rails/current_user.rb",
     "lib/authpwn_rails/engine.rb",
+    "lib/authpwn_rails/expires.rb",
     "lib/authpwn_rails/facebook_session.rb",
     "lib/authpwn_rails/generators/all_generator.rb",
     "lib/authpwn_rails/generators/templates/001_create_users.rb",
     "lib/authpwn_rails/generators/templates/003_create_credentials.rb",
     "lib/authpwn_rails/generators/templates/credential.rb",
     "lib/authpwn_rails/generators/templates/credentials.yml",
+    "lib/authpwn_rails/generators/templates/initializer.rb",
     "lib/authpwn_rails/generators/templates/session/forbidden.html.erb",
     "lib/authpwn_rails/generators/templates/session/home.html.erb",
     "lib/authpwn_rails/generators/templates/session/new.html.erb",
@@ -79,6 +82,7 @@ Gem::Specification.new do |s|
     "test/credentials/one_time_token_credential_test.rb",
     "test/credentials/password_credential_test.rb",
     "test/credentials/password_reset_token_test.rb",
+    "test/credentials/session_uid_token_test.rb",
     "test/credentials/token_crendential_test.rb",
     "test/facebook_controller_test.rb",
     "test/fixtures/bare_session/forbidden.html.erb",
@@ -94,9 +98,11 @@ Gem::Specification.new do |s|
     "test/helpers/routes.rb",
     "test/helpers/view_helpers.rb",
     "test/http_basic_controller_test.rb",
+    "test/initializer_test.rb",
     "test/routes_test.rb",
     "test/session_controller_api_test.rb",
     "test/session_mailer_api_test.rb",
+    "test/test_extensions_test.rb",
     "test/test_helper.rb",
     "test/user_extensions/email_field_test.rb",
     "test/user_extensions/facebook_fields_test.rb",
