@@ -8,11 +8,11 @@ class Engine < Rails::Engine
   generators do
     require 'authpwn_rails/generators/all_generator.rb'
   end
-  
+
   initializer 'authpwn.rspec.extensions' do
     begin
       require 'rspec'
-      
+
       RSpec.configure do |c|
         c.include Authpwn::TestExtensions
         c.include Authpwn::ControllerTestExtensions

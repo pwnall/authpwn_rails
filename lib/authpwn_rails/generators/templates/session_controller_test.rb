@@ -16,7 +16,6 @@ class SessionControllerTest < ActionController::TestCase
     assert_select 'a[href="/session"][data-method="delete"]', 'Log out'
   end
 
-
   test "user login works and purges old sessions" do
     old_token = credentials(:jane_session_token)
     old_token.updated_at = Time.now - 1.year
@@ -49,7 +48,7 @@ class SessionControllerTest < ActionController::TestCase
     assert_equal({}, ActiveSupport::JSON.decode(response.body))
   end
 
-  test "user signup page" do
+  test "user login page" do
     get :new
     assert_template :new
 
