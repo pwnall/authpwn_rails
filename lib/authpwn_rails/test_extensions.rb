@@ -56,7 +56,7 @@ module ControllerTestExtensions
   # The authenticated user in the test session.
   def session_current_user
     return nil unless suid = request.session[:authpwn_suid]
-    Credentials::Token.with_code(suid).user
+    Tokens::Base.with_code(suid).first!.user
   end
 
   # Sets the HTTP Authentication header.

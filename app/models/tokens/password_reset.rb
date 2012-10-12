@@ -2,7 +2,7 @@
 module Tokens
 
 # Lets the user to change their password without knowing the old one.
-class PasswordReset < OneTime
+class PasswordReset < Tokens::OneTime
   # Decent compromise between convenience and security.
   self.expires_after = 3.days
 

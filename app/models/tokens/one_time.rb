@@ -1,8 +1,8 @@
 # :namespace
 module Tokens
-  
+
 # One-time tokens can only be used once to authenticate an account.
-class OneTime < Credentials::Token
+class OneTime < Tokens::Base
   # Updates the token's state to reflect that it was used for authentication.
   #
   # One-time tokens become invalid after they are spent.

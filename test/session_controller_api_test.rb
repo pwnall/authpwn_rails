@@ -94,7 +94,7 @@ class SessionControllerApiTest < ActionController::TestCase
     old_token.save!
     post :create, :email => @email_credential.email, :password => 'password'
     assert_equal @user, session_current_user, 'session'
-    assert_nil Credentials::Token.with_code(old_token.code),
+    assert_nil Tokens::Base.with_code(old_token.code).first,
                'old session not purged'
   end
 
@@ -105,7 +105,7 @@ class SessionControllerApiTest < ActionController::TestCase
     old_token.save!
     post :create, :email => @email_credential.email, :password => 'password'
     assert_equal @user, session_current_user, 'session'
-    assert_equal old_token, Credentials::Token.with_code(old_token.code),
+    assert_equal old_token, Tokens::Base.with_code(old_token.code).first,
                'old session purged'
   end
 
@@ -129,7 +129,7 @@ class SessionControllerApiTest < ActionController::TestCase
                   :format => 'json'
     assert_response :ok
     assert_equal @user, session_current_user, 'session'
-    assert_nil Credentials::Token.with_code(old_token.code),
+    assert_nil Tokens::Base.with_code(old_token.code).first,
                'old session not purged'
   end
 
@@ -165,7 +165,7 @@ class SessionControllerApiTest < ActionController::TestCase
     old_token.save!
     post :create, :email => @email_credential.email, :password => 'fail'
     assert_nil session_current_user, 'session'
-    assert_equal old_token, Credentials::Token.with_code(old_token.code),
+    assert_equal old_token, Tokens::Base.with_code(old_token.code).first,
                'old session purged'
   end
 
@@ -249,7 +249,7 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_redirected_to session_url
     assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
-    assert_nil Credentials::Token.with_code(@token_credential.code),
+    assert_nil Tokens::Base.with_code(@token_credential.code).first,
                'one-time credential is spent'
   end
 
@@ -263,7 +263,7 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_equal session[:_csrf_token], data['csrf']
     assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
-    assert_nil Credentials::Token.with_code(@token_credential.code),
+    assert_nil Tokens::Base.with_code(@token_credential.code).first,
                'one-time credential is spent'
   end
 

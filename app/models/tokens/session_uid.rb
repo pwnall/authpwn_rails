@@ -1,7 +1,7 @@
 # :namespace
 module Tokens
 
-class SessionUid < Credentials::Token
+class SessionUid < Tokens::Base
   # The session UID.
   alias_attribute :suid, :name
 

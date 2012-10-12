@@ -34,11 +34,20 @@ module UserModel
 
   # Class methods on models that include Authpwn::UserModel.
   module ClassMethods
+    # Scope using the value returned by User#to_param.
+    #
+    # @param [String] param value returned by User#to_param
+    # @return [ActiveRecord::Relation]
+    def with_param(param)
+      where(:exuid => param)
+    end
+
     # Queries the database using the value returned by User#to_param.
     #
-    # Returns nil if no matching User exists.
+    # @deprecated use with_param(param).first or .first! instead
+    # @return [User, nil] nil if no matching User exists.
     def find_by_param(param)
-      where(:exuid => param).first
+      with_param(param).first
     end
 
     # Authenticates a user given the information on a signup form.

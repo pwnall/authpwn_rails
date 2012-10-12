@@ -75,7 +75,7 @@ class CookieControllerTest < ActionController::TestCase
     get :show
     assert_response :success
     assert_nil assigns(:current_user), 'current_user set'
-    assert_nil Credentials::Token.with_code(@token.suid),
+    assert_nil Tokens::Base.with_code(@token.suid).first,
                'session token not destroyed'
   end
 
@@ -149,7 +149,7 @@ class CookieControllerTest < ActionController::TestCase
       put :update, :exuid => @user.exuid
     end
     assert_response :success
-    assert_nil Credentials::Token.with_code(old_token.suid),
+    assert_nil Tokens::Base.with_code(old_token.suid).first,
                "old user's token not destroyed"
     assert_not_equal @token.suid, request.session[:authpwn_suid]
 

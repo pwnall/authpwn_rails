@@ -32,7 +32,7 @@ module ControllerInstanceMethods
   def set_session_current_user(user)
     # Try to reuse existing sessions.
     if session[:authpwn_suid]
-      token = Tokens::SessionUid.with_code session[:authpwn_suid]
+      token = Tokens::SessionUid.with_code(session[:authpwn_suid]).first
       if token
         if token.user == user
           token.touch

@@ -40,6 +40,15 @@ class UserTest < ActiveSupport::TestCase
     assert_equal '56789', users(:john).to_param
   end
 
+  test 'with_param' do
+    assert_equal users(:john), User.with_param(users(:john).to_param).first
+    assert_equal users(:jane), User.with_param(users(:jane).to_param).first!
+    assert_equal nil, User.with_param('bogus id').first
+    assert_raise ActiveRecord::RecordNotFound do
+      User.with_param(nil).first!
+    end
+  end
+
   test 'find_by_param' do
     assert_equal users(:john), User.find_by_param(users(:john).to_param)
     assert_equal users(:jane), User.find_by_param(users(:jane).to_param)

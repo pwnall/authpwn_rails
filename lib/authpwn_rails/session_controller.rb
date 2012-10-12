@@ -119,7 +119,7 @@ module SessionController
 
   # GET /session/token/token-code
   def token
-    if token = Credentials::Token.with_code(params[:code])
+    if token = Tokens::Base.with_code(params[:code]).first
       auth = token.authenticate
     else
       auth = :invalid

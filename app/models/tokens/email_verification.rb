@@ -2,7 +2,7 @@
 module Tokens
 
 # A token that verifies the user's ownership of their e-mail address.
-class EmailVerification < OneTime
+class EmailVerification < Tokens::OneTime
   # The e-mail address verified by this token.
   #
   # Note that it's useful to keep track of the exact e-mail address that the

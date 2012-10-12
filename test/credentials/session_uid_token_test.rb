@@ -78,8 +78,9 @@ class SessionUidTokenTest < ActiveSupport::TestCase
     assert_difference 'Credential.count', -1 do
       Tokens::SessionUid.remove_expired
     end
-    assert_nil Credentials::Token.with_code(old_token.code)
-    assert_equal fresh_token, Credentials::Token.with_code(fresh_token.code)
+    assert_nil Tokens::Base.with_code(old_token.code).first
+    assert_equal fresh_token,
+                 Tokens::Base.with_code(fresh_token.code).first
   end
 
   test 'random_for' do
@@ -88,7 +89,7 @@ class SessionUidTokenTest < ActiveSupport::TestCase
     assert_difference 'Credential.count', 1 do
       credential = Tokens::SessionUid.random_for user, '1.2.3.4', 'Test/UA'
     end
-    saved_credential = Credentials::Token.with_code credential.code
+    saved_credential = Tokens::Base.with_code(credential.code).first
     assert saved_credential, 'token was not saved'
     assert_equal saved_credential, credential, 'wrong token returned'
     assert_equal user, saved_credential.user
