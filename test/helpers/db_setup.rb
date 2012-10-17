@@ -19,6 +19,8 @@ else
                                           :database => ':memory:'
 end
 ActiveRecord::Base.configurations = true
+ActiveRecord::Base.mass_assignment_sanitizer = :strict
+# ActiveRecord::Base.whitelist_attributes = true
 
 ActiveRecord::Migration.verbose = false
 require 'authpwn_rails/generators/templates/001_create_users.rb'

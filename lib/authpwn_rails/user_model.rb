@@ -22,8 +22,6 @@ module UserModel
     # Credentials used to authenticate the user.
     has_many :credentials, :dependent => :destroy, :inverse_of => :user
     validates_associated :credentials
-    # This is safe, because credentials use attr_accessible.
-    accepts_nested_attributes_for :credentials, :allow_destroy => true
 
     # Automatically assign exuid.
     before_validation :set_default_exuid, :on => :create

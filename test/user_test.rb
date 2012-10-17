@@ -56,13 +56,6 @@ class UserTest < ActiveSupport::TestCase
     assert_equal nil, User.find_by_param(nil)
   end
 
-  test 'nested attributes' do
-    @user = User.new :credentials_attributes => { 0 =>
-        {:name => 'test@email.com', :type => 'Credentials::Password'}}
-    assert_equal 1, @user.credentials.length
-    assert_equal 'test@email.com', @user.credentials.first.name
-  end
-
   test 'authenticate_email' do
     assert_equal users(:john),
         User.authenticate_signin('john@gmail.com', 'password')

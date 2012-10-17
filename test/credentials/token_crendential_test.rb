@@ -2,8 +2,8 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class TokenCredentialTest < ActiveSupport::TestCase
   def setup
-    @credential = Tokens::Base.new(
-        :code => 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo')
+    @credential = Tokens::Base.new
+    @credential.code = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
     @credential.user = users(:bill)
   end
 
