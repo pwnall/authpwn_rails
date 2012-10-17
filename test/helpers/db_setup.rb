@@ -18,9 +18,14 @@ else
   ActiveRecord::Base.establish_connection :adapter => 'sqlite3',
                                           :database => ':memory:'
 end
-ActiveRecord::Base.configurations = true
-ActiveRecord::Base.mass_assignment_sanitizer = :strict
-# ActiveRecord::Base.whitelist_attributes = true
+
+class ActiveRecord::Base
+  self.configurations = true
+  self.mass_assignment_sanitizer = :strict
+
+  # Hacky equivalent to config.active_record.whitelist_attributes = true
+  attr_accessible
+end
 
 ActiveRecord::Migration.verbose = false
 require 'authpwn_rails/generators/templates/001_create_users.rb'
@@ -31,7 +36,6 @@ CreateCredentials.migrate :up
 require 'authpwn_rails/generators/templates/user.rb'
 require 'authpwn_rails/generators/templates/credential.rb'
 
-# :nodoc: open TestCase to setup fixtures
 class ActiveSupport::TestCase
   include ActiveRecord::TestFixtures
 
