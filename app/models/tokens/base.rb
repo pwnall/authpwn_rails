@@ -97,7 +97,7 @@ class Base < ::Credential
   def self.random_for(user, key = nil, klass = nil)
     klass ||= self
     token = self.new
-    token.code = random.code
+    token.code = random_code
     token.key = key unless key.nil?
     user.credentials << token
     token.save!

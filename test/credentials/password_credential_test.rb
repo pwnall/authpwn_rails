@@ -2,8 +2,9 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class PasswordCredentialTest < ActiveSupport::TestCase
   def setup
-    @credential = Credentials::Password.new :password => 'awesome',
-                                            :password_confirmation => 'awesome'
+    @credential = Credentials::Password.new
+    @credential.password = 'awesome'
+    @credential.password_confirmation = 'awesome'
     @credential.user = users(:bill)
     @_password_expires = Credentials::Password.expires_after
   end

@@ -2,9 +2,9 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class EmailVerificationTokenTest < ActiveSupport::TestCase
   def setup
-    @credential = Tokens::EmailVerification.new(
-        :code => 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo',
-        :key => 'jane@gmail.com')
+    @credential = Tokens::EmailVerification.new
+    @credential.code = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
+    @credential.key = 'jane@gmail.com'
     @credential.user = users(:jane)
   end
 
