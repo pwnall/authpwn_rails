@@ -1,6 +1,11 @@
 case ENV['DB']
 when /mysql/i
-  `mysql -u root -e "DROP DATABASE IF EXISTS plugin_dev; CREATE DATABASE plugin_dev;"`
+  create_sql = 'CREATE DATABASE plugin_dev DEFAULT CHARACTER SET utf8;'
+  if /:(.*)$/ =~ ENV['DB']
+    create_sql.sub! ';', " DEFAULT COLLATE #{$1};"
+  end
+
+  `mysql -u root -e "DROP DATABASE IF EXISTS plugin_dev; #{create_sql}"`
   ActiveRecord::Base.establish_connection :adapter => 'mysql2',
       :database => 'plugin_dev', :username => 'root', :password => ''
 when /pg/i
