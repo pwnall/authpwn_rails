@@ -30,6 +30,7 @@ module ControllerInstanceMethods
 
   # Sets up the session so that it will authenticate the given user.
   def set_session_current_user(user)
+    self.current_user = user
     # Try to reuse existing sessions.
     if session[:authpwn_suid]
       token = Tokens::SessionUid.with_code(session[:authpwn_suid]).first
@@ -48,7 +49,6 @@ module ControllerInstanceMethods
     else
       session.delete :authpwn_suid
     end
-    self.current_user = user
   end
 
   # Filter that implements authenticates_using_session.

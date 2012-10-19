@@ -106,6 +106,7 @@ class CookieControllerTest < ActionController::TestCase
     end
     assert_response :success
     assert_equal @token.suid, request.session[:authpwn_suid]
+    assert_equal @user, assigns(:current_user)
 
     get :show
     assert_response :success
@@ -121,6 +122,7 @@ class CookieControllerTest < ActionController::TestCase
     assert_response :success
     assert_operator @token.reload.updated_at, :>=, Time.now - 1.hour,
         'Old token not refreshed'
+    assert_equal @user, assigns(:current_user)
 
     get :show
     assert_response :success
@@ -152,6 +154,7 @@ class CookieControllerTest < ActionController::TestCase
     assert_nil Tokens::Base.with_code(old_token.suid).first,
                "old user's token not destroyed"
     assert_not_equal @token.suid, request.session[:authpwn_suid]
+    assert_equal @user, assigns(:current_user)
 
     get :show
     assert_response :success
@@ -166,6 +169,7 @@ class CookieControllerTest < ActionController::TestCase
       put :update, :exuid => @user.exuid
     end
     assert_response :success
+    assert_equal @user, assigns(:current_user)
 
     get :show
     assert_response :success
@@ -179,6 +183,7 @@ class CookieControllerTest < ActionController::TestCase
     end
     assert_response :success
     assert_nil request.session[:authpwn_suid]
+    assert_equal nil, assigns(:current_user)
 
     get :show
     assert_response :success
@@ -191,6 +196,7 @@ class CookieControllerTest < ActionController::TestCase
     end
     assert_response :success
     assert_nil request.session[:authpwn_suid]
+    assert_equal nil, assigns(:current_user)
   end
 
   test "valid user_id bounced" do
