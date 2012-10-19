@@ -62,7 +62,7 @@ module SessionController
     @email = params[:email]
     auth = User.authenticate_signin @email, params[:password]
     unless auth.kind_of? Symbol
-      self.set_session_current_user auth
+      set_session_current_user auth
       Tokens::SessionUid.remove_expired if auto_purge_sessions
     end
 
