@@ -12,8 +12,9 @@ class EmailVerification < Tokens::OneTime
   alias_attribute :email, :key
   validates :email, :presence => true
 
-  # Decent compromise between convenience and security.
-  self.expires_after = 3.days
+  # Verification tokens only work this much time after they have been issued.
+  self.expires_after =
+      Authpwn::Engine.config.authpwn.email_verification_expiration
 
   # Creates a token with a random code that verifies the given e-mail address.
   def self.random_for(email_credential)

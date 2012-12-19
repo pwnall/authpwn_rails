@@ -1,6 +1,6 @@
 # :namespace
 module Credentials
-  
+
 # Associates a Facebook account and OAuth2 token with an account.
 class Facebook < ::Credential
   # The Graph API object ID of the Facebook account.
@@ -20,7 +20,7 @@ class Facebook < ::Credential
   # FBGraph client loaded with this access token.
   def facebook_client
     @client ||= FBGraphRails.fbclient(access_token)
-  end  
+  end
 
   # Finds or creates the model containing a token.
   #
@@ -44,7 +44,7 @@ class Facebook < ::Credential
     end
     credential
   end
-  
+
   # Extracts the Facebook user ID from a OAuth2 token.
   #
   # This used to be a hack that pulled the UID out of an OAuth2 token. The new
@@ -53,9 +53,9 @@ class Facebook < ::Credential
   def self.uid_from_token(access_token)
     FBGraphRails.fbclient(access_token).selection.me.info![:id].to_s
   end
-  
+
   # Forms should not be able to touch any attribute.
   attr_accessible
-end  # class Credentials::Facebook 
+end  # class Credentials::Facebook
 
 end  # namespace Credentials

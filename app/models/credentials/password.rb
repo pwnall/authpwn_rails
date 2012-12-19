@@ -19,7 +19,7 @@ class Password < ::Credential
   # Passwords don't expire by default, because it is non-trivial to get e-mail
   # delivery working in Rails, which is necessary for recovering from expired
   # passwords.
-  self.expires_after = nil
+  self.expires_after = Authpwn::Engine.config.authpwn.password_expiration
 
   # Compares a plain-text password against the password hash in this credential.
   #

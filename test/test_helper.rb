@@ -2,9 +2,8 @@ require 'rubygems'
 require 'test/unit'
 
 require 'action_mailer'
-require 'action_pack'
 require 'active_record'
-require 'active_support'
+require 'rails'
 
 require 'fbgraph_rails'
 require 'fbgraph_rails/controller'
@@ -20,7 +19,11 @@ require 'helpers/action_mailer.rb'
 require 'helpers/autoload_path.rb'
 require 'helpers/db_setup.rb'
 require 'helpers/fbgraph.rb'
+require 'helpers/rails.rb'
 require 'helpers/routes.rb'
 
 # Simulate Rails' initializer loading.
 require 'authpwn_rails/generators/templates/initializer.rb'
+
+# Rails stubbing is only needed by the initializer, and breaks tests.
+require 'helpers/rails_undo.rb'

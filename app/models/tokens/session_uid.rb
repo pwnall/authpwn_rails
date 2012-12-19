@@ -14,8 +14,8 @@ class SessionUid < Tokens::Base
   # The IP of the computer that received this suid.
   validates :browser_ip, :presence => true
 
-  # Decent compromise between convenience and security.
-  self.expires_after = 14.days
+  # Browser users are logged out if they don't hit the app in this much time.
+  self.expires_after = Authpwn::Engine.config.authpwn.session_expiration
 
   # Creates a new session UID token for a user.
   #
@@ -34,7 +34,7 @@ class SessionUid < Tokens::Base
   # When a session UID is used to authenticate a user, its updated_at time is
   # refreshed if it differs from the current time by this much.
   class_attribute :updates_after, :instance_writer => false
-  self.updates_after = 1.hour
+  self.updates_after = Authpwn::Engine.config.authpwn.session_precision
 
   # Updates the time associated with the session.
   def spend

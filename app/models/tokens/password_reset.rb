@@ -3,8 +3,8 @@ module Tokens
 
 # Lets the user to change their password without knowing the old one.
 class PasswordReset < Tokens::OneTime
-  # Decent compromise between convenience and security.
-  self.expires_after = 3.days
+  # Password reset tokens only work this much time after they've been issued.
+  self.expires_after = Authpwn::Engine.config.authpwn.password_reset_expiration
 
   # Blanks the user's old password, so the new password form won't ask for it.
   #
