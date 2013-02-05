@@ -43,7 +43,7 @@ class EmailVerificationTokenTest < ActiveSupport::TestCase
 
   test 'spend verifies the e-mail and destroys the token' do
     email_credential = credentials(:john_email)
-    assert !email_credential.verified, 'bad setup'
+    assert !email_credential.verified?, 'bad setup'
     credential = credentials(:john_email_token)
     assert_equal Tokens::EmailVerification, credential.class, 'bad setup'
 
