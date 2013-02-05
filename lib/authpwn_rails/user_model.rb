@@ -20,7 +20,8 @@ module UserModel
     validates :exuid, :presence => true, :length => 1..32, :uniqueness => true
 
     # Credentials used to authenticate the user.
-    has_many :credentials, :dependent => :destroy, :inverse_of => :user
+    has_many :credentials, :dependent => :destroy, :inverse_of => :user,
+                           :autosave => true
     validates_associated :credentials
 
     # Automatically assign exuid.

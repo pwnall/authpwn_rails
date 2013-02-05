@@ -63,4 +63,15 @@ class UserTest < ActiveSupport::TestCase
         User.authenticate_signin('john@gmail.com', 'pa55w0rd'),
         "Jane's password on John's account"
   end
+
+  test 'autosaves credentials' do
+    user = users(:john)
+    email_credential = user.credentials.
+        find { |c| c.instance_of?(Credentials::Email) }
+    email_credential.verified = true
+    assert email_credential.changed?, 'Broken test assumption'
+    user.save!
+
+    assert !email_credential.changed?, 'Credential not auto-saved'
+  end
 end
