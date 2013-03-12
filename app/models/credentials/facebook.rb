@@ -5,7 +5,7 @@ module Credentials
 class Facebook < ::Credential
   # The Graph API object ID of the Facebook account.
   alias_attribute :facebook_uid, :name
-  validates :name, :format => /^\d+$/, :presence => true,
+  validates :name, :format => /\A\d+\Z/, :presence => true,
        :uniqueness => { :scope => [:type],
        :message => 'Your Facebook user is already associated to an account' }
 
@@ -54,8 +54,10 @@ class Facebook < ::Credential
     FBGraphRails.fbclient(access_token).selection.me.info![:id].to_s
   end
 
-  # Forms should not be able to touch any attribute.
-  attr_accessible
+  if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
+    # Forms should not be able to touch any attribute.
+    attr_accessible
+  end
 end  # class Credentials::Facebook
 
 end  # namespace Credentials

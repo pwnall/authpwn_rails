@@ -73,8 +73,10 @@ class Password < ::Credential
     [(0...12).map { |i| 1 + rand(255) }.pack('C*')].pack('m').strip
   end
 
-  # Forms can only change the plain-text password fields.
-  attr_accessible :password, :password_confirmation
+  if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
+    # Forms can only change the plain-text password fields.
+    attr_accessible :password, :password_confirmation
+  end
 end  # class Credentials::Password
 
 end  # namespace Credentials

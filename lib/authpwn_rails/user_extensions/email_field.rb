@@ -6,17 +6,19 @@ module Authpwn
 
 # :nodoc: namespace
 module UserExtensions
-  
+
 # Augments the User model with an email virtual attribute.
 module EmailField
   extend ActiveSupport::Concern
-  
+
   included do
-    validates :email, :format => /^[A-Za-z0-9.+_]+@[^@]*\.(\w+)$/,
+    validates :email, :format => /\A[A-Za-z0-9.+_]+@[^@]*\.(\w+)\Z/,
          :presence => true
-    attr_accessible :email
+    if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
+      attr_accessible :email
+    end
   end
-  
+
   module ClassMethods
     # The user who has a certain e-mail, or nil if the e-mail is unclaimed.
     def with_email(email)
@@ -24,12 +26,12 @@ module EmailField
       credential && credential.user
     end
   end
-  
+
   # Credentials::Email instance associated with this user.
   def email_credential
     credentials.find { |c| c.instance_of?(Credentials::Email) }
   end
-  
+
   # The e-mail from the user's Email credential.
   #
   # Returns nil if this user has no Email credential.
@@ -37,7 +39,7 @@ module EmailField
     credential = self.email_credential
     credential && credential.email
   end
-  
+
   # Sets the e-mail on the user's Email credential.
   #
   # Creates a new Credentials::Email instance if necessary.
@@ -50,7 +52,7 @@ module EmailField
     new_email
   end
 end  # module Authpwn::UserExtensions::EmailField
-  
+
 end  # module Authpwn::UserExtensions
-  
+
 end  # module Authpwn

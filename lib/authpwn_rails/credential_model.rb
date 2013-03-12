@@ -21,7 +21,9 @@ module CredentialModel
     # Secret information associated with the token.
     validates :key, :length => { :in => 1..2.kilobytes, :allow_nil => true }
 
-    attr_accessible
+    if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
+      attr_accessible
+    end
   end
 
   # Included in the metaclass of models that call pwnauth_facebook_token_model.

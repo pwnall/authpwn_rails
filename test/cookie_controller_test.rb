@@ -44,8 +44,14 @@ class CookieControllerTest < ActionController::TestCase
     get :show
     assert_response :success
     assert_equal @user, assigns(:current_user)
-    assert_equal "User: #{ActiveRecord::Fixtures.identify(:john)}",
-                 response.body
+    john_id = if defined? ActiveRecord::FixtureSet
+      # Rails 4
+      ActiveRecord::FixtureSet.identify :john
+    else
+      # Rails 3
+      ActiveRecord::Fixtures.identify :john
+    end
+    assert_equal "User: #{john_id}", response.body
   end
 
   test "valid suid in session does not refresh very recent session" do

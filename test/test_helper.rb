@@ -7,8 +7,18 @@ require 'rails'
 
 require 'fbgraph_rails'
 require 'fbgraph_rails/controller'
-require 'flexmock/test_unit'
 require 'sqlite3'
+
+if ActiveSupport::TestCase.superclass == Test::Unit::TestCase
+  # Rails 3.
+  require 'flexmock/test_unit'
+else
+  require 'flexmock'
+  # Rails 4.
+  class MiniTest::Unit::TestCase
+    include FlexMock::TestCase
+  end
+end
 
 require 'authpwn_rails'
 

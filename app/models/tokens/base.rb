@@ -26,7 +26,7 @@ class Base < ::Credential
   # Token names are random, so we can expect they'll be unique across the
   # entire namespace. We need this check to enforce name uniqueness across
   # different token types.
-  validates :name, :format => /^[A-Za-z0-9\_\-]+$/, :presence => true,
+  validates :name, :format => /\A[A-Za-z0-9\_\-]+\Z/, :presence => true,
                    :uniqueness => true
 
   # Tokens can expire. This is a good idea most of the time, because token
@@ -53,9 +53,8 @@ class Base < ::Credential
     # NOTE 2: After using this method, it's likely that the user's other tokens
     #         (e.g., email or Facebook OAuth token) will be required, so we
     #         pre-fetch them.
-    credential = Credential.where(:name => code).
-        where(Credential.arel_table[:type].matches('Tokens::%')).
-        includes(:user => :credentials)
+    Credential.where(:name => code).where(Credential.arel_table[:type].
+        matches('Tokens::%')).includes(:user => :credentials)
   end
 
   # Authenticates a user using this token.

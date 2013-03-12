@@ -1,11 +1,11 @@
 # :namespace
 module Credentials
-  
+
 # Associates an e-mail address with the user account.
 class Email < ::Credential
   # The e-mail address.
   alias_attribute :email, :name
-  validates :name, :format => /^[A-Za-z0-9.+_]+@[^@]*\.(\w+)$/,
+  validates :name, :format => /\A[A-Za-z0-9.+_]+@[^@]*\.(\w+)\Z/,
        :presence => true, :uniqueness => { :scope => [:type],
        :message => 'This e-mail address is already claimed by an account' }
 
@@ -17,7 +17,7 @@ class Email < ::Credential
   def set_verified_to_false
     self.key ||= '0' if self.key.nil?
   end
-  
+
   # True if the e-mail has been verified via a token URL.
   def verified?
     key == '1'
@@ -44,7 +44,7 @@ class Email < ::Credential
     user = credential.user
     user.auth_bounce_reason(credential) || user
   end
-  
+
   # Locates the credential holding an e-mail address.
   #
   # Returns the User matching the given e-mail, or nil if the e-mail is not
@@ -52,12 +52,14 @@ class Email < ::Credential
   def self.with(email)
     # This method is likely to be used to kick off a complex authentication
     # process, so it makes sense to pre-fetch the user's other credentials.
-    credential = Credentials::Email.where(:name => email).
-                                    includes(:user => :credentials).first
+    Credentials::Email.where(:name => email).includes(:user => :credentials).
+                       first
   end
 
-  # Forms can only change the e-mail in the credential.
-  attr_accessible :email
+  if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
+    # Forms can only change the e-mail in the credential.
+    attr_accessible :email
+  end
 end  # class Credentials::Email
 
 end  # namespace Credentials

@@ -21,10 +21,12 @@ end
 
 class ActiveRecord::Base
   self.configurations = true
-  self.mass_assignment_sanitizer = :strict
+  if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
+    self.mass_assignment_sanitizer = :strict
 
-  # Hacky equivalent to config.active_record.whitelist_attributes = true
-  attr_accessible
+    # Hacky equivalent to config.active_record.whitelist_attributes = true
+    attr_accessible
+  end
 end
 
 ActiveRecord::Migration.verbose = false
