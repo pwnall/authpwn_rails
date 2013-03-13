@@ -41,8 +41,13 @@ class HttpBasicControllerTest < ActionController::TestCase
     set_http_basic_user @user, 'pa55w0rd'
     get :show
     assert_equal @user, assigns(:current_user)
-    assert_equal "User: #{ActiveRecord::Fixtures.identify(:jane)}",
-                 response.body
+    
+    jane_id = if defined? ActiveRecord::FixtureSet
+      ActiveRecord::FixtureSet.identify :jane
+    else
+      ActiveRecord::Fixtures.identify :jane
+    end
+    assert_equal "User: #{jane_id}", response.body
   end
 
   test "invalid user credentials in header" do
@@ -58,8 +63,13 @@ class HttpBasicControllerTest < ActionController::TestCase
     set_http_basic_user @user, 'fail'
     get :show
     assert_equal @user, assigns(:current_user)
-    assert_equal "User: #{ActiveRecord::Fixtures.identify(:jane)}",
-                 response.body
+
+    jane_id = if defined? ActiveRecord::FixtureSet
+      ActiveRecord::FixtureSet.identify :jane
+    else
+      ActiveRecord::Fixtures.identify :jane
+    end
+    assert_equal "User: #{jane_id}", response.body
   end
 
 
@@ -75,8 +85,13 @@ class HttpBasicControllerTest < ActionController::TestCase
     set_http_basic_user @user
     get :show
     assert_equal @user, assigns(:current_user)
-    assert_equal "User: #{ActiveRecord::Fixtures.identify(:jane)}",
-                 response.body
+
+    jane_id = if defined? ActiveRecord::FixtureSet
+      ActiveRecord::FixtureSet.identify :jane
+    else
+      ActiveRecord::Fixtures.identify :jane
+    end
+    assert_equal "User: #{jane_id}", response.body
   end
 
   test "invalid user_pid in session" do

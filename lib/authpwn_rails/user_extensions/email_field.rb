@@ -20,10 +20,24 @@ module EmailField
   end
 
   module ClassMethods
-    # The user who has a certain e-mail, or nil if the e-mail is unclaimed.
-    def with_email(email)
-      credential = Credentials::Email.where(:name => email).includes(:user).first
-      credential && credential.user
+    begin
+      ActiveRecord::QueryMethods.instance_method :references
+      # Rails 4.
+
+      # The user who has a certain e-mail, or nil if the e-mail is unclaimed.
+      def with_email(email)
+        credential = Credentials::Email.where(:name => email).
+            includes(:user).references(:email).first
+        credential && credential.user
+      end
+    rescue NameError
+      # Rails 3.
+
+      def with_email(email)
+        credential = Credentials::Email.where(:name => email).includes(:user).
+                                        first
+        credential && credential.user
+      end
     end
   end
 

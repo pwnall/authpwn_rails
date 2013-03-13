@@ -45,16 +45,30 @@ class Base < ::Credential
     credential ? credential.authenticate : :invalid
   end
 
-  # Scope that uses a secret code.
-  def self.with_code(code)
-    # NOTE 1: The where query must be performed off the root type, otherwise
-    #         Rails will try to guess the right values for the 'type' column,
-    #         and will sometimes get them wrong.
-    # NOTE 2: After using this method, it's likely that the user's other tokens
-    #         (e.g., email or Facebook OAuth token) will be required, so we
-    #         pre-fetch them.
-    Credential.where(:name => code).where(Credential.arel_table[:type].
-        matches('Tokens::%')).includes(:user => :credentials)
+  
+  begin
+    ActiveRecord::QueryMethods.instance_method :references
+    # Rails 4.
+
+    # Scope that uses a secret code.
+    def self.with_code(code)
+      # NOTE 1: The where query must be performed off the root type, otherwise
+      #         Rails will try to guess the right values for the 'type' column,
+      #         and will sometimes get them wrong.
+      # NOTE 2: After using this method, it's likely that the user's other
+      #         tokens (e.g., email or Facebook OAuth token) will be required,
+      #         so we pre-fetch them.
+      Credential.where(:name => code).includes(:user => :credentials).
+          where(Credential.arel_table[:type].matches('Tokens::%')).
+          references(:credential)
+    end
+  rescue NameError
+    # Rails 3.
+
+    def self.with_code(code)
+      Credential.where(:name => code).includes(:user => :credentials).
+          where(Credential.arel_table[:type].matches('Tokens::%'))
+    end
   end
 
   # Authenticates a user using this token.
