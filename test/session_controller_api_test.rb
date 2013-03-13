@@ -27,21 +27,21 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "show renders welcome without a user" do
-    flexmock(@controller).should_receive(:welcome).once.and_return(nil)
+    @controller.expects(:welcome).once.returns nil
     get :show
     assert_template :welcome
     assert_nil assigns(:current_user)
   end
 
   test "show json renders empty object without a user" do
-    flexmock(@controller).should_receive(:welcome).once.and_return(nil)
+    @controller.expects(:welcome).once.returns nil
     get :show, :format => 'json'
     assert_response :ok
     assert_equal({}, ActiveSupport::JSON.decode(response.body))
   end
 
   test "show renders home with a user" do
-    flexmock(@controller).should_receive(:home).once.and_return(nil)
+    @controller.expects(:home).once.returns nil
     set_session_current_user @user
     get :show
     assert_template :home
@@ -50,7 +50,7 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "show json renders user when logged in" do
     set_session_current_user @user
-    flexmock(@controller).should_receive(:home).once.and_return(nil)
+    @controller.expects(:home).once.returns nil
     get :show, :format => 'json'
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
@@ -180,8 +180,8 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "create uses User.authenticate_signin" do
-    flexmock(User).should_receive(:authenticate_signin).
-        with('em@ail.com', 'fail').and_return @email_credential.user
+    User.expects(:authenticate_signin).at_least_once.
+        with('em@ail.com', 'fail').returns @email_credential.user
     post :create, :email => 'em@ail.com', :password => 'fail'
     assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
@@ -243,8 +243,8 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "token logs in with good token" do
-    flexmock(@controller).should_receive(:home_with_token).once.
-                          with(@token_credential).and_return(nil)
+    @controller.expects(:home_with_token).once.with(@token_credential).
+                returns(nil)
     get :token, :code => @token_credential.code
     assert_redirected_to session_url
     assert_equal @user, assigns(:current_user), 'instance variable'
@@ -254,8 +254,8 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "token by json logs in with good token" do
-    flexmock(@controller).should_receive(:home_with_token).once.
-                          with(@token_credential).and_return(nil)
+    @controller.expects(:home_with_token).once.with(@token_credential).
+                returns(nil)
     get :token, :code => @token_credential.code, :format => 'json'
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body

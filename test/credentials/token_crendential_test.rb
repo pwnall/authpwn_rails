@@ -90,8 +90,7 @@ class TokenCredentialTest < ActiveSupport::TestCase
 
     Tokens::Base.all.each do |token|
       token.updated_at = Time.now - 1.year
-      flexmock(token.class).should_receive(:expires_after).zero_or_more_times.
-                            and_return 1.week
+      token.class.stubs(:expires_after).returns 1.week
       token.save!
     end
     assert_difference 'Credential.count', -1,
@@ -127,8 +126,7 @@ class TokenCredentialTest < ActiveSupport::TestCase
     token = Tokens::Base.with_code(credentials(:jane_token).code).first
     token.updated_at = Time.now - 1.year
     token.save!
-    flexmock(token.class).should_receive(:expires_after).
-        zero_or_more_times.and_return 1.week
+    token.class.stubs(:expires_after).returns 1.week
     assert_equal :invalid, token.authenticate,
                  'expired token'
     assert_nil Tokens::Base.with_code(credentials(:jane_token).code).first,

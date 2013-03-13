@@ -70,7 +70,7 @@ class PasswordCredentialTest < ActiveSupport::TestCase
 
   test 'authenticate calls User#auth_bounce_reason' do
     user = @credential.user
-    flexmock(user).should_receive(:auth_bounce_reason).and_return(:reason)
+    user.expects(:auth_bounce_reason).at_least_once.returns(:reason)
     @credential.updated_at = Time.now
     assert_equal :reason, @credential.authenticate('awesome')
     assert_equal :invalid, @credential.authenticate('not awesome')

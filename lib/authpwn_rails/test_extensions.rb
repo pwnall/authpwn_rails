@@ -11,7 +11,7 @@ module TestExtensions
   # the credential matches the given argument, and nil otherwise.
   def with_blocked_credential(blocked_credential, reason = :blocked, &block)
     # Stub a method in all User instances for this test only.
-    # flexmock.new_instances doesn't work because ActiveRecord doesn't use new
+    # mocha.any_instance doesn't work because ActiveRecord doesn't use new
     # to instantiate records.
     ::User.class_eval do
       alias_method :_auth_bounce_reason_wbc_stub, :auth_bounce_reason

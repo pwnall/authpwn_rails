@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'test/unit'
 
+require 'action_controller'
 require 'action_mailer'
 require 'active_record'
 require 'rails'
@@ -9,21 +10,13 @@ require 'fbgraph_rails'
 require 'fbgraph_rails/controller'
 require 'sqlite3'
 
-if ActiveSupport::TestCase.superclass == Test::Unit::TestCase
-  # Rails 3.
-  require 'flexmock/test_unit'
-else
-  require 'flexmock'
-  # Rails 4.
-  class MiniTest::Unit::TestCase
-    include FlexMock::TestCase
-  end
-end
+require 'mocha/setup'
 
 require 'authpwn_rails'
 
 require 'helpers/view_helpers.rb'
 # NOTE: application_controller and action_mailer have to follow view_helpers
+require 'helpers/action_controller.rb'
 require 'helpers/application_controller.rb'
 require 'helpers/action_mailer.rb'
 require 'helpers/autoload_path.rb'

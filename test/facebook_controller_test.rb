@@ -5,7 +5,7 @@ class FacebookController < ApplicationController
   authenticates_using_session
   probes_facebook_access_token
   authenticates_using_facebook
-  
+
   def show
     if current_user
       render :text => "User: #{current_user.id}"
@@ -24,11 +24,11 @@ class FacebookControllerTest < ActionController::TestCase
     @old_user_class = ::User
     Object.send :remove_const, :User
     ::User = UserWithFb2
-    
+
     @user = users(:john)
     @new_token = 'facebook:new_token|boom'
   end
-  
+
   teardown do
     Object.send :remove_const, :User
     ::User = @old_user_class
@@ -39,27 +39,27 @@ class FacebookControllerTest < ActionController::TestCase
     assert_response :success
     assert_nil assigns(:current_user)
   end
-  
+
   test "facebook token for existing user" do
-    flexmock(Credentials::Facebook).should_receive(:uid_from_token).
+    Credentials::Facebook.expects(:uid_from_token).at_least_once.
         with(credentials(:john_facebook).key).
-        and_return(credentials(:john_facebook).facebook_uid)
+        returns(credentials(:john_facebook).facebook_uid)
     set_session_current_facebook_token credentials(:john_facebook).key
     get :show, {}
     assert_response :success
     assert_equal @user, assigns(:current_user)
   end
-  
-  test "new facebook token" do    
+
+  test "new facebook token" do
     set_session_current_facebook_token @new_token
-    flexmock(Credentials::Facebook).should_receive(:uid_from_token).
-        with(@new_token).and_return('12345678')
+    Credentials::Facebook.expects(:uid_from_token).at_least_once.
+        with(@new_token).returns('12345678')
     get :show, {}
     assert_response :success
     assert_not_equal @user, assigns(:current_user)
   end
-  
+
   test "auth_controller? is false" do
     assert_equal false, @controller.auth_controller?
-  end  
+  end
 end

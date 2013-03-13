@@ -3,7 +3,7 @@ require File.expand_path('../test_helper', __FILE__)
 # Mock controller used for testing session handling.
 class HttpBasicController < ApplicationController
   authenticates_using_http_basic
-    
+
   def show
     if current_user
       render :text => "User: #{current_user.id}"
@@ -11,7 +11,7 @@ class HttpBasicController < ApplicationController
       render :text => "No user"
     end
   end
-  
+
   def bouncer
     bounce_to_http_basic
   end
@@ -28,7 +28,7 @@ class HttpBasicControllerTest < ActionController::TestCase
     assert_nil assigns(:current_user)
     assert_equal 'No user', response.body
   end
-  
+
   test "valid user_id in session cookie" do
     set_session_current_user @user
     get :show
@@ -53,15 +53,15 @@ class HttpBasicControllerTest < ActionController::TestCase
   end
 
   test "uses User.authenticate_signin" do
-    flexmock(User).should_receive(:authenticate_signin).
-        with('jane@gmail.com', 'fail').and_return @user
+    User.expects(:authenticate_signin).at_least_once.
+        with('jane@gmail.com', 'fail').returns @user
     set_http_basic_user @user, 'fail'
     get :show
     assert_equal @user, assigns(:current_user)
     assert_equal "User: #{ActiveRecord::Fixtures.identify(:jane)}",
                  response.body
   end
-  
+
 
   test "reset user credentials in header" do
     set_http_basic_user @user, 'pa55w0rd'
@@ -78,13 +78,13 @@ class HttpBasicControllerTest < ActionController::TestCase
     assert_equal "User: #{ActiveRecord::Fixtures.identify(:jane)}",
                  response.body
   end
-  
+
   test "invalid user_pid in session" do
     get :show, {}, :current_user_pid => 'random@user.com'
     assert_response :success
     assert_nil assigns(:current_user)
   end
-  
+
   test "valid user bounced to http authentication" do
     set_http_basic_user @user
     get :bouncer
@@ -100,7 +100,7 @@ class HttpBasicControllerTest < ActionController::TestCase
     data = ActiveSupport::JSON.decode response.body
     assert_match(/not allowed/i, data['error'])
   end
-  
+
   test "no user_id bounced to http authentication" do
     get :bouncer
     assert_response :unauthorized

@@ -52,7 +52,7 @@ class Email < ::Credential
   def self.with(email)
     # This method is likely to be used to kick off a complex authentication
     # process, so it makes sense to pre-fetch the user's other credentials.
-    Credentials::Email.where(:name => email).includes(:user => :credentials).
+    Credentials::Email.includes(:user).where(:name => email).
                        first
   end
 

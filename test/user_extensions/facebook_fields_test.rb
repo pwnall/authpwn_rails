@@ -7,16 +7,16 @@ end
 class FacebookFieldsTest < ActiveSupport::TestCase
   def setup
     @user = UserWithFb.new
-    
+
     @john = UserWithFb.find_by_id(users(:john).id)
     @jane = UserWithFb.find_by_id(users(:jane).id)
     @bill = UserWithFb.find_by_id(users(:bill).id)
   end
-  
+
   test 'setup' do
     assert @user.valid?
   end
-  
+
   test 'facebook_credential' do
     assert_equal credentials(:john_facebook), @john.facebook_credential
     assert_equal credentials(:jane_facebook), @jane.facebook_credential
@@ -52,9 +52,9 @@ class FacebookFieldsTest < ActiveSupport::TestCase
   end
 
   test 'for_facebook_token' do
-    flexmock(Credentials::Facebook).should_receive(:uid_from_token).
+    Credentials::Facebook.expects(:uid_from_token).at_least_once.
         with(credentials(:john_facebook).key).
-        and_return(credentials(:john_facebook).facebook_uid)
+        returns credentials(:john_facebook).facebook_uid
     assert_equal users(:john),
         UserWithFb.for_facebook_token(credentials(:john_facebook).access_token)
   end

@@ -57,6 +57,7 @@ class SessionUidTokenTest < ActiveSupport::TestCase
 
   test 'spend updates old token' do
     @credential.updated_at = Time.now - 1.day
+    @credential.save!
     @credential.spend
     assert_operator @credential.updated_at, :>=, Time.now - 1.minute
   end
