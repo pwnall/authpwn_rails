@@ -78,16 +78,16 @@ module ControllerInstanceMethods
       format.html do
         @redirect_url = redirect_url
         if current_user
-          render 'session/forbidden', :status => :forbidden
+          render 'session/forbidden', status: :forbidden
         else
           flash[:auth_redirect_url] = redirect_url
-          render 'session/forbidden', :status => :forbidden
+          render 'session/forbidden', status: :forbidden
         end
       end
       format.json do
         message = current_user ? "You're not allowed to access that" :
                                  'Please sign in'
-        render :json => { :error => message }
+        render json: { error: message }
       end
     end
   end

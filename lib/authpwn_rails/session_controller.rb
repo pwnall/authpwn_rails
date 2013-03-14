@@ -12,7 +12,7 @@ module SessionController
 
   included do
     skip_filter :authenticate_using_session
-    authenticates_using_session :except => [:create, :reset_password, :token]
+    authenticates_using_session except: [:create, :reset_password, :token]
 
     # If set, every successful login will cause a database purge.
     class_attribute :auto_purge_sessions
@@ -33,20 +33,19 @@ module SessionController
       welcome
       unless performed?
         respond_to do |format|
-          format.html { render :action => :welcome }
-          format.json { render :json => {} }
+          format.html { render action: :welcome }
+          format.json { render json: {} }
         end
       end
     else
       home
       unless performed?
         respond_to do |format|
-          format.html { render :action => :home }
+          format.html { render action: :home }
           format.json do
             user_data = @user.as_json
             user_data = user_data['user'] if @user.class.include_root_in_json
-            render :json => { :user => user_data,
-                              :csrf => form_authenticity_token }
+            render json: { user: user_data, csrf: form_authenticity_token }
           end
         end
       end
@@ -74,16 +73,15 @@ module SessionController
           if current_user.class.include_root_in_json
             user_data = user_data['user']
           end
-          render :json => { :user => user_data,
-                            :csrf => form_authenticity_token }
+          render json: { user: user_data, csrf: form_authenticity_token }
         end
       else
         error_text = bounce_notice_text auth
         format.html do
-          redirect_to new_session_url, :flash => { :alert => error_text,
-              :auth_redirect_url => @redirect_url }
+          redirect_to new_session_url, flash: { alert: error_text,
+              auth_redirect_url: @redirect_url }
         end
-        format.json { render :json => { :error => auth, :text => error_text } }
+        format.json { render json: { error: auth, text: error_text } }
       end
     end
   end
@@ -101,17 +99,17 @@ module SessionController
     respond_to do |format|
       if user
         format.html do
-          redirect_to new_session_url, :alert =>
+          redirect_to new_session_url, alert:
               'Please check your e-mail for instructions'
         end
-        format.json { render :json => { } }
+        format.json { render json: { } }
       else
         error_text = 'Invalid e-mail'
         format.html do
-          redirect_to new_session_url, :alert => error_text
+          redirect_to new_session_url, alert: error_text
         end
         format.json do
-          render :json => { :error => :not_found, :text => notice }
+          render json: { error: :not_found, text: notice }
         end
       end
     end
@@ -129,10 +127,10 @@ module SessionController
       error_text = bounce_notice_text auth
       respond_to do |format|
         format.html do
-          redirect_to new_session_url, :flash => { :alert => error_text,
-              :auth_redirect_url => session_url }
+          redirect_to new_session_url, flash: { alert: error_text,
+              auth_redirect_url: session_url }
         end
-        format.json { render :json => { :error => auth, :text => error_text } }
+        format.json { render json: { error: auth, text: error_text } }
       end
     else
       self.set_session_current_user auth
@@ -145,8 +143,7 @@ module SessionController
             if current_user.class.include_root_in_json
               user_data = user_data['user']
             end
-            render :json => { :user => user_data,
-                              :csrf => form_authenticity_token }
+            render json: { user: user_data, csrf: form_authenticity_token }
           end
         end
       end
@@ -209,12 +206,12 @@ module SessionController
     respond_to do |format|
       if success
         format.html do
-          redirect_to session_url, :notice => 'Password updated'
+          redirect_to session_url, notice: 'Password updated'
         end
         format.json { head :ok }
       else
-        format.html { render :action => :password_change }
-        format.json { render :json => { :error => :invalid } }
+        format.html { render action: :password_change }
+        format.json { render json: { error: :invalid } }
       end
     end
   end
@@ -225,7 +222,7 @@ module SessionController
     # Parameters used to change the user's password.
     def change_password_params
       params.permit :format, :old_password,
-          :credential => [ :password, :password_confirmation ]
+          credential: [ :password, :password_confirmation ]
     end
   else
     # Rails 3.

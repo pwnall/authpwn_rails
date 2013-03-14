@@ -6,9 +6,9 @@ class HttpBasicController < ApplicationController
 
   def show
     if current_user
-      render :text => "User: #{current_user.id}"
+      render text: "User: #{current_user.id}"
     else
-      render :text => "No user"
+      render text: "No user"
     end
   end
 
@@ -95,7 +95,7 @@ class HttpBasicControllerTest < ActionController::TestCase
   end
 
   test "invalid user_pid in session" do
-    get :show, {}, :current_user_pid => 'random@user.com'
+    get :show, {}, current_user_pid: 'random@user.com'
     assert_response :success
     assert_nil assigns(:current_user)
   end
@@ -110,7 +110,7 @@ class HttpBasicControllerTest < ActionController::TestCase
 
   test "valid user bounced in json" do
     set_http_basic_user @user
-    get :bouncer, :format => 'json'
+    get :bouncer, format: 'json'
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_match(/not allowed/i, data['error'])
@@ -124,7 +124,7 @@ class HttpBasicControllerTest < ActionController::TestCase
   end
 
   test "no user_id bounced in json" do
-    get :bouncer, :format => 'json'
+    get :bouncer, format: 'json'
     assert_response :unauthorized
     assert_equal 'Basic realm="Application"',
                  response.headers['WWW-Authenticate']

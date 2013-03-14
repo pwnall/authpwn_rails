@@ -11,15 +11,15 @@ module CredentialModel
 
   included do
     # The user whose token this is.
-    belongs_to :user, :inverse_of => :credentials
-    validates :user, :presence => true
+    belongs_to :user, inverse_of: :credentials
+    validates :user, presence: true
 
     # Name that can be used to find the token.
-    validates :name, :length => { :in => 1..128, :allow_nil => true },
-                     :uniqueness => { :scope => [:type], :allow_nil => true }
+    validates :name, length: { in: 1..128, allow_nil: true },
+                     uniqueness: { scope: [:type], allow_nil: true }
 
     # Secret information associated with the token.
-    validates :key, :length => { :in => 1..2.kilobytes, :allow_nil => true }
+    validates :key, length: { in: 1..2.kilobytes, allow_nil: true }
 
     if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
       attr_accessible

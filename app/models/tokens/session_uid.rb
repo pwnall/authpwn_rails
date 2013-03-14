@@ -6,13 +6,13 @@ class SessionUid < Tokens::Base
   alias_attribute :suid, :name
 
   # The IP address and User-Agent string of the browser using this session.
-  store :key, :accessors => [:browser_ip, :browser_ua]
+  store :key, accessors: [:browser_ip, :browser_ua]
 
   # The User-Agent header of the browser that received this suid.
-  validates :browser_ua, :presence => true
+  validates :browser_ua, presence: true
 
   # The IP of the computer that received this suid.
-  validates :browser_ip, :presence => true
+  validates :browser_ip, presence: true
 
   # Browser users are logged out if they don't hit the app in this much time.
   self.expires_after = Authpwn::Engine.config.authpwn.session_expiration
@@ -25,7 +25,7 @@ class SessionUid < Tokens::Base
   #                            session
   def self.random_for(user, browser_ip, browser_ua)
     browser_ua = browser_ua[0, 1536] if browser_ua.length > 1536
-    key = { :browser_ip => browser_ip, :browser_ua => browser_ua }
+    key = { browser_ip: browser_ip, browser_ua: browser_ua }
     super user, key, self
   end
 
@@ -33,7 +33,7 @@ class SessionUid < Tokens::Base
   #
   # When a session UID is used to authenticate a user, its updated_at time is
   # refreshed if it differs from the current time by this much.
-  class_attribute :updates_after, :instance_writer => false
+  class_attribute :updates_after, instance_writer: false
   self.updates_after = Authpwn::Engine.config.authpwn.session_precision
 
   # Updates the time associated with the session.

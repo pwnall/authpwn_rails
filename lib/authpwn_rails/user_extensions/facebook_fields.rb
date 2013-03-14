@@ -22,7 +22,7 @@ module FacebookFields
     
     # The user who has a certain e-mail, or nil if the e-mail is unclaimed.
     def with_facebook_uid(facebook_uid)
-      credential = Credentials::Facebook.where(:name => facebook_uid).
+      credential = Credentials::Facebook.where(name: facebook_uid).
                                          includes(:user).first
       credential && credential.user
     end

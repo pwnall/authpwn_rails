@@ -22,24 +22,24 @@ module MapperMixin
     paths = options[:paths] || controller
     methods = options[:method_names] || 'session'
 
-    get "/#{paths}/token/:code", :controller => controller, :action => 'token',
-                                 :as => :"token_#{methods}"
+    get "/#{paths}/token/:code", controller: controller, action: 'token',
+                                 as: :"token_#{methods}"
 
-    get "/#{paths}", :controller => controller, :action => 'show',
-                     :as => :"#{methods}"
-    get "/#{paths}/new", :controller => controller, :action => 'new',
-                         :as => :"new_#{methods}"
-    post "/#{paths}", :controller => controller, :action => 'create'
-    delete "/#{paths}", :controller => controller, :action => 'destroy'
+    get "/#{paths}", controller: controller, action: 'show',
+                     as: :"#{methods}"
+    get "/#{paths}/new", controller: controller, action: 'new',
+                         as: :"new_#{methods}"
+    post "/#{paths}", controller: controller, action: 'create'
+    delete "/#{paths}", controller: controller, action: 'destroy'
 
-    get "/#{paths}/change_password", :controller => controller,
-                                    :action => 'password_change',
-                                    :as => "change_password_#{methods}"
-    post "/#{paths}/change_password", :controller => controller,
-                                     :action => 'change_password'
-    post "/#{paths}/reset_password", :controller => controller,
-                                     :action => 'reset_password',
-                                     :as => "reset_password_#{methods}"
+    get "/#{paths}/change_password", controller: controller,
+                                    action: 'password_change',
+                                    as: "change_password_#{methods}"
+    post "/#{paths}/change_password", controller: controller,
+                                     action: 'change_password'
+    post "/#{paths}/reset_password", controller: controller,
+                                     action: 'reset_password',
+                                     as: "reset_password_#{methods}"
   end
 end
 

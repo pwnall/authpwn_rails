@@ -6,7 +6,7 @@ end
 
 class EmailFieldTest < ActiveSupport::TestCase
   def setup
-    @user = UserWithEmail.new :email => 'blah@gmail.com'
+    @user = UserWithEmail.new email: 'blah@gmail.com'
     
     @john = UserWithEmail.find_by_id(users(:john).id)
     @jane = UserWithEmail.find_by_id(users(:jane).id)

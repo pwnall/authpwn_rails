@@ -26,8 +26,8 @@ class Base < ::Credential
   # Token names are random, so we can expect they'll be unique across the
   # entire namespace. We need this check to enforce name uniqueness across
   # different token types.
-  validates :name, :format => /\A[A-Za-z0-9\_\-]+\Z/, :presence => true,
-                   :uniqueness => true
+  validates :name, format: /\A[A-Za-z0-9\_\-]+\Z/, presence: true,
+                   uniqueness: true
 
   # Tokens can expire. This is a good idea most of the time, because token
   # codes are supposed to be used quickly.
@@ -58,7 +58,7 @@ class Base < ::Credential
       # NOTE 2: After using this method, it's likely that the user's other
       #         tokens (e.g., email or Facebook OAuth token) will be required,
       #         so we pre-fetch them.
-      Credential.where(:name => code).includes(:user => :credentials).
+      Credential.where(name: code).includes(user: :credentials).
           where(Credential.arel_table[:type].matches('Tokens::%')).
           references(:credential)
     end
@@ -66,7 +66,7 @@ class Base < ::Credential
     # Rails 3.
 
     def self.with_code(code)
-      Credential.where(:name => code).includes(:user => :credentials).
+      Credential.where(name: code).includes(user: :credentials).
           where(Credential.arel_table[:type].matches('Tokens::%'))
     end
   end
@@ -132,7 +132,7 @@ class Base < ::Credential
   # @param [String] param value returned by Token#to_param
   # @return [ActiveRecord::Relation]
   def self.with_param(param)
-    where(:name => param)
+    where(name: param)
   end
 end  # class Tokens::Base
 

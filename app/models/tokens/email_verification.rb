@@ -10,7 +10,7 @@ class EmailVerification < Tokens::OneTime
   # user. Otherwise, a user might be able to change their e-mail address and
   # then use the token to verify the ownership of the wrong address.
   alias_attribute :email, :key
-  validates :email, :presence => true
+  validates :email, presence: true
 
   # Verification tokens only work this much time after they have been issued.
   self.expires_after =

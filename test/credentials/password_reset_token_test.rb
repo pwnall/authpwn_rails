@@ -46,7 +46,7 @@ class PasswordVerificationTokenTest < ActiveSupport::TestCase
       end
     end
     assert credential.frozen?, 'not destroyed'
-    assert_nil Credential.where(:id => password_credential.id).first,
+    assert_nil Credential.where(id: password_credential.id).first,
                'password not blanked out'
   end
 

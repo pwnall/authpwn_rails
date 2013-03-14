@@ -8,9 +8,9 @@ class FacebookController < ApplicationController
 
   def show
     if current_user
-      render :text => "User: #{current_user.id}"
+      render text: "User: #{current_user.id}"
     else
-      render :text => "No user"
+      render text: "No user"
     end
   end
 end

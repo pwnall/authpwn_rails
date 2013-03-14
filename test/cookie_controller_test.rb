@@ -2,13 +2,13 @@ require File.expand_path('../test_helper', __FILE__)
 
 # Mock controller used for testing session handling.
 class CookieController < ApplicationController
-  authenticates_using_session :except => :update
+  authenticates_using_session except: :update
 
   def show
     if current_user
-      render :text => "User: #{current_user.id}"
+      render text: "User: #{current_user.id}"
     else
-      render :text => "No user"
+      render text: "No user"
     end
   end
 
@@ -18,7 +18,7 @@ class CookieController < ApplicationController
     else
       set_session_current_user User.find_by_param(params[:exuid])
     end
-    render :text => ''
+    render text: ''
   end
 
   def bouncer
@@ -95,7 +95,7 @@ class CookieControllerTest < ActionController::TestCase
 
   test "set_session_current_user creates new token by default" do
     assert_difference 'Credential.count', 1 do
-      put :update, :exuid => @user.exuid
+      put :update, exuid: @user.exuid
     end
     assert_response :success
     assert_not_equal @token.suid, request.session[:authpwn_suid]
@@ -108,7 +108,7 @@ class CookieControllerTest < ActionController::TestCase
   test "set_session_current_user reuses existing token when suitable" do
     request.session[:authpwn_suid] = @token.suid
     assert_no_difference 'Credential.count', 'existing token not reused' do
-      put :update, :exuid => @user.exuid
+      put :update, exuid: @user.exuid
     end
     assert_response :success
     assert_equal @token.suid, request.session[:authpwn_suid]
@@ -123,7 +123,7 @@ class CookieControllerTest < ActionController::TestCase
     @token.updated_at = Time.now - 1.day
     request.session[:authpwn_suid] = @token.suid
     assert_no_difference 'Credential.count', 'existing token not reused' do
-      put :update, :exuid => @user.exuid
+      put :update, exuid: @user.exuid
     end
     assert_response :success
     assert_operator @token.reload.updated_at, :>=, Time.now - 1.hour,
@@ -139,7 +139,7 @@ class CookieControllerTest < ActionController::TestCase
     @token.destroy
     request.session[:authpwn_suid] = @token.suid
     assert_difference 'Credential.count', 1, 'session token not created' do
-      put :update, :exuid => @user.exuid
+      put :update, exuid: @user.exuid
     end
     assert_response :success
     assert_not_equal @token.suid, request.session[:authpwn_suid]
@@ -154,7 +154,7 @@ class CookieControllerTest < ActionController::TestCase
     request.session[:authpwn_suid] = old_token.suid
     assert_no_difference 'Credential.count',
         "old user's token not destroyed or no new token created" do
-      put :update, :exuid => @user.exuid
+      put :update, exuid: @user.exuid
     end
     assert_response :success
     assert_nil Tokens::Base.with_code(old_token.suid).first,
@@ -172,7 +172,7 @@ class CookieControllerTest < ActionController::TestCase
     request.session[:authpwn_suid] = credentials(:jane_session_token).suid
     assert_no_difference 'Credential.count',
         "old user's token not destroyed or new user's token not created" do
-      put :update, :exuid => @user.exuid
+      put :update, exuid: @user.exuid
     end
     assert_response :success
     assert_equal @user, assigns(:current_user)
@@ -185,7 +185,7 @@ class CookieControllerTest < ActionController::TestCase
   test "set_session_current_user logs off a user correctly" do
     request.session[:authpwn_suid] = @token.suid
     assert_difference 'Credential.count', -1, 'token not destroyed' do
-      put :update, :exuid => ''
+      put :update, exuid: ''
     end
     assert_response :success
     assert_nil request.session[:authpwn_suid]
@@ -198,7 +198,7 @@ class CookieControllerTest < ActionController::TestCase
 
   test "set_session_current_user behaves when no user is logged off" do
     assert_no_difference 'Credential.count' do
-      put :update, :exuid => ''
+      put :update, exuid: ''
     end
     assert_response :success
     assert_nil request.session[:authpwn_suid]
@@ -215,7 +215,7 @@ class CookieControllerTest < ActionController::TestCase
 
   test "valid user_id bounced in json" do
     request.session[:authpwn_suid] = @token.suid
-    get :bouncer, :format => 'json'
+    get :bouncer, format: 'json'
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_match(/not allowed/i, data['error'])
@@ -231,7 +231,7 @@ class CookieControllerTest < ActionController::TestCase
   end
 
   test "no user_id bounced in json" do
-    get :bouncer, :format => 'json'
+    get :bouncer, format: 'json'
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_match(/sign in/i, data['error'])

@@ -10,7 +10,7 @@ module Expires
     #
     # Users can reset this timer by updating their credentials, e.g. changing
     # their password.
-    class_attribute :expires_after, :instance_writer => false
+    class_attribute :expires_after, instance_writer: false
   end
 
   # True if this password is too old and should not be used for authentication.

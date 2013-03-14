@@ -5,14 +5,14 @@ module Credentials
 class Password < ::Credential
   # Virtual attribute: the user's password.
   attr_accessor :password
-  validates :password, :presence => { :on => :create },
-                       :confirmation => { :allow_nil => true }
+  validates :password, presence: { on: :create },
+                       confirmation: { allow_nil: true }
 
   # Virtual attribute: confirmation for the user's password.
   attr_accessor :password_confirmation
 
   # A user can have a single password.
-  validates :user_id, :uniqueness => true
+  validates :user_id, uniqueness: true
 
   # Passwords can expire, if users don't change them often enough.
   include Authpwn::Expires

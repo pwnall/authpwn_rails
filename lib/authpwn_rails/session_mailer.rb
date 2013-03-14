@@ -16,9 +16,9 @@ module SessionMailer
     @host.slice! -1 if @host[-1] == ?/
     hostname = @host.split(':', 2).first  # Strip out any port.
     
-    mail :to => @token.email,
-         :subject => email_verification_subject(token, hostname, @protocol),
-         :from => email_verification_from(token, hostname, @protocol)
+    mail to: @token.email,
+         subject: email_verification_subject(token, hostname, @protocol),
+         from: email_verification_from(token, hostname, @protocol)
   end
 
   # The subject line in an e-mail verification e-mail.
@@ -48,8 +48,8 @@ module SessionMailer
     @host.slice! -1 if @host[-1] == ?/
 
     hostname = @host.split(':', 2).first  # Strip out any port.
-    mail :to => email, :from => reset_password_from(token, hostname, @protocol),
-         :subject => reset_password_subject(token, hostname, @protocol)
+    mail to: email, from: reset_password_from(token, hostname, @protocol),
+         subject: reset_password_subject(token, hostname, @protocol)
   end
   
   # The subject line in a password reset e-mail.

@@ -12,8 +12,8 @@ module PasswordField
   extend ActiveSupport::Concern
 
   included do
-    validates :password, :presence => { :on => :create },
-                         :confirmation => { :allow_nil => true }
+    validates :password, presence: { on: :create },
+                         confirmation: { allow_nil: true }
 
     if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
       attr_accessible :password, :password_confirmation
@@ -23,7 +23,7 @@ module PasswordField
   module ClassMethods
     # The user who has a certain e-mail, or nil if the e-mail is unclaimed.
     def with_email(email)
-      credential = Credentials::Email.where(:name => email).includes(:user).first
+      credential = Credentials::Email.where(name: email).includes(:user).first
       credential && credential.user
     end
   end
@@ -56,7 +56,7 @@ module PasswordField
     if credential = self.password_credential
       credential.password = new_password
     else
-      credentials << Credentials::Password.new(:password => new_password)
+      credentials << Credentials::Password.new(password: new_password)
     end
     new_password
   end
@@ -68,7 +68,7 @@ module PasswordField
     if credential = self.password_credential
       credential.password_confirmation = new_password_confirmation
     else
-      credentials << Credentials::Password.new(:password_confirmation =>
+      credentials << Credentials::Password.new(password_confirmation:
                                                new_password_confirmation)
     end
     new_password_confirmation

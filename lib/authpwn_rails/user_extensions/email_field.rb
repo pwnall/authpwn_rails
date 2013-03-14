@@ -13,8 +13,8 @@ module EmailField
   extend ActiveSupport::Concern
 
   included do
-    validates :email, :format => /\A[A-Za-z0-9.+_]+@[^@]*\.(\w+)\Z/,
-         :presence => true
+    validates :email, format: /\A[A-Za-z0-9.+_]+@[^@]*\.(\w+)\Z/,
+         presence: true
     if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
       attr_accessible :email
     end
@@ -27,7 +27,7 @@ module EmailField
 
       # The user who has a certain e-mail, or nil if the e-mail is unclaimed.
       def with_email(email)
-        credential = Credentials::Email.where(:name => email).
+        credential = Credentials::Email.where(name: email).
             includes(:user).references(:user).first
         credential && credential.user
       end
@@ -35,7 +35,7 @@ module EmailField
       # Rails 3.
 
       def with_email(email)
-        credential = Credentials::Email.where(:name => email).includes(:user).
+        credential = Credentials::Email.where(name: email).includes(:user).
                                         first
         credential && credential.user
       end
@@ -62,7 +62,7 @@ module EmailField
     if credential = self.email_credential
       credential.email = new_email
     else
-      credentials << Credentials::Email.new(:email => new_email)
+      credentials << Credentials::Email.new(email: new_email)
     end
     new_email
   end

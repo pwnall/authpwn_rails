@@ -17,15 +17,15 @@ module UserModel
     #
     # This is decoupled from "id" column to avoid leaking information about
     # the application's usage.
-    validates :exuid, :presence => true, :length => 1..32, :uniqueness => true
+    validates :exuid, presence: true, length: 1..32, uniqueness: true
 
     # Credentials used to authenticate the user.
-    has_many :credentials, :dependent => :destroy, :inverse_of => :user,
-                           :autosave => true
+    has_many :credentials, dependent: :destroy, inverse_of: :user,
+                           autosave: true
     validates_associated :credentials
 
     # Automatically assign exuid.
-    before_validation :set_default_exuid, :on => :create
+    before_validation :set_default_exuid, on: :create
 
     if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
       # Forms should not be able to touch any attribute.
@@ -40,7 +40,7 @@ module UserModel
     # @param [String] param value returned by User#to_param
     # @return [ActiveRecord::Relation]
     def with_param(param)
-      where(:exuid => param)
+      where(exuid: param)
     end
 
     # Queries the database using the value returned by User#to_param.

@@ -5,17 +5,17 @@ module Credentials
 class Facebook < ::Credential
   # The Graph API object ID of the Facebook account.
   alias_attribute :facebook_uid, :name
-  validates :name, :format => /\A\d+\Z/, :presence => true,
-       :uniqueness => { :scope => [:type],
-       :message => 'Your Facebook user is already associated to an account' }
+  validates :name, format: /\A\d+\Z/, presence: true,
+       uniqueness: { scope: [:type],
+       message: 'Your Facebook user is already associated to an account' }
 
   # A user can be associated to a single Facebook account.
-  validates :user_id, :uniqueness => {
-      :message => 'Your account is already associated to a Facebook user' }
+  validates :user_id, uniqueness: {
+      message: 'Your account is already associated to a Facebook user' }
 
   # OAuth2 token issued by Facebook.
   alias_attribute :access_token, :key
-  validates :key, :presence => true
+  validates :key, presence: true
 
   # FBGraph client loaded with this access token.
   def facebook_client
@@ -28,7 +28,7 @@ class Facebook < ::Credential
   # token. Otherwise, a new model will be created, together with a user.
   def self.for(access_token)
     uid = uid_from_token access_token
-    credential = self.where(:name => uid.to_str).first
+    credential = self.where(name: uid.to_str).first
     if credential
       credential.key = access_token
       credential.save!

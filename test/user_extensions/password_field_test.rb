@@ -6,8 +6,8 @@ end
 
 class PasswordFieldTest < ActiveSupport::TestCase
   def setup
-    @user = UserWithPassword.new :password => 'awesome',
-                                 :password_confirmation => 'awesome'
+    @user = UserWithPassword.new password: 'awesome',
+                                 password_confirmation: 'awesome'
     
     @john = UserWithPassword.find_by_id(users(:john).id)
     @jane = UserWithPassword.find_by_id(users(:jane).id)

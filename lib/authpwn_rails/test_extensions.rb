@@ -42,7 +42,7 @@ module ControllerTestExtensions
   def set_session_current_user(user)
     if user
       # Avoid database inserts, if at all possible.
-      if token = Tokens::SessionUid.where(:user_id => user.id).first
+      if token = Tokens::SessionUid.where(user_id: user.id).first
         token.spend  # Only bump updated_at if necessary.
       else
         token = Tokens::SessionUid.random_for user, '127.0.0.1', 'UnitTests'
@@ -75,17 +75,17 @@ module ControllerTestExtensions
 
     if password.nil?
       password = 'password'
-      credential = Credentials::Password.where(:user_id => user.id).first
+      credential = Credentials::Password.where(user_id: user.id).first
       if credential
-        credential.update_attributes! :password => password
+        credential.update_attributes! password: password
       else
-        credential = Credentials::Password.new :password => password
+        credential = Credentials::Password.new password: password
         credential.user_id = user.id
         credential.save!
       end
     end
 
-    credential = Credentials::Email.where(:user_id => user.id).first
+    credential = Credentials::Email.where(user_id: user.id).first
     unless credential
       raise RuntimeError, "Can't specify an user without an e-mail"
     end
