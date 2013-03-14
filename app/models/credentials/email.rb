@@ -57,7 +57,7 @@ class Email < ::Credential
       # This method is likely to be used to kick off a complex authentication
       # process, so it makes sense to pre-fetch the user's other credentials.
       Credentials::Email.includes(:user => :credentials).where(:name => email).
-                         references(:email).first
+                         references(:credential).first
     end
   rescue NameError
     # Rails 3.
@@ -69,7 +69,6 @@ class Email < ::Credential
                          first
     end
   end
-
 
   if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
     # Forms can only change the e-mail in the credential.

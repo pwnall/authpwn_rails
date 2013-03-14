@@ -130,7 +130,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (>= 1.3.2)
+  bundler (>= 1.3.3)
   fbgraph_rails (>= 0.2.2)
   jeweler (>= 1.8.4)
   mocha (>= 0.13.3)

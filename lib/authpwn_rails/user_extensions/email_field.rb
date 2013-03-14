@@ -1,4 +1,5 @@
 require 'active_model'
+require 'active_record'
 require 'active_support'
 
 # :nodoc: namespace
@@ -27,7 +28,7 @@ module EmailField
       # The user who has a certain e-mail, or nil if the e-mail is unclaimed.
       def with_email(email)
         credential = Credentials::Email.where(:name => email).
-            includes(:user).references(:email).first
+            includes(:user).references(:user).first
         credential && credential.user
       end
     rescue NameError
