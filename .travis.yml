@@ -11,3 +11,7 @@ rvm:
   - 1.9.3
   - 2.0.0
   - rbx-19mode
+matrix:
+  exclude:
+    - gemfile: Gemfile.rails3
+      rvm: 2.0.0

@@ -6,10 +6,10 @@ User authentication for a Ruby on Rails 3 application. Works with Facebook.
 
 Scaffold user accounts, and session controller views.
     rails g authpwn:all
-    
+
 Wire authentication into your ApplicationController.
     authenticates_using_session
-    authenticates_using_facebook     
+    authenticates_using_facebook
 
 Note: the code inside the models and controllers is tucked away in the plug-in.
 The scaffold models and controllers are there as extension points. You will be
@@ -21,7 +21,7 @@ See legacy/migrate_09_to_010.rb for a semi-automated way of migrating your
 database.
 
 == Note on Patches/Pull Requests
- 
+
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a future version
@@ -32,4 +32,4 @@ database.
 
 == Copyright
 
-Copyright (c) 2010-2012 Victor Costan, released under the MIT license
+Copyright (c) 2010-2013 Victor Costan, released under the MIT license.
