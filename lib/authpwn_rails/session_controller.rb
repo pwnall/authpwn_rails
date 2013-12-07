@@ -78,8 +78,12 @@ module SessionController
       else
         error_text = bounce_notice_text auth
         format.html do
-          redirect_to new_session_url, flash: { alert: error_text,
-              auth_redirect_url: @redirect_url }
+          if params[:redirect_url]
+            redirect_to new_session_url, flash: { alert: error_text,
+                auth_redirect_url: @redirect_url }
+          else
+            redirect_to new_session_url, alert: error_text
+          end
         end
         format.json { render json: { error: auth, text: error_text } }
       end

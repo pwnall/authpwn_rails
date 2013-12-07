@@ -74,7 +74,6 @@ class SessionControllerApiTest < ActionController::TestCase
     url = 'http://authpwn.redirect.url'
     get :new, {}, {}, { auth_redirect_url: url }
     assert_template :new
-    assert_equal url, assigns(:redirect_url), 'redirect_url should be set'
     assert_select 'form' do
       assert_select "input[name=redirect_url][value=#{url}]"
     end
@@ -84,6 +83,8 @@ class SessionControllerApiTest < ActionController::TestCase
     post :create, email: @email_credential.email, password: 'password'
     assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
+    assert_nil flash[:alert], 'no alert'
+    assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
     assert_redirected_to session_url
   end
 
@@ -138,6 +139,8 @@ class SessionControllerApiTest < ActionController::TestCase
     post :create, email: @email_credential.email, password: 'password',
                   redirect_url: url
     assert_redirected_to url
+    assert_nil flash[:alert], 'no alert'
+    assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
   end
 
   test "create does not log in with bad password" do
@@ -146,6 +149,7 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
     assert_match(/Invalid/, flash[:alert])
+    assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
   end
 
   test "create does not log in with expired password" do
@@ -156,6 +160,7 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
     assert_match(/expired/, flash[:alert])
+    assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
   end
 
   test "create does not purge sessions if not logged in" do
@@ -177,6 +182,7 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
     assert_match(/ blocked/, flash[:alert])
+    assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
   end
 
   test "create uses User.authenticate_signin" do
@@ -240,6 +246,7 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
     assert_match(/Invalid /, flash[:alert])
+    assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
   end
 
   test "token logs in with good token" do
