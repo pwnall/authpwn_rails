@@ -1,9 +1,8 @@
 source :rubygems
-ruby '1.9.3'
 
 gem 'fbgraph_rails', '>= 0.2.2'
 
-gem 'rails', '~> 3.2.15'
+gem 'rails', '~> 3.2.16'
 
 group :development do
   gem 'bundler', '>= 1.3.5'
