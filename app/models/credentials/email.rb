@@ -3,10 +3,17 @@ module Credentials
 
 # Associates an e-mail address with the user account.
 class Email < ::Credential
+  # E-mail is a user-visible attribute, so we want good error messages for some
+  # of its validations. This means we must re-define them.
+  clear_validators!
+
+  # The user whose email this is.
+  validates :user, presence: true
+
   # The e-mail address.
   alias_attribute :email, :name
   validates :name, format: /\A[A-Za-z0-9.+_]+@[^@]*\.(\w+)\Z/,
-       presence: true, uniqueness: { scope: [:type],
+       presence: true, length: 1..128, uniqueness: { scope: [:type],
        message: 'This e-mail address is already claimed by an account' }
 
   # '1' if the user proved ownership of the e-mail address.

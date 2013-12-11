@@ -46,18 +46,27 @@ class EmailCredentialTest < ActiveSupport::TestCase
   test 'email length' do
     @credential.email = 'abcde' * 25 + '@mit.edu'
     assert !@credential.valid?, 'Overly long email'
+    assert @credential.errors[:name].any? { |m| /too long/i =~ m },
+           'Validation errors include length error'
   end
 
   test 'email format' do
     ['cos tan@gmail.com', 'costan@x@mit.edu'].each do |email|
       @credential.email = email
       assert !@credential.valid?, "Bad email format - #{email}"
+      assert @credential.errors[:name].any? { |m| /invalid/i =~ m },
+             'Validation errors include format error'
     end
   end
 
   test 'email uniqueness' do
     @credential.email = credentials(:john_email).email
     assert !@credential.valid?
+    assert @credential.errors[:name].any? { |m| /already claimed/i =~ m },
+           'Validation errors include custom uniqueness error'
+    assert !@credential.errors[:name].
+                        any? { |m| m == 'has already been taken' },
+           'Validation errors do not include default uniqueness error'
   end
 
   test 'authenticate' do

@@ -13,8 +13,13 @@ module EmailField
   extend ActiveSupport::Concern
 
   included do
-    validates :email, format: /\A[A-Za-z0-9.+_]+@[^@]*\.(\w+)\Z/,
-         presence: true
+    validates_each :email do |record, attr, value|
+      unless record.email_credential.valid?
+        record.email_credential.errors.each do |_, message|
+          record.errors.add attr, message
+        end
+      end
+    end
     if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
       attr_accessible :email
     end
