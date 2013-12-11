@@ -28,7 +28,7 @@ class AllGenerator < Rails::Generators::Base
               File.join('test', 'functional', 'session_controller_test.rb')
 
     route "authpwn_session"
-    route "root :to => 'session#show'"
+    route "root to: 'session#show'"
   end
 
   def create_session_views

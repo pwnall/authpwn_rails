@@ -11,7 +11,16 @@ module SessionModel
   extend ActiveSupport::Concern
 
   included do
-    include ActiveModel::Model
+    if defined? ActiveModel::Model
+      # Rails 4.
+      include ActiveModel::Model
+    else
+      # Rails 3.
+      include ActiveModel::Conversion
+      extend  ActiveModel::Naming
+      extend  ActiveModel::Translation
+      include ActiveModel::Validations
+    end
 
     # The e-mail used to sign up.
     attr_accessor :email

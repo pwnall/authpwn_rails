@@ -1,4 +1,4 @@
-source :rubygems
+source 'https://rubygems.org'
 
 gem 'fbgraph_rails', '>= 0.2.2'
 
