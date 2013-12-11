@@ -5,7 +5,13 @@ module Credentials
 class Email < ::Credential
   # E-mail is a user-visible attribute, so we want good error messages for some
   # of its validations. This means we must re-define them.
-  clear_validators!
+  if respond_to?(:clear_validators!)
+    clear_validators!
+  else
+    # Backport clear_validators! from Rails 4.
+    reset_callbacks :validate
+    _validators.clear
+  end
 
   # The user whose email this is.
   validates :user, presence: true
