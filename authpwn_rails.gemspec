@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "authpwn_rails"
-  s.version = "0.14.3"
+  s.version = "0.15.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
@@ -52,6 +52,7 @@ Gem::Specification.new do |s|
     "lib/authpwn_rails/generators/templates/credential.rb",
     "lib/authpwn_rails/generators/templates/credentials.yml",
     "lib/authpwn_rails/generators/templates/initializer.rb",
+    "lib/authpwn_rails/generators/templates/session.rb",
     "lib/authpwn_rails/generators/templates/session/forbidden.html.erb",
     "lib/authpwn_rails/generators/templates/session/home.html.erb",
     "lib/authpwn_rails/generators/templates/session/new.html.erb",
@@ -72,6 +73,7 @@ Gem::Specification.new do |s|
     "lib/authpwn_rails/session.rb",
     "lib/authpwn_rails/session_controller.rb",
     "lib/authpwn_rails/session_mailer.rb",
+    "lib/authpwn_rails/session_model.rb",
     "lib/authpwn_rails/test_extensions.rb",
     "lib/authpwn_rails/user_extensions/email_field.rb",
     "lib/authpwn_rails/user_extensions/facebook_fields.rb",
@@ -107,6 +109,7 @@ Gem::Specification.new do |s|
     "test/routes_test.rb",
     "test/session_controller_api_test.rb",
     "test/session_mailer_api_test.rb",
+    "test/session_test.rb",
     "test/test_extensions_test.rb",
     "test/test_helper.rb",
     "test/user_extensions/email_field_test.rb",
