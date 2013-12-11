@@ -21,6 +21,7 @@ class AllGenerator < Rails::Generators::Base
   end
 
   def create_session_controller
+    copy_file 'session.rb', File.join('app', 'models', 'session.rb')
     copy_file 'session_controller.rb',
               File.join('app', 'controllers', 'session_controller.rb')
     copy_file File.join('session_controller_test.rb'),

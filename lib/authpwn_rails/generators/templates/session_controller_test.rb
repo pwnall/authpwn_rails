@@ -20,7 +20,8 @@ class SessionControllerTest < ActionController::TestCase
     old_token = credentials(:jane_session_token)
     old_token.updated_at = Time.now - 1.year
     old_token.save!
-    post :create, email: @email_credential.email, password: 'password'
+    post :create, session: { email: @email_credential.email,
+                             password: 'password' }
     assert_equal @user, session_current_user, 'session'
     assert_redirected_to session_url
     assert_nil Tokens::Base.with_code(old_token.code).first,
@@ -53,8 +54,8 @@ class SessionControllerTest < ActionController::TestCase
     assert_template :new
 
     assert_select 'form[action=?]', session_path do
-      assert_select 'input[name="email"]'
-      assert_select 'input[name="password"]'
+      assert_select 'input[name=?]', 'session[email]'
+      assert_select 'input[name=?]', 'session[password]'
       assert_select 'button[name="login"]'
       assert_select 'button[name="reset_password"]'
     end

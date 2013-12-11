@@ -9,6 +9,7 @@ module Authpwn
   autoload :Expires, 'authpwn_rails/expires.rb'
   autoload :SessionController, 'authpwn_rails/session_controller.rb'
   autoload :SessionMailer, 'authpwn_rails/session_mailer.rb'
+  autoload :SessionModel, 'authpwn_rails/session_model.rb'
   autoload :UserModel, 'authpwn_rails/user_model.rb'
 
   # Contains extensions to the User model.

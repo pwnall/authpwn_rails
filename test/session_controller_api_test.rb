@@ -80,6 +80,16 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "create logs in with good account details" do
+    post :create, session: { email: @email_credential.email,
+                             password: 'password' }
+    assert_equal @user, assigns(:current_user), 'instance variable'
+    assert_equal @user, session_current_user, 'session'
+    assert_nil flash[:alert], 'no alert'
+    assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
+    assert_redirected_to session_url
+  end
+
+  test "create logs in with good raw account details" do
     post :create, email: @email_credential.email, password: 'password'
     assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
@@ -93,7 +103,8 @@ class SessionControllerApiTest < ActionController::TestCase
     old_token = credentials(:jane_session_token)
     old_token.updated_at = Time.now - 1.year
     old_token.save!
-    post :create, email: @email_credential.email, password: 'password'
+    post :create, session: { email: @email_credential.email,
+                             password: 'password' }
     assert_equal @user, session_current_user, 'session'
     assert_nil Tokens::Base.with_code(old_token.code).first,
                'old session not purged'
@@ -136,15 +147,15 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "create redirects properly with good account details" do
     url = 'http://authpwn.redirect.url'
-    post :create, email: @email_credential.email, password: 'password',
-                  redirect_url: url
+    post :create, session: { email: @email_credential.email,
+                             password: 'password' }, redirect_url: url
     assert_redirected_to url
     assert_nil flash[:alert], 'no alert'
     assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
   end
 
   test "create does not log in with bad password" do
-    post :create, email: @email_credential.email, password: 'fail'
+    post :create, session: { email: @email_credential.email, password: 'fail' }
     assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
@@ -155,7 +166,8 @@ class SessionControllerApiTest < ActionController::TestCase
   test "create does not log in with expired password" do
     @password_credential.updated_at = Time.now - 2.years
     @password_credential.save!
-    post :create, email: @email_credential.email, password: 'password'
+    post :create, session: { email: @email_credential.email,
+                             password: 'password' }
     assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
@@ -168,7 +180,7 @@ class SessionControllerApiTest < ActionController::TestCase
     old_token = credentials(:jane_session_token)
     old_token.updated_at = Time.now - 1.year
     old_token.save!
-    post :create, email: @email_credential.email, password: 'fail'
+    post :create, session: { email: @email_credential.email, password: 'fail' }
     assert_nil session_current_user, 'session'
     assert_equal old_token, Tokens::Base.with_code(old_token.code).first,
                'old session purged'
@@ -176,7 +188,8 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "create does not log in blocked accounts" do
     with_blocked_credential @email_credential do
-      post :create, email: @email_credential.email, password: 'password'
+      post :create, session: { email: @email_credential.email,
+                               password: 'password' }
     end
     assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
@@ -233,8 +246,8 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "create maintains redirect_url for bad logins" do
     url = 'http://authpwn.redirect.url'
-    post :create, email: @email_credential.email, password: 'fail',
-                  redirect_url: url
+    post :create, session: { email: @email_credential.email,
+                             password: 'fail' }, redirect_url: url
     assert_redirected_to new_session_url
     assert_match(/Invalid /, flash[:alert])
     assert_equal url, flash[:auth_redirect_url]

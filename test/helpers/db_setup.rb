@@ -37,6 +37,7 @@ CreateCredentials.migrate :up
 
 require 'authpwn_rails/generators/templates/user.rb'
 require 'authpwn_rails/generators/templates/credential.rb'
+require 'authpwn_rails/generators/templates/session.rb'
 
 class ActiveSupport::TestCase
   include ActiveRecord::TestFixtures

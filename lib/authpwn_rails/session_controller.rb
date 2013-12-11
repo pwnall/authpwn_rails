@@ -21,7 +21,7 @@ module SessionController
 
   # GET /session/new
   def new
-    @email = params[:email]
+    @session = Session.from_params params
     @redirect_url = flash[:auth_redirect_url]
     redirect_to session_url if current_user
   end
@@ -58,8 +58,8 @@ module SessionController
     return reset_password if params[:reset_password]
 
     @redirect_url = params[:redirect_url] || session_url
-    @email = params[:email]
-    auth = User.authenticate_signin @email, params[:password]
+    @session = Session.from_params params
+    auth = User.authenticate_signin @session.email, @session.password
     unless auth.kind_of? Symbol
       set_session_current_user auth
       Tokens::SessionUid.remove_expired if auto_purge_sessions
@@ -92,12 +92,12 @@ module SessionController
 
   # POST /session/reset_password
   def reset_password
-    @email = params[:email]
-    credential = Credentials::Email.with @email
+    email = params[:email]
+    credential = Credentials::Email.with email
 
     if user = (credential && credential.user)
       token = Tokens::PasswordReset.random_for user
-      ::SessionMailer.reset_password_email(@email, token, root_url).deliver
+      ::SessionMailer.reset_password_email(email, token, root_url).deliver
     end
 
     respond_to do |format|
