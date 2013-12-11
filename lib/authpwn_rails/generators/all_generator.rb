@@ -52,6 +52,12 @@ class AllGenerator < Rails::Generators::Base
   end
 
   def create_session_mailer_views
+    copy_file File.join('session_mailer', 'email_verification_email.html.erb'),
+              File.join('app', 'views', 'session_mailer',
+                        'email_verification_email.html.erb')
+    copy_file File.join('session_mailer', 'email_verification_email.text.erb'),
+              File.join('app', 'views', 'session_mailer',
+                        'email_verification_email.text.erb')
     copy_file File.join('session_mailer', 'reset_password_email.html.erb'),
               File.join('app', 'views', 'session_mailer',
                         'reset_password_email.html.erb')
