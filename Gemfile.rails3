@@ -12,4 +12,7 @@ group :development do
   gem 'mysql2', '>= 0.3.14'
   gem 'pg', '>= 0.17.0'
   gem 'sqlite3', '>= 1.3.8'
+  gem 'rubysl', platforms: [:rbx]
+  gem 'rubysl-bundler', platforms: [:rbx]
+  gem 'rubysl-rake', platforms: [:rbx]
 end
