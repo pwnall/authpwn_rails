@@ -14,10 +14,14 @@ module EmailField
 
   included do
     validates_each :email do |record, attr, value|
-      unless record.email_credential.valid?
-        record.email_credential.errors.each do |_, message|
-          record.errors.add attr, message
+      if record.email_credential
+        unless record.email_credential.valid?
+          record.email_credential.errors.each do |_, message|
+            record.errors.add attr, message
+          end
         end
+      else
+        record.errors.add attr, :blank
       end
     end
     if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=

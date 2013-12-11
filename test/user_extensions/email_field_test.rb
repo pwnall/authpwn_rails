@@ -17,9 +17,20 @@ class EmailFieldTest < ActiveSupport::TestCase
     assert @user.valid?
   end
 
+  test 'freshly constructed user' do
+    user = UserWithEmail.new
+    assert !user.valid?
+    assert_not_nil user.errors[:email], 'No validation errors on e-mail'
+    assert user.errors[:email].any? { |m| /blank/i =~ m },
+           'E-mail validation errors include length error'
+  end
+
   test 'email presence' do
     @user.email = nil
     assert !@user.valid?
+    assert_not_nil @user.errors[:email], 'No validation errors on e-mail'
+    assert @user.errors[:email].any? { |m| /blank/i =~ m },
+           'E-mail validation errors include presence error'
   end
 
   test 'email_credential' do
