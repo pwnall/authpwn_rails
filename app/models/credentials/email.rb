@@ -20,7 +20,7 @@ class Email < ::Credential
   alias_attribute :email, :name
   validates :name, format: /\A[A-Za-z0-9.+_]+@[^@]*\.(\w+)\Z/,
        presence: true, length: 1..128, uniqueness: { scope: [:type],
-       message: 'This e-mail address is already claimed by an account' }
+       message: 'is already used by another account' }
 
   # '1' if the user proved ownership of the e-mail address.
   validates :key, presence: true, inclusion: { in: ['0', '1'] }

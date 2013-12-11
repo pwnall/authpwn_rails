@@ -50,7 +50,7 @@ class EmailFieldTest < ActiveSupport::TestCase
     @user.email = @john.email
     assert !@user.valid?, 'Using existent e-mail'
     assert_not_nil @user.errors[:email], 'No validation errors on e-mail'
-    assert @user.errors[:email].any? { |m| /already claimed/i =~ m },
+    assert @user.errors[:email].any? { |m| /already used by another/i =~ m },
            'E-mail validation errors include uniqueness error'
   end
 

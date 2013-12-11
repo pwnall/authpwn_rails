@@ -62,7 +62,8 @@ class EmailCredentialTest < ActiveSupport::TestCase
   test 'email uniqueness' do
     @credential.email = credentials(:john_email).email
     assert !@credential.valid?
-    assert @credential.errors[:name].any? { |m| /already claimed/i =~ m },
+    assert @credential.errors[:name].
+                       any? { |m| /already used by another/i =~ m },
            'Validation errors include custom uniqueness error'
     assert !@credential.errors[:name].
                         any? { |m| m == 'has already been taken' },
