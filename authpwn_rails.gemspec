@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "authpwn_rails"
-  s.version = "0.15.1"
+  s.version = "0.15.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Costan"]
-  s.date = "2013-12-11"
+  s.date = "2014-02-14"
   s.description = "Works with Facebook."
   s.email = "victor@costan.us"
   s.extra_rdoc_files = [
@@ -120,11 +120,11 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/pwnall/authpwn_rails"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.23"
+  s.rubygems_version = "2.0.14"
   s.summary = "User authentication for Rails 3 applications."
 
   if s.respond_to? :specification_version then
-    s.specification_version = 3
+    s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<fbgraph_rails>, [">= 0.2.2"])
@@ -136,6 +136,9 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<mysql2>, [">= 0.3.14"])
       s.add_development_dependency(%q<pg>, [">= 0.17.0"])
       s.add_development_dependency(%q<sqlite3>, [">= 1.3.8"])
+      s.add_development_dependency(%q<rubysl>, [">= 0"])
+      s.add_development_dependency(%q<rubysl-bundler>, [">= 0"])
+      s.add_development_dependency(%q<rubysl-rake>, [">= 0"])
     else
       s.add_dependency(%q<fbgraph_rails>, [">= 0.2.2"])
       s.add_dependency(%q<rails>, [">= 3.2.16"])
@@ -146,6 +149,9 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<mysql2>, [">= 0.3.14"])
       s.add_dependency(%q<pg>, [">= 0.17.0"])
       s.add_dependency(%q<sqlite3>, [">= 1.3.8"])
+      s.add_dependency(%q<rubysl>, [">= 0"])
+      s.add_dependency(%q<rubysl-bundler>, [">= 0"])
+      s.add_dependency(%q<rubysl-rake>, [">= 0"])
     end
   else
     s.add_dependency(%q<fbgraph_rails>, [">= 0.2.2"])
@@ -157,6 +163,9 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<mysql2>, [">= 0.3.14"])
     s.add_dependency(%q<pg>, [">= 0.17.0"])
     s.add_dependency(%q<sqlite3>, [">= 1.3.8"])
+    s.add_dependency(%q<rubysl>, [">= 0"])
+    s.add_dependency(%q<rubysl-bundler>, [">= 0"])
+    s.add_dependency(%q<rubysl-rake>, [">= 0"])
   end
 end
 
