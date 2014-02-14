@@ -228,7 +228,7 @@ module SessionController
   else
     # Rails 3.
     def change_password_params
-      params
+      params[:credential]
     end
   end
 
