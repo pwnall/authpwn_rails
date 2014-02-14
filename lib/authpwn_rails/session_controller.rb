@@ -195,15 +195,13 @@ module SessionController
     if @credential
       # An old password is set, must verify it.
       if @credential.check_password params[:old_password]
-        success = @credential.update_attributes(
-            change_password_params[:credential])
+        success = @credential.update_attributes change_password_params
       else
         success = false
         flash[:alert] = 'Incorrect old password. Please try again.'
       end
     else
-      @credential = Credentials::Password.new(
-          change_password_params[:credential])
+      @credential = Credentials::Password.new change_password_params
       @credential.user = current_user
       success = @credential.save
     end
@@ -225,8 +223,7 @@ module SessionController
 
     # Parameters used to change the user's password.
     def change_password_params
-      params.permit :format, :old_password,
-          credential: [ :password, :password_confirmation ]
+      params.require(:credential).permit :password, :password_confirmation
     end
   else
     # Rails 3.

@@ -381,6 +381,17 @@ class SessionControllerApiTest < ActionController::TestCase
         'hacks'), 'password not changed'
   end
 
+  test "change_password works with correct input and extra form input" do
+    set_session_current_user @user
+    post :change_password, old_password: 'password',
+         credential: { password: 'hacks', password_confirmation: 'hacks'},
+         utf8: '✓', commit: 'Change password'
+    assert_redirected_to session_url
+    assert_equal @password_credential, assigns(:credential)
+    assert_equal @user, User.authenticate_signin(@email_credential.email,
+        'hacks'), 'password not changed'
+  end
+
   test "change_password rejects bad old password" do
     set_session_current_user @user
     post :change_password, old_password: '_password',
