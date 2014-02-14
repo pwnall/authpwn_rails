@@ -92,7 +92,7 @@ module SessionController
 
   # POST /session/reset_password
   def reset_password
-    email = params[:email]
+    email = params[:session] && params[:session][:email]
     credential = Credentials::Email.with email
 
     if user = (credential && credential.user)

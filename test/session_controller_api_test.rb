@@ -495,7 +495,7 @@ class SessionControllerApiTest < ActionController::TestCase
     @request.host = 'mail.test.host:1234'
 
     assert_difference 'Credential.count', 1 do
-      post :reset_password, email: @email_credential.email
+      post :reset_password, session: { email: @email_credential.email }
     end
 
     token = Credential.last
@@ -517,7 +517,8 @@ class SessionControllerApiTest < ActionController::TestCase
     ActionMailer::Base.deliveries = []
 
     assert_difference 'Credential.count', 1 do
-      post :reset_password, email: @email_credential.email, format: 'json'
+      post :reset_password, session: { email: @email_credential.email },
+                            format: 'json'
     end
 
     token = Credential.last
@@ -534,7 +535,7 @@ class SessionControllerApiTest < ActionController::TestCase
     ActionMailer::Base.deliveries = []
 
     assert_no_difference 'Credential.count' do
-      post :reset_password, email: 'no@such.email'
+      post :reset_password, session: { email: 'no@such.email' }
     end
     assert ActionMailer::Base.deliveries.empty?, 'no email generated'
 
@@ -545,7 +546,7 @@ class SessionControllerApiTest < ActionController::TestCase
     ActionMailer::Base.deliveries = []
 
     assert_no_difference 'Credential.count' do
-      post :reset_password, email: 'no@such.email', format: 'json'
+      post :reset_password, session: { email: 'no@such.email' }, format: 'json'
     end
     assert ActionMailer::Base.deliveries.empty?, 'no email generated'
 
@@ -558,7 +559,7 @@ class SessionControllerApiTest < ActionController::TestCase
     ActionMailer::Base.deliveries = []
 
     assert_difference 'Credential.count', 1 do
-      post :create, email: @email_credential.email, password: '',
+      post :create, session: { email: @email_credential.email, password: '' },
                     reset_password: :requested
     end
 
