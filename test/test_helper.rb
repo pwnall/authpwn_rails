@@ -22,6 +22,7 @@ require 'helpers/action_mailer.rb'
 require 'helpers/autoload_path.rb'
 require 'helpers/db_setup.rb'
 require 'helpers/fbgraph.rb'
+require 'helpers/i18n.rb'
 require 'helpers/rails.rb'
 require 'helpers/routes.rb'
 
