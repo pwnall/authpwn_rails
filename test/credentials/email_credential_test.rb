@@ -76,7 +76,9 @@ class EmailCredentialTest < ActiveSupport::TestCase
     assert_equal :blocked, Credentials::Email.authenticate('john@gmail.com')
     assert_equal :invalid, Credentials::Email.authenticate('bill@gmail.com')
 
-    credentials(:john_email).update_attributes! verified: true
+    john_email = credentials(:john_email)
+    john_email.verified = true
+    john_email.save!
     assert_equal users(:john),
                  Credentials::Email.authenticate('john@gmail.com')
   end
@@ -87,7 +89,10 @@ class EmailCredentialTest < ActiveSupport::TestCase
       assert_equal :blocked,
                    Credentials::Email.authenticate('john@gmail.com')
       assert_equal :invalid, Credentials::Email.authenticate('bill@gmail.com')
-      credentials(:john_email).update_attributes! verified: true
+
+      john_email = credentials(:john_email)
+      john_email.verified = true
+      john_email.save!
       assert_equal users(:john),
                    Credentials::Email.authenticate('john@gmail.com')
     end

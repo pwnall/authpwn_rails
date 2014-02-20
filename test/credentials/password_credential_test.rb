@@ -97,7 +97,9 @@ class PasswordCredentialTest < ActiveSupport::TestCase
         Credentials::Password.authenticate_email('none@gmail.com', 'pa55w0rd'),
         'Bogus e-mail'
 
-    credentials(:john_email).update_attributes! verified: true
+    john_email = credentials(:john_email)
+    john_email.verified = true
+    john_email.save!
     assert_equal users(:john),
         Credentials::Password.authenticate_email('john@gmail.com', 'password')
   end
