@@ -56,8 +56,8 @@ class SessionControllerTest < ActionController::TestCase
     assert_select 'form[action=?]', session_path do
       assert_select 'input[name=?]', 'session[email]'
       assert_select 'input[name=?]', 'session[password]'
-      assert_select 'button[name="login"]'
-      assert_select 'button[name="reset_password"]'
+      assert_select 'button[name="login"][type="submit"]'
+      assert_select 'button[name="reset_password"][type="submit"]'
     end
   end
 
@@ -85,7 +85,7 @@ class SessionControllerTest < ActionController::TestCase
       assert_select 'input[name="old_password"]'
       assert_select 'input[name=?]', 'credential[password]'
       assert_select 'input[name=?]', 'credential[password_confirmation]'
-      assert_select 'button[type=submit]'
+      assert_select 'button[type="submit"]'
     end
   end
 
@@ -100,7 +100,7 @@ class SessionControllerTest < ActionController::TestCase
       assert_select 'input[name="old_password"]', count: 0
       assert_select 'input[name=?]', 'credential[password]'
       assert_select 'input[name=?]', 'credential[password_confirmation]'
-      assert_select 'button[type=submit]'
+      assert_select 'button[type="submit"]'
     end
   end
 
