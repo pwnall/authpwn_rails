@@ -13,7 +13,7 @@ class SessionControllerTest < ActionController::TestCase
     get :show
 
     assert_equal @user, assigns(:user)
-    assert_select 'a[href="/session"][data-method="delete"]', 'Log out'
+    assert_select 'a[href="/session"][data-method="delete"]', 'sign out'
   end
 
   test "user login works and purges old sessions" do
@@ -40,7 +40,7 @@ class SessionControllerTest < ActionController::TestCase
     get :show
 
     assert_equal User.count, assigns(:user_count)
-    assert_select 'a', 'Log in'
+    assert_select 'a', 'sign in'
   end
 
   test "user not logged in with JSON request" do
@@ -85,7 +85,7 @@ class SessionControllerTest < ActionController::TestCase
       assert_select 'input[name="old_password"]'
       assert_select 'input[name=?]', 'credential[password]'
       assert_select 'input[name=?]', 'credential[password_confirmation]'
-      assert_select 'input[type=submit]'
+      assert_select 'button[type=submit]'
     end
   end
 
@@ -100,7 +100,7 @@ class SessionControllerTest < ActionController::TestCase
       assert_select 'input[name="old_password"]', count: 0
       assert_select 'input[name=?]', 'credential[password]'
       assert_select 'input[name=?]', 'credential[password_confirmation]'
-      assert_select 'input[type=submit]'
+      assert_select 'button[type=submit]'
     end
   end
 

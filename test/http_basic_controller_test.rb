@@ -41,7 +41,7 @@ class HttpBasicControllerTest < ActionController::TestCase
     set_http_basic_user @user, 'pa55w0rd'
     get :show
     assert_equal @user, assigns(:current_user)
-    
+
     jane_id = if defined? ActiveRecord::FixtureSet
       ActiveRecord::FixtureSet.identify :jane
     else
@@ -105,7 +105,7 @@ class HttpBasicControllerTest < ActionController::TestCase
     get :bouncer
     assert_response :forbidden
     assert_template 'session/forbidden'
-    assert_select 'a[href="/session"][data-method="delete"]', 'Log out'
+    assert_select 'a[href="/session"][data-method="delete"]', 'sign out'
   end
 
   test "valid user bounced in json" do
