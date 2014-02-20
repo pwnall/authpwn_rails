@@ -71,17 +71,25 @@ class EmailCredentialTest < ActiveSupport::TestCase
   end
 
   test 'authenticate' do
-    assert_equal users(:john), Credentials::Email.authenticate('john@gmail.com')
-    assert_equal users(:jane), Credentials::Email.authenticate('jane@gmail.com')
+    assert_equal users(:jane),
+                 Credentials::Email.authenticate('jane@gmail.com')
+    assert_equal :blocked, Credentials::Email.authenticate('john@gmail.com')
     assert_equal :invalid, Credentials::Email.authenticate('bill@gmail.com')
+
+    credentials(:john_email).update_attributes! verified: true
+    assert_equal users(:john),
+                 Credentials::Email.authenticate('john@gmail.com')
   end
 
   test 'authenticate calls User#auth_bounce_reason' do
-    with_blocked_credential credentials(:john_email), :reason do
-      assert_equal :reason, Credentials::Email.authenticate('john@gmail.com')
-      assert_equal users(:jane),
-                   Credentials::Email.authenticate('jane@gmail.com')
+    with_blocked_credential credentials(:jane_email), :reason do
+      assert_equal :reason, Credentials::Email.authenticate('jane@gmail.com')
+      assert_equal :blocked,
+                   Credentials::Email.authenticate('john@gmail.com')
       assert_equal :invalid, Credentials::Email.authenticate('bill@gmail.com')
+      credentials(:john_email).update_attributes! verified: true
+      assert_equal users(:john),
+                   Credentials::Email.authenticate('john@gmail.com')
     end
   end
 end

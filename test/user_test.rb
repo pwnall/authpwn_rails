@@ -56,12 +56,14 @@ class UserTest < ActiveSupport::TestCase
     assert_equal nil, User.find_by_param(nil)
   end
 
-  test 'authenticate_email' do
-    assert_equal users(:john),
-        User.authenticate_signin('john@gmail.com', 'password')
+  test 'authenticate_signin' do
+    assert_equal users(:jane),
+        User.authenticate_signin('jane@gmail.com', 'pa55w0rd')
     assert_equal :invalid,
-        User.authenticate_signin('john@gmail.com', 'pa55w0rd'),
-        "Jane's password on John's account"
+        User.authenticate_signin('jane@gmail.com', 'password'),
+        "John's password on Jane's account"
+    assert_equal :blocked,
+        User.authenticate_signin('john@gmail.com', 'password')
   end
 
   test 'autosaves credentials' do

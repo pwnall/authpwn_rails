@@ -54,6 +54,7 @@ class Email < ::Credential
   def self.authenticate(email)
     credential = with email
     return :invalid unless credential
+    return :blocked unless credential.verified?
     user = credential.user
     user.auth_bounce_reason(credential) || user
   end

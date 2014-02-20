@@ -17,7 +17,7 @@ class TokenCredentialTest < ActiveSupport::TestCase
   end
 
   test 'code uniqueness' do
-    @credential.code = credentials(:john_token).code
+    @credential.code = credentials(:jane_token).code
     assert !@credential.valid?
   end
 
@@ -27,7 +27,7 @@ class TokenCredentialTest < ActiveSupport::TestCase
   end
 
   test 'spend does nothing' do
-    credential = credentials(:jane_token)
+    credential = credentials(:john_token)
     assert_equal Tokens::Base, credential.class, 'bad setup'
 
     assert_no_difference 'Credential.count' do
@@ -36,12 +36,12 @@ class TokenCredentialTest < ActiveSupport::TestCase
   end
 
   test 'random_for' do
-    token = Tokens::Base.random_for users(:john)
+    token = Tokens::Base.random_for users(:jane)
     assert token.valid?, 'valid token'
-    assert_equal users(:john), token.user
+    assert_equal users(:jane), token.user
     assert_equal Tokens::Base, token.class
     assert !token.new_record?, 'saved token'
-    assert_operator users(:john).credentials, :include?, token
+    assert_operator users(:jane).credentials, :include?, token
   end
 
   test 'with_code' do

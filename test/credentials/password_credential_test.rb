@@ -77,24 +77,28 @@ class PasswordCredentialTest < ActiveSupport::TestCase
   end
 
   test 'authenticate_email' do
-    assert_equal users(:john),
-        Credentials::Password.authenticate_email('john@gmail.com', 'password')
-    assert_equal :invalid,
-        Credentials::Password.authenticate_email('john@gmail.com', 'pa55w0rd'),
-        "Jane's password on John's account"
     assert_equal users(:jane),
         Credentials::Password.authenticate_email('jane@gmail.com', 'pa55w0rd')
     assert_equal :invalid,
         Credentials::Password.authenticate_email('jane@gmail.com', 'password'),
         "John's password on Jane's account"
     assert_equal :invalid,
-        Credentials::Password.authenticate_email('john@gmail.com', 'awesome'),
+        Credentials::Password.authenticate_email('jane@gmail.com', 'awesome'),
         'Bogus password'
+    assert_equal :blocked,
+        Credentials::Password.authenticate_email('john@gmail.com', 'password')
+    assert_equal :blocked,
+        Credentials::Password.authenticate_email('john@gmail.com', 'pa55w0rd'),
+        "Jane's password on John's account"
     assert_equal :invalid,
         Credentials::Password.authenticate_email('bill@gmail.com', 'pa55w0rd'),
         'Password authentication on account without password credential'
     assert_equal :invalid,
         Credentials::Password.authenticate_email('none@gmail.com', 'pa55w0rd'),
         'Bogus e-mail'
+
+    credentials(:john_email).update_attributes! verified: true
+    assert_equal users(:john),
+        Credentials::Password.authenticate_email('john@gmail.com', 'password')
   end
 end

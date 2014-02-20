@@ -15,10 +15,10 @@ class SessionControllerApiTest < ActionController::TestCase
   tests BareSessionController
 
   setup do
-    @user = users(:john)
-    @email_credential = credentials(:john_email)
-    @password_credential = credentials(:john_password)
-    @token_credential = credentials(:john_token)
+    @user = users(:jane)
+    @email_credential = credentials(:jane_email)
+    @password_credential = credentials(:jane_password)
+    @token_credential = credentials(:jane_token)
     @_auto_purge_sessions = BareSessionController.auto_purge_sessions
   end
 
@@ -81,7 +81,7 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "create logs in with good account details" do
     post :create, session: { email: @email_credential.email,
-                             password: 'password' }
+                             password: 'pa55w0rd' }
     assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
     assert_nil flash[:alert], 'no alert'
@@ -90,7 +90,7 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "create logs in with good raw account details" do
-    post :create, email: @email_credential.email, password: 'password'
+    post :create, email: @email_credential.email, password: 'pa55w0rd'
     assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
     assert_nil flash[:alert], 'no alert'
@@ -104,7 +104,7 @@ class SessionControllerApiTest < ActionController::TestCase
     old_token.updated_at = Time.now - 1.year
     old_token.save!
     post :create, session: { email: @email_credential.email,
-                             password: 'password' }
+                             password: 'pa55w0rd' }
     assert_equal @user, session_current_user, 'session'
     assert_nil Tokens::Base.with_code(old_token.code).first,
                'old session not purged'
@@ -115,14 +115,14 @@ class SessionControllerApiTest < ActionController::TestCase
     old_token = credentials(:jane_session_token)
     old_token.updated_at = Time.now - 1.year
     old_token.save!
-    post :create, email: @email_credential.email, password: 'password'
+    post :create, email: @email_credential.email, password: 'pa55w0rd'
     assert_equal @user, session_current_user, 'session'
     assert_equal old_token, Tokens::Base.with_code(old_token.code).first,
                'old session purged'
   end
 
   test "create by json logs in with good account details" do
-    post :create, email: @email_credential.email, password: 'password',
+    post :create, email: @email_credential.email, password: 'pa55w0rd',
                   format: 'json'
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
@@ -137,7 +137,7 @@ class SessionControllerApiTest < ActionController::TestCase
     old_token = credentials(:jane_session_token)
     old_token.updated_at = Time.now - 1.year
     old_token.save!
-    post :create, email: @email_credential.email, password: 'password',
+    post :create, email: @email_credential.email, password: 'pa55w0rd',
                   format: 'json'
     assert_response :ok
     assert_equal @user, session_current_user, 'session'
@@ -148,7 +148,7 @@ class SessionControllerApiTest < ActionController::TestCase
   test "create redirects properly with good account details" do
     url = 'http://authpwn.redirect.url'
     post :create, session: { email: @email_credential.email,
-                             password: 'password' }, redirect_url: url
+                             password: 'pa55w0rd' }, redirect_url: url
     assert_redirected_to url
     assert_nil flash[:alert], 'no alert'
     assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
@@ -167,7 +167,7 @@ class SessionControllerApiTest < ActionController::TestCase
     @password_credential.updated_at = Time.now - 2.years
     @password_credential.save!
     post :create, session: { email: @email_credential.email,
-                             password: 'password' }
+                             password: 'pa55w0rd' }
     assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
@@ -189,7 +189,7 @@ class SessionControllerApiTest < ActionController::TestCase
   test "create does not log in blocked accounts" do
     with_blocked_credential @email_credential do
       post :create, session: { email: @email_credential.email,
-                               password: 'password' }
+                               password: 'pa55w0rd' }
     end
     assert_redirected_to new_session_url
     assert_nil assigns(:current_user), 'instance variable'
@@ -221,7 +221,7 @@ class SessionControllerApiTest < ActionController::TestCase
   test "create by json does not log in with expired password" do
     @password_credential.updated_at = Time.now - 2.years
     @password_credential.save!
-    post :create, email: @email_credential.email, password: 'password',
+    post :create, email: @email_credential.email, password: 'pa55w0rd',
                   format: 'json'
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
@@ -233,7 +233,7 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "create by json does not log in blocked accounts" do
     with_blocked_credential @email_credential do
-      post :create, email: @email_credential.email, password: 'password',
+      post :create, email: @email_credential.email, password: 'pa55w0rd',
                     format: 'json'
     end
     assert_response :ok
@@ -365,15 +365,15 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "change_password bounces without logged in user" do
-    post :change_password, old_password: 'password',
+    post :change_password, old_password: 'pa55w0rd',
          credential: { password: 'hacks',
-                          password_confirmation: 'hacks'}
+                       password_confirmation: 'hacks'}
     assert_response :forbidden
   end
 
   test "change_password works with correct input" do
     set_session_current_user @user
-    post :change_password, old_password: 'password',
+    post :change_password, old_password: 'pa55w0rd',
          credential: { password: 'hacks', password_confirmation: 'hacks'}
     assert_redirected_to session_url
     assert_equal @password_credential, assigns(:credential)
@@ -383,7 +383,7 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "change_password works with correct input and extra form input" do
     set_session_current_user @user
-    post :change_password, old_password: 'password',
+    post :change_password, old_password: 'pa55w0rd',
          credential: { password: 'hacks', password_confirmation: 'hacks'},
          utf8: "\u2713", commit: 'Change password'
     assert_redirected_to session_url
@@ -394,24 +394,24 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "change_password rejects bad old password" do
     set_session_current_user @user
-    post :change_password, old_password: '_password',
+    post :change_password, old_password: '_pa55w0rd',
          credential: { password: 'hacks', password_confirmation: 'hacks'}
     assert_response :ok
     assert_template :password_change
     assert_equal @password_credential, assigns(:credential)
     assert_equal @user, User.authenticate_signin(@email_credential.email,
-        'password'), 'password wrongly changed'
+        'pa55w0rd'), 'password wrongly changed'
   end
 
   test "change_password rejects un-confirmed password" do
     set_session_current_user @user
-    post :change_password, old_password: 'password',
+    post :change_password, old_password: 'pa55w0rd',
          credential: { password: 'hacks', password_confirmation: 'hacks_'}
     assert_response :ok
     assert_template :password_change
     assert_equal @password_credential, assigns(:credential)
     assert_equal @user, User.authenticate_signin( @email_credential.email,
-        'password'), 'password wrongly changed'
+        'pa55w0rd'), 'password wrongly changed'
   end
 
   test "change_password works for password recovery" do
@@ -438,7 +438,7 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "change_password by json bounces without logged in user" do
-    post :change_password, format: 'json', old_password: 'password',
+    post :change_password, format: 'json', old_password: 'pa55w0rd',
          credential: { password: 'hacks', password_confirmation: 'hacks'}
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
@@ -447,7 +447,7 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "change_password by json works with correct input" do
     set_session_current_user @user
-    post :change_password, format: 'json', old_password: 'password',
+    post :change_password, format: 'json', old_password: 'pa55w0rd',
          credential: { password: 'hacks',
                           password_confirmation: 'hacks'}
     assert_response :ok
@@ -457,25 +457,25 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "change_password by json rejects bad old password" do
     set_session_current_user @user
-    post :change_password, format: 'json', old_password: '_password',
+    post :change_password, format: 'json', old_password: '_pa55w0rd',
          credential: { password: 'hacks', password_confirmation: 'hacks'}
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'invalid', data['error']
     assert_equal @password_credential, assigns(:credential)
     assert_equal @user, User.authenticate_signin(@email_credential.email,
-        'password'), 'password wrongly changed'
+        'pa55w0rd'), 'password wrongly changed'
   end
 
   test "change_password by json rejects un-confirmed password" do
     set_session_current_user @user
-    post :change_password, format: 'json', old_password: 'password',
+    post :change_password, format: 'json', old_password: 'pa55w0rd',
          credential: { password: 'hacks', password_confirmation: 'hacks_'}
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'invalid', data['error']
-    assert_equal @user, User.authenticate_signin( @email_credential.email,
-        'password'), 'password wrongly changed'
+    assert_equal @user, User.authenticate_signin(@email_credential.email,
+        'pa55w0rd'), 'password wrongly changed'
   end
 
   test "change_password by json works for password recovery" do
