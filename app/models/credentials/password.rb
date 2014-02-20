@@ -83,7 +83,7 @@ class Password < ::Credential
 
   if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
     # Forms can only change the plain-text password fields.
-    attr_accessible :password, :password_confirmation
+    attr_accessible :old_password, :password, :password_confirmation
   end
 end  # class Credentials::Password
 
