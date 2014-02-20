@@ -11,6 +11,14 @@ class Password < ::Credential
   # Virtual attribute: confirmation for the user's password.
   attr_accessor :password_confirmation
 
+  # Virtual attribute that lets us have an old_password field on forms.
+  def old_password
+    nil
+  end
+  def old_password=(new_old_password)
+    new_old_password
+  end
+
   # A user can have a single password.
   validates :user_id, uniqueness: true
 

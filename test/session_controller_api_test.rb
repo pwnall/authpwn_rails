@@ -365,16 +365,15 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "change_password bounces without logged in user" do
-    post :change_password, old_password: 'pa55w0rd',
-         credential: { password: 'hacks',
-                       password_confirmation: 'hacks'}
+    post :change_password, credential: { old_password: 'pa55w0rd',
+        password: 'hacks', password_confirmation: 'hacks' }
     assert_response :forbidden
   end
 
   test "change_password works with correct input" do
     set_session_current_user @user
-    post :change_password, old_password: 'pa55w0rd',
-         credential: { password: 'hacks', password_confirmation: 'hacks'}
+    post :change_password, credential: { old_password: 'pa55w0rd',
+        password: 'hacks', password_confirmation: 'hacks'}
     assert_redirected_to session_url
     assert_equal @password_credential, assigns(:credential)
     assert_equal @user, User.authenticate_signin(@email_credential.email,
@@ -383,9 +382,9 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "change_password works with correct input and extra form input" do
     set_session_current_user @user
-    post :change_password, old_password: 'pa55w0rd',
-         credential: { password: 'hacks', password_confirmation: 'hacks'},
-         utf8: "\u2713", commit: 'Change password'
+    post :change_password, credential: { old_password: 'pa55w0rd',
+        password: 'hacks', password_confirmation: 'hacks' }, utf8: "\u2713",
+        commit: 'Change Password'
     assert_redirected_to session_url
     assert_equal @password_credential, assigns(:credential)
     assert_equal @user, User.authenticate_signin(@email_credential.email,
@@ -394,8 +393,8 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "change_password rejects bad old password" do
     set_session_current_user @user
-    post :change_password, old_password: '_pa55w0rd',
-         credential: { password: 'hacks', password_confirmation: 'hacks'}
+    post :change_password, credential: { old_password: '_pa55w0rd',
+        password: 'hacks', password_confirmation: 'hacks' }
     assert_response :ok
     assert_template :password_change
     assert_equal @password_credential, assigns(:credential)
@@ -405,8 +404,8 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "change_password rejects un-confirmed password" do
     set_session_current_user @user
-    post :change_password, old_password: 'pa55w0rd',
-         credential: { password: 'hacks', password_confirmation: 'hacks_'}
+    post :change_password, credential: { old_password: 'pa55w0rd',
+        password: 'hacks', password_confirmation: 'hacks_' }
     assert_response :ok
     assert_template :password_change
     assert_equal @password_credential, assigns(:credential)
@@ -417,9 +416,8 @@ class SessionControllerApiTest < ActionController::TestCase
   test "change_password works for password recovery" do
     set_session_current_user @user
     @password_credential.destroy
-    post :change_password,
-         credential: { password: 'hacks',
-                          password_confirmation: 'hacks'}
+    post :change_password, credential: { password: 'hacks',
+                                         password_confirmation: 'hacks' }
     assert_redirected_to session_url
     assert_equal @user, User.authenticate_signin(@email_credential.email,
         'hacks'), 'password not changed'
@@ -429,17 +427,17 @@ class SessionControllerApiTest < ActionController::TestCase
     set_session_current_user @user
     @password_credential.destroy
     assert_no_difference 'Credential.count' do
-      post :change_password,
-           credential: { password: 'hacks',
-                            password_confirmation: 'hacks_'}
+      post :change_password, credential: { password: 'hacks',
+                                           password_confirmation: 'hacks_' }
     end
     assert_response :ok
     assert_template :password_change
   end
 
   test "change_password by json bounces without logged in user" do
-    post :change_password, format: 'json', old_password: 'pa55w0rd',
-         credential: { password: 'hacks', password_confirmation: 'hacks'}
+    post :change_password, format: 'json',
+        credential: { old_password: 'pa55w0rd', password: 'hacks',
+                      password_confirmation: 'hacks' }
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'Please sign in', data['error']
@@ -447,9 +445,9 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "change_password by json works with correct input" do
     set_session_current_user @user
-    post :change_password, format: 'json', old_password: 'pa55w0rd',
-         credential: { password: 'hacks',
-                          password_confirmation: 'hacks'}
+    post :change_password, format: 'json',
+        credential: { old_password: 'pa55w0rd', password: 'hacks',
+                      password_confirmation: 'hacks' }
     assert_response :ok
     assert_equal @user, User.authenticate_signin(@email_credential.email,
         'hacks'), 'password not changed'
@@ -457,8 +455,9 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "change_password by json rejects bad old password" do
     set_session_current_user @user
-    post :change_password, format: 'json', old_password: '_pa55w0rd',
-         credential: { password: 'hacks', password_confirmation: 'hacks'}
+    post :change_password, format: 'json',
+        credential: { old_password: '_pa55w0rd', password: 'hacks',
+                      password_confirmation: 'hacks' }
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'invalid', data['error']
@@ -469,8 +468,9 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "change_password by json rejects un-confirmed password" do
     set_session_current_user @user
-    post :change_password, format: 'json', old_password: 'pa55w0rd',
-         credential: { password: 'hacks', password_confirmation: 'hacks_'}
+    post :change_password, format: 'json',
+         credential: { old_password: 'pa55w0rd', password: 'hacks',
+                       password_confirmation: 'hacks_' }
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'invalid', data['error']
@@ -482,7 +482,7 @@ class SessionControllerApiTest < ActionController::TestCase
     set_session_current_user @user
     @password_credential.destroy
     post :change_password, format: 'json',
-         credential: { password: 'hacks', password_confirmation: 'hacks'}
+         credential: { password: 'hacks', password_confirmation: 'hacks' }
     assert_response :ok
     assert_equal @user, User.authenticate_signin(
          @email_credential.email, 'hacks'), 'password not changed'
@@ -493,8 +493,7 @@ class SessionControllerApiTest < ActionController::TestCase
     @password_credential.destroy
     assert_no_difference 'Credential.count' do
       post :change_password, format: 'json',
-           credential: { password: 'hacks',
-                            password_confirmation: 'hacks_'}
+           credential: { password: 'hacks', password_confirmation: 'hacks_' }
     end
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body

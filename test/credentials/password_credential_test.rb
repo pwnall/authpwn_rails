@@ -42,6 +42,12 @@ class PasswordCredentialTest < ActiveSupport::TestCase
     assert !@credential.valid?
   end
 
+  test 'old_password always returns nil' do
+    assert_equal @credential.old_password, nil
+    @credential.old_password = 'old password'
+    assert_equal @credential.old_password, nil
+  end
+
   test 'check_password' do
     assert_equal true, @credential.check_password('awesome')
     assert_equal false, @credential.check_password('not awesome'),
