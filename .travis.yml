@@ -7,11 +7,16 @@ env:
 gemfile:
   - Gemfile.rails3
   - Gemfile.rails4
+  - Gemfile.rails41
 rvm:
   - 1.9.3
   - 2.0.0
+  - 2.1.0
   - rbx
 matrix:
   exclude:
     - gemfile: Gemfile.rails3
       rvm: 2.0.0
+    - gemfile: Gemfile.rails3
+      rvm: 2.1.0
+

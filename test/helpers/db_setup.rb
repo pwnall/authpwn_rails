@@ -1,3 +1,5 @@
+ar_config = { adapter: 'sqlite3', database: ':memory:'}
+
 case ENV['DB']
 when /mysql/i
   create_sql = 'CREATE DATABASE plugin_dev DEFAULT CHARACTER SET utf8;'
@@ -6,21 +8,20 @@ when /mysql/i
   end
 
   `mysql -u root -e "DROP DATABASE IF EXISTS plugin_dev; #{create_sql}"`
-  ActiveRecord::Base.establish_connection adapter: 'mysql2',
-      database: 'plugin_dev', username: 'root', password: ''
+   ar_config = { adapter: 'mysql2', database: 'plugin_dev',
+                 username: 'root', password: '' }
 when /pg/i
   pg_user = ENV['DB_USER'] || ENV['USER']
   `psql -U #{pg_user} -d postgres -c "DROP DATABASE IF EXISTS plugin_dev;"`
   `psql -U #{pg_user} -d postgres -c "CREATE DATABASE plugin_dev;"`
-  ActiveRecord::Base.establish_connection adapter: 'postgresql',
-      database: 'plugin_dev', username: pg_user, password: ''
-else
-  ActiveRecord::Base.establish_connection adapter: 'sqlite3',
-                                          database: ':memory:'
+  ar_config = { adapter: 'postgresql', database: 'plugin_dev',
+                username: pg_user, password: '' }
 end
 
+ActiveRecord::Base.configurations = { 'test' => ar_config }
+ActiveRecord::Base.establish_connection :test
+
 class ActiveRecord::Base
-  self.configurations = true
   if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
     self.mass_assignment_sanitizer = :strict
 

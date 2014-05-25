@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'test/unit'
+require 'minitest/autorun'
 
 require 'action_controller'
 require 'action_mailer'
