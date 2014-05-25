@@ -379,7 +379,7 @@ DEPENDENCIES
   mocha (>= 0.14.0)
   mysql2 (>= 0.3.16)
   pg (>= 0.17.1)
-  rails (>= 4.1.1)
+  rails (>= 3.2.18)
   rubysl
   rubysl-bundler
   rubysl-rake
