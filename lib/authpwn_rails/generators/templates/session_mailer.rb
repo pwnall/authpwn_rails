@@ -21,6 +21,6 @@ class SessionMailer < ActionMailer::Base
     %Q|"#{server_hostname} staff" <admin@#{server_hostname}>|
   end
 
-  # You shouldn't extend the session controller, so you can benefit from future
+  # You shouldn't extend the session mailer, so you can benefit from future
   # features. But, if you must, you can do it here.
 end
