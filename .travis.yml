@@ -10,7 +10,6 @@ gemfile:
   - Gemfile.rails41
   - Gemfile.rails42
 rvm:
-  - 1.9.3
   - 2.0.0
   - 2.1.0
   - rbx
