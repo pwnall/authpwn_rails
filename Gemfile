@@ -5,7 +5,7 @@ gem 'fbgraph_rails', '>= 0.2.2'
 gem 'rails', '>= 3.2.18'
 
 group :development do
-  gem 'bundler', '>= 1.6.2'
+  gem 'bundler', '>= 1.7.3'
   gem 'mocha', '>= 0.14.0'
   gem 'jeweler', '>= 2.0.1'
   gem 'simplecov', '>= 0'

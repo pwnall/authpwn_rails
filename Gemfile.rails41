@@ -2,11 +2,11 @@ source 'https://rubygems.org'
 
 gem 'fbgraph_rails', '>= 0.2.2'
 
-gem 'rails', '>= 4.1.1'
+gem 'rails', '>= 4.1.6'
 
 group :development do
-  gem 'bundler', '>= 1.6.2'
-  gem 'mocha', '>= 0.14.0'
+  gem 'bundler', '>= 1.7.3'
+  gem 'mocha', '>= 1.1.0'
   gem 'jeweler', '>= 2.0.1'
   gem 'simplecov', '>= 0'
   gem 'mysql2', '>= 0.3.16'

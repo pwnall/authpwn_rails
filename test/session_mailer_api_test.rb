@@ -30,7 +30,7 @@ class SessionMailerApiTest < ActionMailer::TestCase
       end
     end
   end
-  
+
   teardown do
     SessionMailer.class_eval do
       undef :email_verification_from
@@ -44,10 +44,15 @@ class SessionMailerApiTest < ActionMailer::TestCase
   end
 
   test 'email verification email contents' do
-    email = SessionMailer.email_verification_email(@verification_token,
-                                                   @root_url).deliver
+    email_draft = SessionMailer.email_verification_email @verification_token,
+                                                         @root_url
+    if email_draft.respond_to? :deliver_now
+      email = email_draft.deliver_now
+    else
+      email = email_draft.deliver
+    end
     assert !ActionMailer::Base.deliveries.empty?
-    
+
     assert_equal 'test.host e-mail verification', email.subject
     assert_equal ['email_check@test.host'], email.from
     assert_equal [@verification_email], email.to
@@ -56,14 +61,19 @@ class SessionMailerApiTest < ActionMailer::TestCase
   end
 
   test 'password reset email contents' do
-    email = SessionMailer.reset_password_email(@reset_email, @reset_token,
-                                               @root_url).deliver
+    email_draft = SessionMailer.reset_password_email @reset_email,
+                                                     @reset_token, @root_url
+    if email_draft.respond_to? :deliver_now
+      email = email_draft.deliver_now
+    else
+      email = email_draft.deliver
+    end
     assert !ActionMailer::Base.deliveries.empty?
-    
+
     assert_equal 'test.host password reset', email.subject
     assert_equal ['reset@test.host'], email.from
     assert_equal [@reset_email], email.to
-    assert_match @reset_token.code, email.encoded    
+    assert_match @reset_token.code, email.encoded
     assert_match 'hxxp://test.host:8808/session/token/', email.encoded
   end
 end

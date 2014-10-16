@@ -8,13 +8,13 @@ class CreateCredentials < ActiveRecord::Migration
       t.timestamp :updated_at, null: false
 
       t.binary :key, limit: 2.kilobytes, null: true
-    end
 
-    # All the credentials (maybe of a specific type) belonging to a user.
-    add_index :credentials, [:user_id, :type], unique: false
-    # A specific credential, to find out what user it belongs to.
-    add_index :credentials, [:type, :name], unique: true
-    # Expired credentials (particularly useful for tokens).
-    add_index :credentials, [:type, :updated_at], unique: false
+      # All the credentials (maybe of a specific type) belonging to a user.
+      t.index [:user_id, :type], unique: false
+      # A specific credential, to find out what user it belongs to.
+      t.index [:type, :name], unique: true
+      # Expired credentials (particularly useful for tokens).
+      t.index [:type, :updated_at], unique: false
+    end
   end
 end

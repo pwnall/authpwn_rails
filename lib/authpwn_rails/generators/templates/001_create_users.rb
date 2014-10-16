@@ -3,9 +3,9 @@ class CreateUsers < ActiveRecord::Migration
     create_table :users do |t|
       t.string :exuid, limit: 32, null: false
 
-      t.timestamps
-    end
+      t.timestamps null: false
 
-    add_index :users, :exuid, unique: true
+      t.index :exuid, unique: true
+    end
   end
 end
