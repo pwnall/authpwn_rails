@@ -9,7 +9,6 @@ Scaffold user accounts, and session controller views.
 
 Wire authentication into your ApplicationController.
     authenticates_using_session
-    authenticates_using_facebook
 
 Note: the code inside the models and controllers is tucked away in the plug-in.
 The scaffold models and controllers are there as extension points. You will be

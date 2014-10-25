@@ -6,8 +6,6 @@ class User < ActiveRecord::Base
   # include Authpwn::UserExtensions::EmailField
   # Virtual password attribute, with confirmation validation.
   # include Authpwn::UserExtensions::PasswordField
-  # Convenience Facebook accessors.
-  # include Authpwn::UserExtensions::FacebookFields
 
   # Change this method to change the way users are looked up when signing in.
   #

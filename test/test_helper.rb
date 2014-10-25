@@ -4,10 +4,9 @@ require 'minitest/autorun'
 require 'action_controller'
 require 'action_mailer'
 require 'active_record'
+require 'active_support/core_ext'
 require 'rails'
 
-require 'fbgraph_rails'
-require 'fbgraph_rails/controller'
 require 'sqlite3'
 
 require 'mocha/setup'

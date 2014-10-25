@@ -22,7 +22,7 @@ module CredentialModel
     validates :key, length: { in: 1..2.kilobytes, allow_nil: true }
   end
 
-  # Included in the metaclass of models that call pwnauth_facebook_token_model.
+  # Class methods on models that include Authpwn::CredentialModel.
   module ClassMethods
 
   end  # module Authpwn::FacebookTokenModel::ClassMethods

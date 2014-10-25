@@ -1,7 +1,5 @@
 source 'https://rubygems.org'
 
-gem 'fbgraph_rails', '>= 0.2.2'
-
 gem 'rails', '>= 4.0.9'
 
 group :development do
