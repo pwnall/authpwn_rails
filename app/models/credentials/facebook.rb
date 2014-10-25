@@ -53,11 +53,6 @@ class Facebook < ::Credential
   def self.uid_from_token(access_token)
     FBGraphRails.fbclient(access_token).selection.me.info![:id].to_s
   end
-
-  if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
-    # Forms should not be able to touch any attribute.
-    attr_accessible
-  end
 end  # class Credentials::Facebook
 
 end  # namespace Credentials

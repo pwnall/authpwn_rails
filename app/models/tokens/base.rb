@@ -1,19 +1,5 @@
 require 'securerandom'
 
-# :nodoc: Backport urlsafe_base64 to 1.8.7.
-unless SecureRandom.respond_to? :urlsafe_base64
-  SecureRandom.class_eval do
-    # :nodoc: lifted from 1.9.3 securerandom.rb, line 190
-    def self.urlsafe_base64(n=nil, padding=false)
-      s = [random_bytes(n)].pack("m*")
-      s.delete!("\n")
-      s.tr!("+/", "-_")
-      s.delete!("=") if !padding
-      s
-    end
-  end
-end
-
 # :namespace
 module Tokens
 
@@ -45,30 +31,17 @@ class Base < ::Credential
     credential ? credential.authenticate : :invalid
   end
 
-  
-  begin
-    ActiveRecord::QueryMethods.instance_method :references
-    # Rails 4.
-
-    # Scope that uses a secret code.
-    def self.with_code(code)
-      # NOTE 1: The where query must be performed off the root type, otherwise
-      #         Rails will try to guess the right values for the 'type' column,
-      #         and will sometimes get them wrong.
-      # NOTE 2: After using this method, it's likely that the user's other
-      #         tokens (e.g., email or Facebook OAuth token) will be required,
-      #         so we pre-fetch them.
-      Credential.where(name: code).includes(user: :credentials).
-          where(Credential.arel_table[:type].matches('Tokens::%')).
-          references(:credential)
-    end
-  rescue NameError
-    # Rails 3.
-
-    def self.with_code(code)
-      Credential.where(name: code).includes(user: :credentials).
-          where(Credential.arel_table[:type].matches('Tokens::%'))
-    end
+  # Scope that uses a secret code.
+  def self.with_code(code)
+    # NOTE 1: The where query must be performed off the root type, otherwise
+    #         Rails will try to guess the right values for the 'type' column,
+    #         and will sometimes get them wrong.
+    # NOTE 2: After using this method, it's likely that the user's other
+    #         tokens (e.g., email or Facebook OAuth token) will be required,
+    #         so we pre-fetch them.
+    Credential.where(name: code).includes(user: :credentials).
+        where(Credential.arel_table[:type].matches('Tokens::%')).
+        references(:credential)
   end
 
   # Authenticates a user using this token.

@@ -21,15 +21,6 @@ end
 ActiveRecord::Base.configurations = { 'test' => ar_config }
 ActiveRecord::Base.establish_connection :test
 
-class ActiveRecord::Base
-  if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
-    self.mass_assignment_sanitizer = :strict
-
-    # Hacky equivalent to config.active_record.whitelist_attributes = true
-    attr_accessible
-  end
-end
-
 ActiveRecord::Migration.verbose = false
 require 'authpwn_rails/generators/templates/001_create_users.rb'
 CreateUsers.migrate :up

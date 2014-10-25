@@ -5,13 +5,7 @@ module Credentials
 class Email < ::Credential
   # E-mail is a user-visible attribute, so we want good error messages for some
   # of its validations. This means we must re-define them.
-  if respond_to?(:clear_validators!)
-    clear_validators!
-  else
-    # Backport clear_validators! from Rails 4.
-    reset_callbacks :validate
-    _validators.clear
-  end
+  clear_validators!
 
   # The user whose email this is.
   validates :user, presence: true
@@ -59,34 +53,15 @@ class Email < ::Credential
     user.auth_bounce_reason(credential) || user
   end
 
-  begin
-    ActiveRecord::QueryMethods.instance_method :references
-    # Rails 4.
-
-    # Locates the credential holding an e-mail address.
-    #
-    # Returns the User matching the given e-mail, or nil if the e-mail is not
-    # associated with any user.
-    def self.with(email)
-      # This method is likely to be used to kick off a complex authentication
-      # process, so it makes sense to pre-fetch the user's other credentials.
-      Credentials::Email.includes(user: :credentials).where(name: email).
-                         references(:credential).first
-    end
-  rescue NameError
-    # Rails 3.
-
-    def self.with(email)
-      # This method is likely to be used to kick off a complex authentication
-      # process, so it makes sense to pre-fetch the user's other credentials.
-      Credentials::Email.includes(user: :credentials).where(name: email).
-                         first
-    end
-  end
-
-  if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
-    # Forms can only change the e-mail in the credential.
-    attr_accessible :email
+  # Locates the credential holding an e-mail address.
+  #
+  # Returns the User matching the given e-mail, or nil if the e-mail is not
+  # associated with any user.
+  def self.with(email)
+    # This method is likely to be used to kick off a complex authentication
+    # process, so it makes sense to pre-fetch the user's other credentials.
+    Credentials::Email.includes(user: :credentials).where(name: email).
+                       references(:credential).first
   end
 end  # class Credentials::Email
 

@@ -1,13 +1,8 @@
 # :nodoc: the routes used in all tests
 class ActionController::TestCase
   def setup_routes
-    if defined? ActionDispatch::Routing
-      # Rails 4.
-      @routes = ActionDispatch::Routing::RouteSet.new
-    else
-      # Rails 3.
-      @routes = ActionController::Routing::RouteSet.new
-    end
+    @routes = ActionDispatch::Routing::RouteSet.new
+
     @routes.draw do
       resource :cookie, controller: 'cookie' do
         collection do

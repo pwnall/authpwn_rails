@@ -5,7 +5,6 @@ env:
   - DB=pg DB_USER=postgres
   - DB=sqlite
 gemfile:
-  - Gemfile.rails3
   - Gemfile.rails4
   - Gemfile.rails41
   - Gemfile.rails42
@@ -13,16 +12,3 @@ rvm:
   - 2.0.0
   - 2.1.0
   - rbx
-matrix:
-  exclude:
-    - gemfile: Gemfile.rails3
-      rvm: 2.0.0
-    - gemfile: Gemfile.rails3
-      rvm: 2.1.0
-    - gemfile: Gemfile.rails4
-      rvm: 1.9.3
-    - gemfile: Gemfile.rails41
-      rvm: 1.9.3
-    - gemfile: Gemfile.rails42
-      rvm: 1.9.3
-

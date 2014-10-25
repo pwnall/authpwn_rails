@@ -26,11 +26,6 @@ module UserModel
 
     # Automatically assign exuid.
     before_validation :set_default_exuid, on: :create
-
-    if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
-      # Forms should not be able to touch any attribute.
-      attr_accessible :credentials_attributes
-    end
   end
 
   # Class methods on models that include Authpwn::UserModel.

@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'fbgraph_rails', '>= 0.2.2'
 
-gem 'rails', '>= 3.2.18'
+gem 'rails', '>= 4.0.9'
 
 group :development do
   gem 'bundler', '>= 1.7.3'

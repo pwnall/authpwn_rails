@@ -218,20 +218,12 @@ module SessionController
     end
   end
 
-  if defined? ActiveModel::ForbiddenAttributesProtection
-    # Rails 4.
-
-    # Parameters used to change the user's password.
-    def change_password_params
-      params.require(:credential).permit :old_password, :password,
-                                         :password_confirmation
-    end
-  else
-    # Rails 3.
-    def change_password_params
-      params[:credential]
-    end
+  # Parameters used to change the user's password.
+  def change_password_params
+    params.require(:credential).permit :old_password, :password,
+                                       :password_confirmation
   end
+  private :change_password_params
 
   # True for controllers belonging to the authentication implementation.
   #

@@ -16,7 +16,7 @@ Jeweler::Tasks.new do |gem|
   gem.name = "authpwn_rails"
   gem.homepage = "http://github.com/pwnall/authpwn_rails"
   gem.license = "MIT"
-  gem.summary = %Q{User authentication for Rails 3 and 4 applications.}
+  gem.summary = %Q{User authentication for Rails 4 applications.}
   gem.description = %Q{Works with Facebook.}
   gem.email = "victor@costan.us"
   gem.authors = ["Victor Costan"]

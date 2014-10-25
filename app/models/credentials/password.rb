@@ -80,11 +80,6 @@ class Password < ::Credential
   def self.random_salt
     [(0...12).map { |i| 1 + rand(255) }.pack('C*')].pack('m').strip
   end
-
-  if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
-    # Forms can only change the plain-text password fields.
-    attr_accessible :old_password, :password, :password_confirmation
-  end
 end  # class Credentials::Password
 
 end  # namespace Credentials

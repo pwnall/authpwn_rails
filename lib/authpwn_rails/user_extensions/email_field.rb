@@ -24,30 +24,14 @@ module EmailField
         record.errors.add attr, :blank
       end
     end
-    if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
-      attr_accessible :email
-    end
   end
 
   module ClassMethods
-    begin
-      ActiveRecord::QueryMethods.instance_method :references
-      # Rails 4.
-
-      # The user who has a certain e-mail, or nil if the e-mail is unclaimed.
-      def with_email(email)
-        credential = Credentials::Email.where(name: email).
-            includes(:user).references(:user).first
-        credential && credential.user
-      end
-    rescue NameError
-      # Rails 3.
-
-      def with_email(email)
-        credential = Credentials::Email.where(name: email).includes(:user).
-                                        first
-        credential && credential.user
-      end
+    # The user who has a certain e-mail, or nil if the e-mail is unclaimed.
+    def with_email(email)
+      credential = Credentials::Email.where(name: email).includes(:user).
+          references(:user).first
+      credential && credential.user
     end
   end
 

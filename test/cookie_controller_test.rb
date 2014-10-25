@@ -44,13 +44,7 @@ class CookieControllerTest < ActionController::TestCase
     get :show
     assert_response :success
     assert_equal @user, assigns(:current_user)
-    john_id = if defined? ActiveRecord::FixtureSet
-      # Rails 4
-      ActiveRecord::FixtureSet.identify :john
-    else
-      # Rails 3
-      ActiveRecord::Fixtures.identify :john
-    end
+    john_id =  ActiveRecord::FixtureSet.identify :john
     assert_equal "User: #{john_id}", response.body
   end
 

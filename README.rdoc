@@ -1,6 +1,6 @@
 = authpwn_rails
 
-User authentication for a Ruby on Rails 3 application. Works with Facebook.
+User authentication for a Ruby on Rails 4 application. Works with Facebook.
 
 == Integration
 

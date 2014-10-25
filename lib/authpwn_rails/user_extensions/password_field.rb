@@ -14,10 +14,6 @@ module PasswordField
   included do
     validates :password, presence: { on: :create },
                          confirmation: { allow_nil: true }
-
-    if ActiveRecord::Base.respond_to? :mass_assignment_sanitizer=
-      attr_accessible :password, :password_confirmation
-    end
   end
 
   module ClassMethods
