@@ -55,7 +55,15 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal @user.exuid, data['user']['exuid']
-    assert_equal session[:_csrf_token], data['csrf']
+
+    if @controller.respond_to? :valid_authenticity_token?, true
+      # Rails 4.2+ uses variable CSRF tokens.
+      assert @controller.send(:valid_authenticity_token?, session,
+                              data['csrf'])
+    else
+      # Rails 4.0 and 4.1 store the CSRF token in the session.
+      assert_equal session[:_csrf_token], data['csrf']
+    end
   end
 
   test "new redirects to session#show when a user is logged in" do
@@ -75,7 +83,7 @@ class SessionControllerApiTest < ActionController::TestCase
     get :new, {}, {}, { auth_redirect_url: url }
     assert_template :new
     assert_select 'form' do
-      assert_select "input[name=redirect_url][value=#{url}]"
+      assert_select "input[name=\"redirect_url\"][value=\"#{url}\"]"
     end
   end
 
@@ -127,9 +135,17 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal @user.exuid, data['user']['exuid']
-    assert_equal session[:_csrf_token], data['csrf']
     assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
+
+    if @controller.respond_to? :valid_authenticity_token?, true
+      # Rails 4.2+ uses variable CSRF tokens.
+      assert @controller.send(:valid_authenticity_token?, session,
+                              data['csrf'])
+    else
+      # Rails 4.0 and 4.1 store the CSRF token in the session.
+      assert_equal session[:_csrf_token], data['csrf']
+    end
   end
 
   test "create by json purges sessions when logging in" do
@@ -280,11 +296,19 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal @user.exuid, data['user']['exuid']
-    assert_equal session[:_csrf_token], data['csrf']
     assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
     assert_nil Tokens::Base.with_code(@token_credential.code).first,
                'one-time credential is spent'
+
+    if @controller.respond_to? :valid_authenticity_token?, true
+      # Rails 4.2+ uses variable CSRF tokens.
+      assert @controller.send(:valid_authenticity_token?, session,
+                              data['csrf'])
+    else
+      # Rails 4.0 and 4.1 store the CSRF token in the session.
+      assert_equal session[:_csrf_token], data['csrf']
+    end
   end
 
   test "token does not log in with random token" do

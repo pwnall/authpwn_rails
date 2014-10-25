@@ -11,7 +11,6 @@ module SessionModel
   extend ActiveSupport::Concern
 
   included do
-    # Rails 4.
     include ActiveModel::Model
 
     # The e-mail used to sign up.

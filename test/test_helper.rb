@@ -25,6 +25,7 @@ require 'helpers/fbgraph.rb'
 require 'helpers/i18n.rb'
 require 'helpers/rails.rb'
 require 'helpers/routes.rb'
+require 'helpers/test_order.rb'
 
 # Simulate Rails' initializer loading.
 require 'authpwn_rails/generators/templates/initializer.rb'

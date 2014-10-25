@@ -97,7 +97,13 @@ module SessionController
 
     if user = (credential && credential.user)
       token = Tokens::PasswordReset.random_for user
-      ::SessionMailer.reset_password_email(email, token, root_url).deliver
+      email = ::SessionMailer.reset_password_email(email, token, root_url)
+      if email.respond_to? :deliver_now
+        # TODO(pwnall): fix the serialization errors blocking deliver_later
+        email.deliver_now
+      else
+        email.deliver
+      end
     end
 
     respond_to do |format|
