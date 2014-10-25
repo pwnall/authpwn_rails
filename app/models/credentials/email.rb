@@ -20,17 +20,20 @@ class Email < ::Credential
   validates :key, presence: true, inclusion: { in: ['0', '1'] }
 
   before_validation :set_verified_to_false, on: :create
-  # :nodoc: by default, e-mail addresses are not verified
+  # @private
+  # By default, e-mail addresses are not verified.
   def set_verified_to_false
     self.key ||= '0' if self.key.nil?
   end
+  private :set_verified_to_false
 
   # True if the e-mail has been verified via a token URL.
   def verified?
     key == '1'
   end
 
-  # True if the e-mail has been verified via a token URL.
+  # @param [Boolean] new_verified_value true if the e-mail has been verified
+  #     via a token URL.
   def verified=(new_verified_value)
     self.key = new_verified_value ? '1' : '0'
     new_verified_value ? true : false

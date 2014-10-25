@@ -231,6 +231,44 @@ module SessionController
   end
   private :change_password_params
 
+  # GET /auth/twitter/callback
+  # POST /auth/twitter/callback
+  def omniauth
+    @redirect_url = params[:redirect_url] || session_url
+    omni_auth = request.env['omniauth.auth']
+    auth = Credentials::OmniAuthUid.authenticate omni_auth
+    unless auth.kind_of? Symbol
+      set_session_current_user auth
+      Tokens::SessionUid.remove_expired if auto_purge_sessions
+    end
+
+    respond_to do |format|
+      if current_user
+        format.html { redirect_to @redirect_url }
+      else
+        error_text = bounce_notice_text auth
+        format.html do
+          if params[:redirect_url]
+            redirect_to new_session_url, flash: { alert: error_text,
+                auth_redirect_url: @redirect_url }
+          else
+            redirect_to new_session_url, alert: error_text
+          end
+        end
+      end
+    end
+  end
+
+  # GET /auth/failure
+  def omniauth_failure
+    respond_to do |format|
+      format.html do
+        redirect_to new_session_url,
+                    alert: 'Authentication failed. Please try again.'
+        end
+    end
+  end
+
   # True for controllers belonging to the authentication implementation.
   #
   # Controllers that return true here are responsible for performing their own

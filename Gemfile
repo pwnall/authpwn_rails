@@ -8,6 +8,7 @@ group :development do
   gem 'jeweler', '>= 2.0.1'
   gem 'simplecov', '>= 0'
   gem 'mysql2', '>= 0.3.16'
+  gem 'omniauth', '>= 1.2.2'
   gem 'pg', '>= 0.17.1'
   gem 'sqlite3', '>= 1.3.9'
   gem 'rubysl', platforms: [:rbx]

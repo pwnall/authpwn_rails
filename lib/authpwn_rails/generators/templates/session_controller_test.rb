@@ -5,6 +5,7 @@ class SessionControllerTest < ActionController::TestCase
     @user = users(:jane)
     @email_credential = credentials(:jane_email)
     @password_credential = credentials(:jane_password)
+    @omniauth_credential = credentials(:jane_omniauth_developer)
   end
 
   test "user home page" do
@@ -117,5 +118,26 @@ class SessionControllerTest < ActionController::TestCase
     assert_equal [@email_credential.email], email.to
 
     assert_redirected_to new_session_url
+  end
+
+  test "OmniAuth failure" do
+    get :omniauth_failure
+
+    assert_redirected_to new_session_url
+  end
+
+  test "OmniAuth login via developer strategy and good account" do
+    old_token = credentials(:jane_session_token)
+    old_token.updated_at = Time.now - 1.year
+    old_token.save!
+
+    request.env['omniauth.auth'] = {
+        'provider' => @omniauth_credential.provider,
+        'uid' => @omniauth_credential.uid }
+    post :omniauth, provider: @omniauth_credential.provider
+    assert_equal @user, session_current_user, 'session'
+    assert_redirected_to session_url
+    assert_nil Tokens::Base.with_code(old_token.code).first,
+               'old session not purged'
   end
 end

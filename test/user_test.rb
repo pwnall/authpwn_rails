@@ -72,6 +72,47 @@ class UserTest < ActiveSupport::TestCase
     assert_equal :blocked, User.authenticate_signin(signin)
   end
 
+  test 'related_to_omniauth without e-mail' do
+    assert_equal nil, User.related_to_omniauth('provider' => 'developer',
+                                               'uid' => 'john@gmail.com')
+    assert_equal nil, User.related_to_omniauth('provider' => 'developer',
+                                               'uid' => 'john@gmail.com',
+                                               'info' => {})
+  end
+
+  test 'related_to_omniauth with existing e-mail' do
+    Credentials::OmniAuthUid.destroy_all
+    assert_equal users(:john), User.related_to_omniauth(
+        'provider' => 'developer', 'uid' => 'john_gmail_com_uid',
+        'info' => { 'email' => 'john@gmail.com' })
+  end
+
+  test 'related_to_omniauth with non-existing e-mail' do
+    assert_equal nil, User.related_to_omniauth('provider' => 'developer',
+        'uid' => 'new_user@gmail.com',
+        'info' => { 'email' => 'new_user@gmail.com' })
+  end
+
+  test 'create_from_omniauth without e-mail' do
+    assert_equal nil, User.create_from_omniauth('provider' => 'developer',
+                                                'uid' => 'newuser@gmail.com')
+    assert_equal nil, User.create_from_omniauth('provider' => 'developer',
+                                                'uid' => 'newuser@gmail.com',
+                                                'info' => {})
+  end
+
+  test 'create_from_omniauth with e-mail' do
+    omniauth_hash = { 'provider' => 'developer',
+        'uid' => 'newuser_gmail_com_uid',
+        'info' => { 'email' => 'newuser@gmail.com' } }
+    user = User.create_from_omniauth omniauth_hash
+    assert_not_nil user
+    email_credential = Credentials::Email.where(user: user).first
+    assert_not_nil email_credential
+    assert_equal 'newuser@gmail.com', email_credential.email
+    assert_equal true, email_credential.valid?
+  end
+
   test 'autosaves credentials' do
     user = users(:john)
     email_credential = user.credentials.

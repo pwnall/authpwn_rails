@@ -12,13 +12,15 @@ def setup_authpwn_routes
       collection { get :bouncer }
     end
 
+    authpwn_session controller: 'bare_session', method_names: 'bare_session',
+                    omniauth_path_prefix: '/bare_auth'
+    authpwn_session controller: 'bare_session2',
+                    method_names: 'bare_session2',
+                    omniauth_path_prefix: '/bare_auth2'
+    root to: 'session#index'
+
     # NOTE: this route should be kept in sync with the session template.
     authpwn_session
-
-    authpwn_session controller: 'bare_session', method_names: 'bare_session'
-    authpwn_session controller: 'bare_session2',
-                    method_names: 'bare_session2'
-    root to: 'session#index'
   end
 
   # NOTE: this must happen before any ActionController or ActionMailer tests

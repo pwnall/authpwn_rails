@@ -66,7 +66,6 @@ class HttpBasicControllerTest < ActionController::TestCase
     assert_equal "User: #{jane_id}", response.body
   end
 
-
   test "reset user credentials in header" do
     set_http_basic_user @user, 'pa55w0rd'
     set_http_basic_user nil

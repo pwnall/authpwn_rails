@@ -66,9 +66,11 @@ class AllGenerator < Rails::Generators::Base
                         'reset_password_email.text.erb')
   end
 
-  def create_initializer
+  def create_initializers
     copy_file 'initializer.rb',
               File.join('config', 'initializers', 'authpwn.rb')
+    copy_file 'omniauth_initializer.rb',
+              File.join('config', 'initializers', 'authpwn_omniauth.rb')
   end
 end  # class Authpwn::AllGenerator
 

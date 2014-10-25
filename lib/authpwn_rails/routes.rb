@@ -10,17 +10,22 @@ module Routes
 module MapperMixin
   # Draws the routes for a session controller.
   #
-  # The options hash accepts the following keys.
-  #   :controller:: the name of the controller; defaults to "session" for
-  #                 SessionController
-  #   :paths:: the prefix of the route paths; defaults to the controller name
-  #   :method_names:: the root of name used in the path methods; defaults to
-  #                   "session", which will generate names like session_path,
-  #                   new_session_path, and token_session_path
+  # @param [Object] options
+  # @option options [String] controller the name of the controller; defaults to
+  #     "session" for SessionController
+  # @option options [String] paths the prefix of the route paths; defaults to
+  #     the controller name
+  # @option options [String] method_names the root of name used in the path
+  #     methods; defaults to "session", which will generate names like
+  #     session_path, new_session_path, and token_session_path
+  # @option options [String] omniauth_path_prefix the prefix of the OmniAuth
+  #     route paths; defaults to '/auth'; this option should equal
+  #     OmniAuth.config.path_prefix
   def authpwn_session(options = {})
     controller = options[:controller] || 'session'
     paths = options[:paths] || controller
     methods = options[:method_names] || 'session'
+    oa_prefix = options[:omniauth_path_prefix] || '/auth'
 
     get "/#{paths}/token/:code", controller: controller, action: 'token',
                                  as: :"token_#{methods}"
@@ -40,6 +45,14 @@ module MapperMixin
     post "/#{paths}/reset_password", controller: controller,
                                      action: 'reset_password',
                                      as: "reset_password_#{methods}"
+
+    match "#{oa_prefix}/:provider/callback", via: [:get, :post],
+                                             controller: controller,
+                                             action: 'omniauth',
+                                             as: "omniauth_#{methods}"
+    get "#{oa_prefix}/failure", controller: controller,
+                                action: 'omniauth_failure',
+                                as: "omniauth_failure_#{methods}"
   end
 end
 
