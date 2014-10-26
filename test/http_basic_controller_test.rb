@@ -42,11 +42,7 @@ class HttpBasicControllerTest < ActionController::TestCase
     get :show
     assert_equal @user, assigns(:current_user)
 
-    jane_id = if defined? ActiveRecord::FixtureSet
-      ActiveRecord::FixtureSet.identify :jane
-    else
-      ActiveRecord::Fixtures.identify :jane
-    end
+    jane_id = ActiveRecord::FixtureSet.identify :jane
     assert_equal "User: #{jane_id}", response.body
   end
 
@@ -58,17 +54,15 @@ class HttpBasicControllerTest < ActionController::TestCase
   end
 
   test "uses User.authenticate_signin" do
-    User.expects(:authenticate_signin).at_least_once.
-        with('jane@gmail.com', 'fail').returns @user
+    signin = Session.new email: 'jane@gmail.com', password: 'fail'
+    Session.expects(:new).at_least_once.with(
+        email: 'jane@gmail.com', password: 'fail').returns signin
+    User.expects(:authenticate_signin).at_least_once.with(signin).returns @user
     set_http_basic_user @user, 'fail'
     get :show
     assert_equal @user, assigns(:current_user)
 
-    jane_id = if defined? ActiveRecord::FixtureSet
-      ActiveRecord::FixtureSet.identify :jane
-    else
-      ActiveRecord::Fixtures.identify :jane
-    end
+    jane_id = ActiveRecord::FixtureSet.identify :jane
     assert_equal "User: #{jane_id}", response.body
   end
 
@@ -86,11 +80,7 @@ class HttpBasicControllerTest < ActionController::TestCase
     get :show
     assert_equal @user, assigns(:current_user)
 
-    jane_id = if defined? ActiveRecord::FixtureSet
-      ActiveRecord::FixtureSet.identify :jane
-    else
-      ActiveRecord::Fixtures.identify :jane
-    end
+    jane_id = ActiveRecord::FixtureSet.identify :jane
     assert_equal "User: #{jane_id}", response.body
   end
 

@@ -56,14 +56,20 @@ class UserTest < ActiveSupport::TestCase
     assert_equal nil, User.find_by_param(nil)
   end
 
-  test 'authenticate_signin' do
-    assert_equal users(:jane),
-        User.authenticate_signin('jane@gmail.com', 'pa55w0rd')
-    assert_equal :invalid,
-        User.authenticate_signin('jane@gmail.com', 'password'),
+  test 'authenticate_signin with valid data' do
+    signin = Session.new email: 'jane@gmail.com', password: 'pa55w0rd'
+    assert_equal users(:jane), User.authenticate_signin(signin)
+  end
+
+  test 'authenticate_signin with wrong password' do
+    signin = Session.new email: 'jane@gmail.com', password: 'password'
+    assert_equal :invalid, User.authenticate_signin(signin),
         "John's password on Jane's account"
-    assert_equal :blocked,
-        User.authenticate_signin('john@gmail.com', 'password')
+  end
+
+  test 'authenticate_signin on blocked e-mail' do
+    signin = Session.new email: 'john@gmail.com', password: 'pa55w0rd'
+    assert_equal :blocked, User.authenticate_signin(signin)
   end
 
   test 'autosaves credentials' do

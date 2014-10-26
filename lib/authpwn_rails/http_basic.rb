@@ -2,14 +2,14 @@ require 'action_controller'
 
 # :nodoc: adds authenticates_using_http_basic
 class ActionController::Base
-  # Keeps track of the currently authenticated user via the session. 
+  # Keeps track of the currently authenticated user via the session.
   #
   # Assumes the existence of a User model. A bare ActiveModel model will do the
   # trick. Model instances must implement id, and the model class must implement
   # find_by_id.
   def self.authenticates_using_http_basic(options = {})
     include Authpwn::HttpBasicControllerInstanceMethods
-    before_filter :authenticate_using_http_basic, options   
+    before_filter :authenticate_using_http_basic, options
   end
 end
 
@@ -29,17 +29,18 @@ module HttpBasicControllerInstanceMethods
   def authenticate_using_http_basic
     return if current_user
     authenticate_with_http_basic do |email, password|
-      auth = User.authenticate_signin email, password
+      signin = Session.new email: email, password: password
+      auth = User.authenticate_signin signin
       self.current_user = auth unless auth.kind_of? Symbol
     end
   end
   private :authenticate_using_http_basic
-  
+
   # Inform the user that their request is forbidden.
   #
   # If a user is logged on, this renders the session/forbidden view with a HTTP
   # 403 code.
-  # 
+  #
   # If no user is logged in, a HTTP 403 code is returned, together with an
   # HTTP Authentication header causing the user-agent (browser) to initiate
   # http basic authentication.

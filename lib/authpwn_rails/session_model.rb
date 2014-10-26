@@ -4,7 +4,7 @@ require 'active_model'
 # :nodoc: namespace
 module Authpwn
 
-# Included by the model class that collects sign-up information.
+# Included by the model class that collects signin information.
 #
 # Parts of the codebase assume the model will be named Session.
 module SessionModel
@@ -13,10 +13,10 @@ module SessionModel
   included do
     include ActiveModel::Model
 
-    # The e-mail used to sign up.
+    # The e-mail used to sign in.
     attr_accessor :email
 
-    # The password used to sign up.
+    # The password used to sign in.
     attr_accessor :password
   end
 

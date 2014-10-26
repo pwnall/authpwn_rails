@@ -59,7 +59,7 @@ module SessionController
 
     @redirect_url = params[:redirect_url] || session_url
     @session = Session.from_params params
-    auth = User.authenticate_signin @session.email, @session.password
+    auth = User.authenticate_signin @session
     unless auth.kind_of? Symbol
       set_session_current_user auth
       Tokens::SessionUid.remove_expired if auto_purge_sessions
