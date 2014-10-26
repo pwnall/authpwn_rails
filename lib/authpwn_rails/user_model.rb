@@ -51,6 +51,7 @@ module UserModel
     # The easiest method of accepting other login information is to override
     # this method, locate the user's email, and supply it in a call to super.
     #
+    # @param [Session] signin the information entered in the sign-in form
     # @return [User, Symbol] the authenticated user, or a symbol indicating the
     #     reason why the authentication failed
     def authenticate_signin(signin)

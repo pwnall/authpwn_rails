@@ -14,6 +14,8 @@ class User < ActiveRecord::Base
   # create a new Session with the e-mail and password, and pass it to super
   #
   # @param [Session] signin the information entered in the sign-in form
+  # @return [User, Symbol] the authenticated user, or a symbol indicating the
+  #     reason why the authentication failed
   def self.authenticate_signin(signin)
     super
   end
