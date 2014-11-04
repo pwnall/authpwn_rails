@@ -45,7 +45,7 @@ module ControllerInstanceMethods
     end
     if user
       session[:authpwn_suid] = Tokens::SessionUid.random_for(user,
-          request.remote_ip, request.user_agent).suid
+          request.remote_ip, request.user_agent || 'N/A').suid
     else
       session.delete :authpwn_suid
     end

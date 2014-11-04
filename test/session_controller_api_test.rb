@@ -101,6 +101,18 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_redirected_to session_url
   end
 
+  test "create logs in with good account details and no User-Agent" do
+    @request.headers['User-Agent'] = nil
+
+    post :create, session: { email: @email_credential.email,
+                             password: 'pa55w0rd' }
+    assert_equal @user, assigns(:current_user), 'instance variable'
+    assert_equal @user, session_current_user, 'session'
+    assert_nil flash[:alert], 'no alert'
+    assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
+    assert_redirected_to session_url
+  end
+
   test "create purges sessions when logging in" do
     BareSessionController.auto_purge_sessions = true
     old_token = credentials(:jane_session_token)
@@ -277,6 +289,19 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "token logs in with good token" do
+    @controller.expects(:home_with_token).once.with(@token_credential).
+                returns(nil)
+    get :token, code: @token_credential.code
+    assert_redirected_to session_url
+    assert_equal @user, assigns(:current_user), 'instance variable'
+    assert_equal @user, session_current_user, 'session'
+    assert_nil Tokens::Base.with_code(@token_credential.code).first,
+               'one-time credential is spent'
+  end
+
+  test "token logs in with good token and no user-agent" do
+    @request.headers['User-Agent'] = nil
+
     @controller.expects(:home_with_token).once.with(@token_credential).
                 returns(nil)
     get :token, code: @token_credential.code
