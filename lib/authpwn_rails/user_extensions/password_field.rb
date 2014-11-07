@@ -12,7 +12,7 @@ module PasswordField
   extend ActiveSupport::Concern
 
   included do
-    validates :password, presence: { on: :create },
+    validates :password, length: { minimum: 1, on: :create, allow_nil: true },
                          confirmation: { allow_nil: true }
   end
 

@@ -140,4 +140,14 @@ class SessionControllerTest < ActionController::TestCase
     assert_nil Tokens::Base.with_code(old_token.code).first,
                'old session not purged'
   end
+
+  test "OmniAuth login via developer strategy and new account" do
+    request.env['omniauth.auth'] = {
+        'provider' => @omniauth_credential.provider,
+        'uid' => 'new_user_gmail_com_uid',
+        'info' => { 'email' => 'new_user@gmail.com' } }
+    post :omniauth, provider: @omniauth_credential.provider
+    assert_not_nil session_current_user, 'session'
+    assert_redirected_to session_url
+  end
 end

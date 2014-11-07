@@ -94,8 +94,9 @@ module UserModel
     def create_from_omniauth(omniauth_hash)
       info_hash = omniauth_hash['info']
       return nil unless email = info_hash && info_hash['email']
-      user = User.create!
-      Credentials::Email.create! user: user, email: email, verified: true
+      user = User.new
+      user.credentials << Credentials::Email.new(email: email, verified: true)
+      user.save!
       user
     end
   end  # module Authpwn::UserModel::ClassMethods
