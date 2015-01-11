@@ -148,6 +148,8 @@ class SessionControllerTest < ActionController::TestCase
         'info' => { 'email' => 'new_user@gmail.com' } }
     post :omniauth, provider: @omniauth_credential.provider
     assert_not_nil session_current_user, 'session'
+    assert_equal true, Credentials::Email.with('new_user@gmail.com').verified?,
+        'newly created e-mail credential not verified'
     assert_redirected_to session_url
   end
 end
