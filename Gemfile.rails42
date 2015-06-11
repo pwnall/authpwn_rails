@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'rails', '~> 4.2.1'
 
 group :development do
-  gem 'bundler', '>= 1.9.9'
+  gem 'bundler', '>= 1.6.6'
   gem 'mocha', '>= 1.1.0'
   gem 'jeweler', '>= 2.0.1'
   gem 'simplecov', '>= 0'
