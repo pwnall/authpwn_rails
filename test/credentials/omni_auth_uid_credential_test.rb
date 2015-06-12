@@ -90,7 +90,7 @@ class OmniAuthUidCredentialTest < ActiveSupport::TestCase
     User.expects(:create_from_omniauth).never
 
     assert_nil Credentials::OmniAuthUid.with(omniauth_hash)
-    assert_difference 'Credentials::OmniAuthUid.count' do
+    assert_difference -> { Credentials::OmniAuthUid.count } do
       assert_equal jane, Credentials::OmniAuthUid.authenticate(omniauth_hash)
     end
     assert_not_nil Credentials::OmniAuthUid.with(omniauth_hash)
@@ -105,7 +105,7 @@ class OmniAuthUidCredentialTest < ActiveSupport::TestCase
     User.expects(:create_from_omniauth).with(omniauth_hash).returns user
 
     assert_nil Credentials::OmniAuthUid.with(omniauth_hash)
-    assert_difference 'Credentials::OmniAuthUid.count' do
+    assert_difference -> { Credentials::OmniAuthUid.count } do
       assert_equal user, Credentials::OmniAuthUid.authenticate(omniauth_hash)
     end
     assert_not_nil Credentials::OmniAuthUid.with(omniauth_hash)
@@ -119,7 +119,7 @@ class OmniAuthUidCredentialTest < ActiveSupport::TestCase
     User.expects(:create_from_omniauth).with(omniauth_hash).returns nil
 
     assert_nil Credentials::OmniAuthUid.with(omniauth_hash)
-    assert_no_difference 'Credentials::OmniAuthUid.count' do
+    assert_no_difference -> { Credentials::OmniAuthUid.count } do
       assert_equal :invalid,
                    Credentials::OmniAuthUid.authenticate(omniauth_hash)
     end
@@ -138,4 +138,3 @@ class OmniAuthUidCredentialTest < ActiveSupport::TestCase
     end
   end
 end
-

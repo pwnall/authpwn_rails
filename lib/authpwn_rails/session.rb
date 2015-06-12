@@ -51,7 +51,7 @@ module ControllerInstanceMethods
     end
   end
 
-  # Filter that implements authenticates_using_session.
+  # The before_action that implements authenticates_using_session.
   #
   # If your ApplicationController contains authenticates_using_session, you
   # can opt out in individual controllers using skip_before_action.

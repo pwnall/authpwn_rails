@@ -30,7 +30,7 @@ class OneTimeTokenCredentialTest < ActiveSupport::TestCase
     credential = credentials(:jane_token)
     assert_equal Tokens::OneTime, credential.class, 'bad setup'
 
-    assert_difference 'Credential.count', -1 do
+    assert_difference -> { Credential.count }, -1 do
       credential.spend
     end
     assert credential.frozen?, 'not destroyed'
@@ -39,10 +39,10 @@ class OneTimeTokenCredentialTest < ActiveSupport::TestCase
   test 'authenticate spends the token' do
     jane = 'skygyoxxmnerxwe4zbi3p5yjtg7zpjl2peyfcwh5wnc37fyfc4xa'
     bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
-    assert_difference 'Credential.count', -1, 'token spent' do
+    assert_difference -> { Credential.count }, -1, 'token spent' do
       assert_equal users(:jane), Tokens::Base.authenticate(jane)
     end
-    assert_no_difference 'Credential.count', 'token mistakenly spent' do
+    assert_no_difference -> { Credential.count }, 'token mistakenly spent' do
       assert_equal :invalid, Tokens::Base.authenticate(bogus)
     end
   end
@@ -51,21 +51,21 @@ class OneTimeTokenCredentialTest < ActiveSupport::TestCase
     jane = 'skygyoxxmnerxwe4zbi3p5yjtg7zpjl2peyfcwh5wnc37fyfc4xa'
 
     with_blocked_credential credentials(:jane_token), :reason do
-      assert_no_difference 'Credential.count', 'no token spent' do
+      assert_no_difference -> { Credential.count }, 'no token spent' do
         assert_equal :reason, Tokens::Base.authenticate(jane)
       end
     end
   end
 
   test 'instance authenticate spends the token' do
-    assert_difference 'Credential.count', -1, 'token spent' do
+    assert_difference -> { Credential.count }, -1, 'token spent' do
       assert_equal users(:jane), credentials(:jane_token).authenticate
     end
   end
 
   test 'instance authenticate calls User#auth_bounce_reason' do
     with_blocked_credential credentials(:jane_token), :reason do
-      assert_no_difference 'Credential.count', 'token mistakenly spent' do
+      assert_no_difference -> { Credential.count }, 'token mistakenly spent' do
         assert_equal :reason, credentials(:jane_token).authenticate
       end
     end

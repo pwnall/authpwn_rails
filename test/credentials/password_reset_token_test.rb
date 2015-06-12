@@ -40,8 +40,8 @@ class PasswordVerificationTokenTest < ActiveSupport::TestCase
     credential = credentials(:jane_password_token)
     assert_equal Tokens::PasswordReset, credential.class, 'bad setup'
 
-    assert_difference 'Credential.count', -2 do
-      assert_difference 'Credentials::Password.count', -1 do
+    assert_difference -> { Credential.count }, -2 do
+      assert_difference -> { Credentials::Password.count }, -1 do
         credential.spend
       end
     end
@@ -55,7 +55,7 @@ class PasswordVerificationTokenTest < ActiveSupport::TestCase
     password_credential.destroy
     credential = credentials(:jane_password_token)
 
-    assert_difference 'Credential.count', -1 do
+    assert_difference -> { Credential.count }, -1 do
       credential.spend
     end
     assert credential.frozen?, 'not destroyed'

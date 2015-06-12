@@ -12,11 +12,7 @@ class SessionMailerTest < ActionMailer::TestCase
   test 'email verification email' do
     email_draft = SessionMailer.email_verification_email @verification_token,
                                                          @root_url
-    if email_draft.respond_to? :deliver_now
-      email = email_draft.deliver_now  # Rails 4.2+
-    else
-      email = email_draft.deliver  # Rails 4.0 and 4.1
-    end
+    email = email_draft.deliver_now
     assert !ActionMailer::Base.deliveries.empty?
 
     assert_equal 'test.host e-mail verification', email.subject
@@ -30,11 +26,7 @@ class SessionMailerTest < ActionMailer::TestCase
   test 'password reset email' do
     email_draft = SessionMailer.reset_password_email @reset_email,
                                                      @reset_token, @root_url
-    if email_draft.respond_to? :deliver_now
-      email = email_draft.deliver_now  # Rails 4.2+
-    else
-      email = email_draft.deliver  # Rails 4.0 and 4.1
-    end
+    email = email_draft.deliver_now
     assert !ActionMailer::Base.deliveries.empty?
 
     assert_equal 'test.host password reset', email.subject

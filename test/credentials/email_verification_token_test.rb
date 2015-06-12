@@ -47,7 +47,7 @@ class EmailVerificationTokenTest < ActiveSupport::TestCase
     credential = credentials(:john_email_token)
     assert_equal Tokens::EmailVerification, credential.class, 'bad setup'
 
-    assert_difference 'Credential.count', -1 do
+    assert_difference -> { Credential.count }, -1 do
       credential.spend
     end
     assert credential.frozen?, 'not destroyed'
@@ -59,7 +59,7 @@ class EmailVerificationTokenTest < ActiveSupport::TestCase
     credential = credentials(:john_email_token)
     credential.email = 'bill@gmail.com'
 
-    assert_difference 'Credential.count', -1 do
+    assert_difference -> { Credential.count }, -1 do
       credential.spend
     end
     assert credential.frozen?, 'not destroyed'

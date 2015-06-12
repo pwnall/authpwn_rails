@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
     "Gemfile.rails4",
     "Gemfile.rails41",
     "Gemfile.rails42",
+    "Gemfile.rails5",
     "LICENSE",
     "README.rdoc",
     "Rakefile",
@@ -140,30 +141,30 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<base32>, [">= 0.3.2"])
-      s.add_runtime_dependency(%q<rails>, [">= 4.0.13", "~> 4.0"])
+      s.add_runtime_dependency(%q<rails>, [">= 5.0.0.1"])
       s.add_development_dependency(%q<bundler>, [">= 1.6.6"])
       s.add_development_dependency(%q<mocha>, [">= 1.1.0"])
-      s.add_development_dependency(%q<jeweler>, [">= 2.0.1"])
+      s.add_development_dependency(%q<jeweler>, [">= 2.1.1"])
       s.add_development_dependency(%q<simplecov>, [">= 0"])
-      s.add_development_dependency(%q<mysql2>, [">= 0.3.20"])
+      s.add_development_dependency(%q<mysql2>, [">= 0.4.4"])
       s.add_development_dependency(%q<omniauth>, [">= 1.3.1"])
       s.add_development_dependency(%q<pg>, [">= 0.18.4"])
-      s.add_development_dependency(%q<rake>, [">= 11.1.1"])
+      s.add_development_dependency(%q<rake>, [">= 11.2.2"])
       s.add_development_dependency(%q<sqlite3>, [">= 1.3.11"])
       s.add_development_dependency(%q<rubysl>, [">= 0"])
       s.add_development_dependency(%q<rubysl-bundler>, [">= 0"])
       s.add_development_dependency(%q<rubysl-rake>, [">= 0"])
     else
       s.add_dependency(%q<base32>, [">= 0.3.2"])
-      s.add_dependency(%q<rails>, [">= 4.0.13", "~> 4.0"])
+      s.add_dependency(%q<rails>, [">= 5.0.0.1"])
       s.add_dependency(%q<bundler>, [">= 1.6.6"])
       s.add_dependency(%q<mocha>, [">= 1.1.0"])
-      s.add_dependency(%q<jeweler>, [">= 2.0.1"])
+      s.add_dependency(%q<jeweler>, [">= 2.1.1"])
       s.add_dependency(%q<simplecov>, [">= 0"])
-      s.add_dependency(%q<mysql2>, [">= 0.3.20"])
+      s.add_dependency(%q<mysql2>, [">= 0.4.4"])
       s.add_dependency(%q<omniauth>, [">= 1.3.1"])
       s.add_dependency(%q<pg>, [">= 0.18.4"])
-      s.add_dependency(%q<rake>, [">= 11.1.1"])
+      s.add_dependency(%q<rake>, [">= 11.2.2"])
       s.add_dependency(%q<sqlite3>, [">= 1.3.11"])
       s.add_dependency(%q<rubysl>, [">= 0"])
       s.add_dependency(%q<rubysl-bundler>, [">= 0"])
@@ -171,15 +172,15 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<base32>, [">= 0.3.2"])
-    s.add_dependency(%q<rails>, [">= 4.0.13", "~> 4.0"])
+    s.add_dependency(%q<rails>, [">= 5.0.0.1"])
     s.add_dependency(%q<bundler>, [">= 1.6.6"])
     s.add_dependency(%q<mocha>, [">= 1.1.0"])
-    s.add_dependency(%q<jeweler>, [">= 2.0.1"])
+    s.add_dependency(%q<jeweler>, [">= 2.1.1"])
     s.add_dependency(%q<simplecov>, [">= 0"])
-    s.add_dependency(%q<mysql2>, [">= 0.3.20"])
+    s.add_dependency(%q<mysql2>, [">= 0.4.4"])
     s.add_dependency(%q<omniauth>, [">= 1.3.1"])
     s.add_dependency(%q<pg>, [">= 0.18.4"])
-    s.add_dependency(%q<rake>, [">= 11.1.1"])
+    s.add_dependency(%q<rake>, [">= 11.2.2"])
     s.add_dependency(%q<sqlite3>, [">= 1.3.11"])
     s.add_dependency(%q<rubysl>, [">= 0"])
     s.add_dependency(%q<rubysl-bundler>, [">= 0"])

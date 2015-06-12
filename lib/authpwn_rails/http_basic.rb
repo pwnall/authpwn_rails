@@ -20,7 +20,7 @@ module Authpwn
 module HttpBasicControllerInstanceMethods
   include Authpwn::CurrentUser
 
-  # Filter that implements authenticates_using_http_basic.
+  # The before_action that implements authenticates_using_http_basic.
   #
   # If your ApplicationController contains authenticates_using_http_basic, you
   # can opt out in individual controllers using skip_before_action.

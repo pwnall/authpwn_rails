@@ -30,7 +30,7 @@ class TokenCredentialTest < ActiveSupport::TestCase
     credential = credentials(:john_token)
     assert_equal Tokens::Base, credential.class, 'bad setup'
 
-    assert_no_difference 'Credential.count' do
+    assert_no_difference -> { Credential.count } do
       credential.spend
     end
   end
@@ -117,12 +117,12 @@ class TokenCredentialTest < ActiveSupport::TestCase
       token.class.stubs(:expires_after).returns 1.week
       token.save!
     end
-    assert_difference 'Credential.count', -1,
+    assert_difference -> { Credential.count }, -1,
                       'authenticate deletes expired credential' do
       assert_equal :invalid, Tokens::Base.authenticate(john),
                    'expired token'
     end
-    assert_difference 'Credential.count', -1,
+    assert_difference -> { Credential.count }, -1,
                       'authenticate deletes expired credential' do
       assert_equal :invalid, Tokens::Base.authenticate(jane),
                    'expired token'

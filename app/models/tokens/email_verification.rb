@@ -26,7 +26,7 @@ class EmailVerification < Tokens::OneTime
   # Returns the token instance.
   def spend
     self.transaction do
-      if credential = email_credential
+      if credential = self.email_credential
         credential.verified = true
         credential.save!
       end
@@ -40,7 +40,7 @@ class EmailVerification < Tokens::OneTime
   #     take advantage of a race condition and changes her e-mail address
   #     before using the token.
   def email_credential
-    user.credentials.find { |c| c.name == email }
+    user.credentials.where(name: email).first
   end
 end  # class Tokens::EmailVerification
 

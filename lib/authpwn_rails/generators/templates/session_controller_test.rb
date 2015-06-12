@@ -12,7 +12,7 @@ class SessionControllerTest < ActionController::TestCase
     set_session_current_user @user
     get :show
 
-    assert_equal @user, assigns(:user)
+    assert_select 'span.user-exuid', @user.exuid
     assert_select 'a[href="/session"][data-method="delete"]', 'sign out'
   end
 
@@ -20,8 +20,8 @@ class SessionControllerTest < ActionController::TestCase
     old_token = credentials(:jane_session_token)
     old_token.updated_at = Time.current - 1.year
     old_token.save!
-    post :create, session: { email: @email_credential.email,
-                             password: 'pa55w0rd' }
+    post :create, params: { session: { email: @email_credential.email,
+                                       password: 'pa55w0rd' } }
     assert_equal @user, session_current_user, 'session'
     assert_redirected_to session_url
     assert_nil Tokens::Base.with_code(old_token.code).first,
@@ -39,7 +39,6 @@ class SessionControllerTest < ActionController::TestCase
   test "application welcome page" do
     get :show
 
-    assert_equal User.count, assigns(:user_count)
     assert_select 'a[href="/session/new"]', 'sign in'
   end
 
@@ -51,7 +50,6 @@ class SessionControllerTest < ActionController::TestCase
 
   test "user login page" do
     get :new
-    assert_template :new
 
     assert_select 'form[action=?]', session_path do
       assert_select 'input[name=?]', 'session[email]'
@@ -64,14 +62,14 @@ class SessionControllerTest < ActionController::TestCase
   test "e-mail verification link" do
     token_credential = credentials(:john_email_token)
     email_credential = credentials(:john_email)
-    get :token, code: token_credential.code
+    get :token, params: { code: token_credential.code }
     assert_redirected_to session_url
     assert email_credential.reload.verified?, 'Email not verified'
   end
 
   test "password reset link" do
     password_credential = credentials(:jane_password)
-    get :token, code: credentials(:jane_password_token).code
+    get :token, params: { code: credentials(:jane_password_token).code }
     assert_redirected_to change_password_session_url
     assert_nil Credential.where(id: password_credential.id).first,
                'Password not cleared'
@@ -109,8 +107,9 @@ class SessionControllerTest < ActionController::TestCase
   test "password reset request" do
     ActionMailer::Base.deliveries = []
 
-    assert_difference 'Credential.count', 1 do
-      post :reset_password, session: { email: @email_credential.email }
+    assert_difference -> { Credential.count }, 1 do
+      post :reset_password, params: {
+          session: { email: @email_credential.email } }
     end
 
     assert !ActionMailer::Base.deliveries.empty?, 'email generated'
@@ -173,7 +172,7 @@ class SessionControllerTest < ActionController::TestCase
       request.env['omniauth.auth'] = {
           'provider' => @omniauth_credential.provider,
           'uid' => @omniauth_credential.uid }
-      post :omniauth, provider: @omniauth_credential.provider
+      post :omniauth, params: { provider: @omniauth_credential.provider }
       assert_equal @user, session_current_user, 'session'
       assert_redirected_to session_url
       assert_nil Tokens::Base.with_code(old_token.code).first,
@@ -190,7 +189,7 @@ class SessionControllerTest < ActionController::TestCase
           'provider' => @omniauth_credential.provider,
           'uid' => 'new_user_gmail_com_uid',
           'info' => { 'email' => 'new_user@gmail.com' } }
-      post :omniauth, provider: @omniauth_credential.provider
+      post :omniauth, params: { provider: @omniauth_credential.provider }
       assert_not_nil session_current_user, 'session'
       assert_equal true, Credentials::Email.with('new_user@gmail.com').verified?,
           'newly created e-mail credential not verified'
@@ -198,5 +197,6 @@ class SessionControllerTest < ActionController::TestCase
     ensure
       ActionController::Base.allow_forgery_protection = false
     end
+
   end
 end

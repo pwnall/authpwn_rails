@@ -35,7 +35,7 @@ class ApiTokenTest < ActiveSupport::TestCase
     credential = credentials(:john_api_token)
     assert_equal Tokens::Api, credential.class, 'bad setup'
 
-    assert_no_difference 'Credential.count' do
+    assert_no_difference -> { Credential.count } do
       credential.spend
     end
   end
@@ -58,7 +58,7 @@ class ApiTokenTest < ActiveSupport::TestCase
   test 'random_for' do
     user = users(:jane)
     credential = nil
-    assert_difference 'Credential.count', 1 do
+    assert_difference -> { Credential.count }, 1 do
       credential = Tokens::Api.random_for user
     end
     saved_credential = Tokens::Base.with_code(credential.code).first

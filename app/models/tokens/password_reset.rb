@@ -23,7 +23,7 @@ class PasswordReset < Tokens::OneTime
   # This method might return nil if a user initiates password recovery multiple
   # times.
   def password_credential
-    user.credentials.find { |c| c.is_a? Credentials::Password }
+    user.credentials.where(type: 'Credentials::Password').first
   end
 end  # class Tokens::PasswordReset
 

@@ -41,11 +41,7 @@ class SessionMailerApiTest < ActionMailer::TestCase
   test 'email verification email contents' do
     email_draft = SessionMailer.email_verification_email @verification_token,
                                                          @root_url
-    if email_draft.respond_to? :deliver_now
-      email = email_draft.deliver_now
-    else
-      email = email_draft.deliver
-    end
+    email = email_draft.deliver_now
     assert !ActionMailer::Base.deliveries.empty?
 
     assert_equal 'test.host e-mail verification', email.subject
@@ -58,11 +54,7 @@ class SessionMailerApiTest < ActionMailer::TestCase
   test 'password reset email contents' do
     email_draft = SessionMailer.reset_password_email @reset_email,
                                                      @reset_token, @root_url
-    if email_draft.respond_to? :deliver_now
-      email = email_draft.deliver_now
-    else
-      email = email_draft.deliver
-    end
+    email = email_draft.deliver_now
     assert !ActionMailer::Base.deliveries.empty?
 
     assert_equal 'test.host password reset', email.subject

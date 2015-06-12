@@ -38,8 +38,8 @@ class ActiveSupport::TestCase
       File.expand_path '../../../lib/authpwn_rails/generators/templates',
                        __FILE__
 
-  self.use_transactional_fixtures = false
-  self.use_instantiated_fixtures  = false
+  self.use_transactional_tests = true
+  self.use_instantiated_fixtures = false
   self.pre_loaded_fixtures = false
   fixtures :all
 end

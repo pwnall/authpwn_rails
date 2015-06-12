@@ -11,11 +11,11 @@ module SessionController
   extend ActiveSupport::Concern
 
   included do
-    skip_filter :authenticate_using_session
+    #skip_before_action :authenticate_using_session
     authenticates_using_session except: [:create, :reset_password, :token]
 
     # NOTE: The Omniauth callback uses POST in some cases.
-    skip_filter :verify_authenticity_token, only: [:omniauth]
+    skip_before_action :verify_authenticity_token, only: [:omniauth]
 
     # If set, every successful login will cause a database purge.
     class_attribute :auto_purge_sessions
@@ -145,12 +145,8 @@ module SessionController
     if user = (credential && credential.user)
       token = Tokens::PasswordReset.random_for user
       email = ::SessionMailer.reset_password_email(email, token, root_url)
-      if email.respond_to? :deliver_now
-        # TODO(pwnall): fix the serialization errors blocking deliver_later
-        email.deliver_now
-      else
-        email.deliver
-      end
+      # TODO(pwnall): fix the serialization errors blocking deliver_later
+      email.deliver_now
     end
 
     respond_to do |format|
@@ -231,7 +227,7 @@ module SessionController
     respond_to do |format|
       format.html do
         @credential = current_user.credentials.
-                                   find { |c| c.is_a? Credentials::Password }
+                                   where(type:  'Credentials::Password').first
         unless @credential
           @credential = Credentials::Password.new
           @credential.user = current_user
@@ -249,7 +245,7 @@ module SessionController
     end
 
     @credential = current_user.credentials.
-                               find { |c| c.is_a? Credentials::Password }
+                               where(type:  'Credentials::Password').first
     if @credential
       # An old password is set, must verify it.
       if @credential.check_password params[:credential][:old_password]

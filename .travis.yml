@@ -10,9 +10,7 @@ env:
   - DB=pg DB_USER=postgres
   - DB=sqlite
 gemfile:
-  - Gemfile.rails4
-  - Gemfile.rails41
-  - Gemfile.rails42
+  - Gemfile.rails5
 rvm:
-  - 2.1.9
   - 2.2.5
+  - 2.3.1

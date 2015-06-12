@@ -80,7 +80,7 @@ class SessionUidTokenTest < ActiveSupport::TestCase
     fresh_token.updated_at = Time.current - 1.minute
     fresh_token.save!
 
-    assert_difference 'Credential.count', -1 do
+    assert_difference -> { Credential.count }, -1 do
       Tokens::SessionUid.remove_expired
     end
     assert_nil Tokens::Base.with_code(old_token.code).first
@@ -91,7 +91,7 @@ class SessionUidTokenTest < ActiveSupport::TestCase
   test 'random_for' do
     user = users(:john)
     credential = nil
-    assert_difference 'Credential.count', 1 do
+    assert_difference -> { Credential.count }, 1 do
       credential = Tokens::SessionUid.random_for user, '1.2.3.4', 'Test/UA'
     end
     saved_credential = Tokens::Base.with_code(credential.code).first

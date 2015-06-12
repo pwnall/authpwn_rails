@@ -3,7 +3,7 @@
 </p>
 
 <% if current_user %>
-<p>
+<p class="forbidden-logged-in-user">
   You should inform the user that they are logged in as
   <%= current_user.exuid %> and suggest them to
   <%= link_to 'sign out', session_path, method: :delete %> and sign in as a
