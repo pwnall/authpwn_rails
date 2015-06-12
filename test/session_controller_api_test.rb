@@ -3,6 +3,18 @@ require File.expand_path('../test_helper', __FILE__)
 class BareSessionController < ApplicationController
   include Authpwn::SessionController
   self.append_view_path File.expand_path('../fixtures', __FILE__)
+
+  # NOTE: As of Rails 5, tests can't use assigns to reach into the controllers'
+  #       instance variables. current_user is a part of authpwn's API, so we
+  #       must test it.
+  before_action :export_current_user_to_cookie
+  def export_current_user_to_cookie
+    cookies['_authpwn_test_cuid'] = if current_user
+      current_user.id.to_s
+    else
+      'nil'
+    end
+  end
 end
 
 # Tests the methods injected by authpwn_session_controller.
@@ -25,8 +37,8 @@ class SessionControllerApiTest < ActionController::TestCase
   test "show renders welcome without a user" do
     @controller.expects(:welcome).once.returns nil
     get :show
-    assert_template :welcome
-    assert_nil assigns(:current_user)
+    assert_select 'p.welcome-page'
+    assert_equal 'nil', cookies['_authpwn_test_cuid']
   end
 
   test "show json renders empty object without a user" do
@@ -40,8 +52,8 @@ class SessionControllerApiTest < ActionController::TestCase
     @controller.expects(:home).once.returns nil
     set_session_current_user @user
     get :show
-    assert_template :home
-    assert_equal @user, assigns(:current_user)
+    assert_select 'span.user-exuid', @user.exuid.to_s
+    assert_equal @user.id.to_s, cookies['_authpwn_test_cuid']
   end
 
   test "show json renders user when logged in" do
@@ -70,23 +82,21 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "new renders login form without a user" do
     get :new
-    assert_template :new
-    assert_nil assigns(:current_user), 'current_user should not be set'
+    assert_select 'form[action="/session"]'
+    assert_equal 'nil', cookies['_authpwn_test_cuid']
   end
 
   test "new renders redirect_url when present in flash" do
     url = 'http://authpwn.redirect.url'
-    get :new, {}, {}, { auth_redirect_url: url }
-    assert_template :new
-    assert_select 'form' do
+    get :new, flash: { auth_redirect_url: url }
+    assert_select 'form[action="/session"]' do
       assert_select "input[name=\"redirect_url\"][value=\"#{url}\"]"
     end
   end
 
   test "create logs in with good account details" do
-    post :create, session: { email: @email_credential.email,
-                             password: 'pa55w0rd' }
-    assert_equal @user, assigns(:current_user), 'instance variable'
+    post :create, params: { session: { email: @email_credential.email,
+                                       password: 'pa55w0rd' } }
     assert_equal @user, session_current_user, 'session'
     assert_nil flash[:alert], 'no alert'
     assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
@@ -94,8 +104,8 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "create logs in with good raw account details" do
-    post :create, email: @email_credential.email, password: 'pa55w0rd'
-    assert_equal @user, assigns(:current_user), 'instance variable'
+    post :create, params: { email: @email_credential.email,
+                            password: 'pa55w0rd' }
     assert_equal @user, session_current_user, 'session'
     assert_nil flash[:alert], 'no alert'
     assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
@@ -105,9 +115,8 @@ class SessionControllerApiTest < ActionController::TestCase
   test "create logs in with good account details and no User-Agent" do
     request.headers['User-Agent'] = nil
 
-    post :create, session: { email: @email_credential.email,
-                             password: 'pa55w0rd' }
-    assert_equal @user, assigns(:current_user), 'instance variable'
+    post :create, params: { session: { email: @email_credential.email,
+                                       password: 'pa55w0rd' } }
     assert_equal @user, session_current_user, 'session'
     assert_nil flash[:alert], 'no alert'
     assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
@@ -119,8 +128,8 @@ class SessionControllerApiTest < ActionController::TestCase
     old_token = credentials(:jane_session_token)
     old_token.updated_at = Time.now - 1.year
     old_token.save!
-    post :create, session: { email: @email_credential.email,
-                             password: 'pa55w0rd' }
+    post :create, params: { session: { email: @email_credential.email,
+                                       password: 'pa55w0rd' } }
     assert_equal @user, session_current_user, 'session'
     assert_nil Tokens::Base.with_code(old_token.code).first,
                'old session not purged'
@@ -131,19 +140,20 @@ class SessionControllerApiTest < ActionController::TestCase
     old_token = credentials(:jane_session_token)
     old_token.updated_at = Time.now - 1.year
     old_token.save!
-    post :create, email: @email_credential.email, password: 'pa55w0rd'
+    post :create, params: { session: { email: @email_credential.email,
+                                       password: 'pa55w0rd' } }
     assert_equal @user, session_current_user, 'session'
     assert_equal old_token, Tokens::Base.with_code(old_token.code).first,
                'old session purged'
   end
 
   test "create by json logs in with good account details" do
-    post :create, email: @email_credential.email, password: 'pa55w0rd',
-                  format: 'json'
+    post :create, format: 'json', params: { email: @email_credential.email,
+                                            password: 'pa55w0rd' }
+
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal @user.exuid, data['user']['exuid']
-    assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
 
     if @controller.respond_to? :valid_authenticity_token?, true
@@ -161,8 +171,9 @@ class SessionControllerApiTest < ActionController::TestCase
     old_token = credentials(:jane_session_token)
     old_token.updated_at = Time.now - 1.year
     old_token.save!
-    post :create, email: @email_credential.email, password: 'pa55w0rd',
-                  format: 'json'
+    post :create, format: 'json', params: { email: @email_credential.email,
+                                            password: 'pa55w0rd' }
+
     assert_response :ok
     assert_equal @user, session_current_user, 'session'
     assert_nil Tokens::Base.with_code(old_token.code).first,
@@ -171,17 +182,17 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "create redirects properly with good account details" do
     url = 'http://authpwn.redirect.url'
-    post :create, session: { email: @email_credential.email,
-                             password: 'pa55w0rd' }, redirect_url: url
+    post :create, params: { redirect_url: url, session: {
+        email: @email_credential.email, password: 'pa55w0rd' } }
     assert_redirected_to url
     assert_nil flash[:alert], 'no alert'
     assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
   end
 
   test "create does not log in with bad password" do
-    post :create, session: { email: @email_credential.email, password: 'fail' }
+    post :create, params: { session: { email: @email_credential.email,
+                                       password: 'fail' } }
     assert_redirected_to new_session_url
-    assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
     assert_match(/Invalid/, flash[:alert])
     assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
@@ -190,10 +201,9 @@ class SessionControllerApiTest < ActionController::TestCase
   test "create does not log in with expired password" do
     @password_credential.updated_at = Time.now - 2.years
     @password_credential.save!
-    post :create, session: { email: @email_credential.email,
-                             password: 'pa55w0rd' }
+    post :create, params: { session: { email: @email_credential.email,
+                                       password: 'pa55w0rd' } }
     assert_redirected_to new_session_url
-    assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
     assert_match(/expired/, flash[:alert])
     assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
@@ -204,7 +214,8 @@ class SessionControllerApiTest < ActionController::TestCase
     old_token = credentials(:jane_session_token)
     old_token.updated_at = Time.now - 1.year
     old_token.save!
-    post :create, session: { email: @email_credential.email, password: 'fail' }
+    post :create, params: { session: { email: @email_credential.email,
+                                       password: 'fail' } }
     assert_nil session_current_user, 'session'
     assert_equal old_token, Tokens::Base.with_code(old_token.code).first,
                'old session purged'
@@ -212,11 +223,10 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "create does not log in blocked accounts" do
     with_blocked_credential @email_credential do
-      post :create, session: { email: @email_credential.email,
-                               password: 'pa55w0rd' }
+      post :create, params: { session: { email: @email_credential.email,
+                                         password: 'pa55w0rd' } }
     end
     assert_redirected_to new_session_url
-    assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
     assert_match(/ blocked/, flash[:alert])
     assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
@@ -228,62 +238,59 @@ class SessionControllerApiTest < ActionController::TestCase
         email: 'em@ail.com', password: 'fail').returns signin
     User.expects(:authenticate_signin).at_least_once.with(signin).
          returns @email_credential.user
-    post :create, email: 'em@ail.com', password: 'fail'
-    assert_equal @user, assigns(:current_user), 'instance variable'
+    post :create, params: { email: 'em@ail.com', password: 'fail' }
     assert_equal @user, session_current_user, 'session'
     assert_redirected_to session_url
   end
 
   test "create by json does not log in with bad password" do
-    post :create, email: @email_credential.email, password: 'fail',
-                  format: 'json'
+    post :create, format: 'json', params: {
+        email: @email_credential.email, password: 'fail' }
+
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'invalid', data['error']
     assert_match(/invalid/i , data['text'])
-    assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
   end
 
   test "create by json does not log in with expired password" do
     @password_credential.updated_at = Time.now - 2.years
     @password_credential.save!
-    post :create, email: @email_credential.email, password: 'pa55w0rd',
-                  format: 'json'
+    post :create, format: 'json', params: {
+        email: @email_credential.email, password: 'pa55w0rd' }
+
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'expired', data['error']
     assert_match(/expired/i , data['text'])
-    assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
   end
 
   test "create by json does not log in blocked accounts" do
     with_blocked_credential @email_credential do
-      post :create, email: @email_credential.email, password: 'pa55w0rd',
-                    format: 'json'
+      post :create, format: 'json', params: {
+          email: @email_credential.email, password: 'pa55w0rd' }
     end
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'blocked', data['error']
     assert_match(/blocked/i , data['text'])
-    assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
   end
 
   test "create maintains redirect_url for bad logins" do
     url = 'http://authpwn.redirect.url'
-    post :create, session: { email: @email_credential.email,
-                             password: 'fail' }, redirect_url: url
+    post :create, params: { redirect_url: url, session: {
+        email: @email_credential.email, password: 'fail' } }
     assert_redirected_to new_session_url
     assert_match(/Invalid /, flash[:alert])
     assert_equal url, flash[:auth_redirect_url]
   end
 
   test "create does not log in with bad e-mail" do
-    post :create, email: 'nobody@gmail.com', password: 'no'
+    post :create, params: { email: 'nobody@gmail.com', password: 'no' }
     assert_redirected_to new_session_url
-    assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
     assert_match(/Invalid /, flash[:alert])
     assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
@@ -292,9 +299,8 @@ class SessionControllerApiTest < ActionController::TestCase
   test "token logs in with good token" do
     @controller.expects(:home_with_token).once.with(@token_credential).
                 returns(nil)
-    get :token, code: @token_credential.code
+    get :token, params: { code: @token_credential.code }
     assert_redirected_to session_url
-    assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
     assert_nil Tokens::Base.with_code(@token_credential.code).first,
                'one-time credential is spent'
@@ -305,9 +311,8 @@ class SessionControllerApiTest < ActionController::TestCase
 
     @controller.expects(:home_with_token).once.with(@token_credential).
                 returns(nil)
-    get :token, code: @token_credential.code
+    get :token, params: { code: @token_credential.code }
     assert_redirected_to session_url
-    assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
     assert_nil Tokens::Base.with_code(@token_credential.code).first,
                'one-time credential is spent'
@@ -316,11 +321,10 @@ class SessionControllerApiTest < ActionController::TestCase
   test "token by json logs in with good token" do
     @controller.expects(:home_with_token).once.with(@token_credential).
                 returns(nil)
-    get :token, code: @token_credential.code, format: 'json'
+    get :token, format: 'json', params: { code: @token_credential.code }
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal @user.exuid, data['user']['exuid']
-    assert_equal @user, assigns(:current_user), 'instance variable'
     assert_equal @user, session_current_user, 'session'
     assert_nil Tokens::Base.with_code(@token_credential.code).first,
                'one-time credential is spent'
@@ -337,10 +341,9 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "token does not log in with random token" do
     assert_no_difference 'Credential.count', 'no credential is spent' do
-      get :token, code: 'no-such-token'
+      get :token, params: { code: 'no-such-token' }
     end
     assert_redirected_to new_session_url
-    assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
     assert_match(/Invalid/, flash[:alert])
   end
@@ -348,38 +351,35 @@ class SessionControllerApiTest < ActionController::TestCase
   test "token does not log in blocked accounts" do
     with_blocked_credential @token_credential do
       assert_no_difference 'Credential.count', 'no credential is spent' do
-        get :token, code: @token_credential.code
+        get :token, params: { code: @token_credential.code }
       end
     end
     assert_redirected_to new_session_url
-    assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
     assert_match(/ blocked/, flash[:alert])
   end
 
   test "token by json does not log in with random token" do
     assert_no_difference 'Credential.count', 'no credential is spent' do
-      get :token, code: 'no-such-token', format: 'json'
+      get :token, format: 'json', params: { code: 'no-such-token' }
     end
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'invalid', data['error']
     assert_match(/invalid/i , data['text'])
-    assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
   end
 
   test "token by json does not log in blocked accounts" do
     with_blocked_credential @token_credential do
       assert_no_difference 'Credential.count', 'no credential is spent' do
-        get :token, code: @token_credential.code, format: 'json'
+        get :token, format: 'json', params: { code: @token_credential.code }
       end
     end
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'blocked', data['error']
     assert_match(/blocked/i , data['text'])
-    assert_nil assigns(:current_user), 'instance variable'
     assert_nil session_current_user, 'session'
   end
 
@@ -388,7 +388,6 @@ class SessionControllerApiTest < ActionController::TestCase
     delete :destroy
 
     assert_redirected_to session_url
-    assert_nil assigns(:current_user)
   end
 
   test "logout by json" do
@@ -396,7 +395,6 @@ class SessionControllerApiTest < ActionController::TestCase
     delete :destroy, format: 'json'
 
     assert_response :ok
-    assert_nil assigns(:current_user)
   end
 
   test "api_token request" do
@@ -459,44 +457,44 @@ class SessionControllerApiTest < ActionController::TestCase
     set_session_current_user @user
     get :password_change
     assert_response :ok
-    assert_template :password_change
-    assert_equal @password_credential, assigns(:credential)
+    assert_select 'form[action="/session/change_password"][method="post"]' do
+      assert_select 'input[name="credential[old_password]"]'
+    end
   end
 
   test "change_password bounces without logged in user" do
-    post :change_password, credential: { old_password: 'pa55w0rd',
-        password: 'hacks', password_confirmation: 'hacks' }
+    post :change_password, params: { credential: { old_password: 'pa55w0rd',
+        password: 'hacks', password_confirmation: 'hacks' } }
     assert_response :forbidden
   end
 
   test "change_password works with correct input" do
     set_session_current_user @user
-    post :change_password, credential: { old_password: 'pa55w0rd',
-        password: 'hacks', password_confirmation: 'hacks'}
+    post :change_password, params: { credential: { old_password: 'pa55w0rd',
+        password: 'hacks', password_confirmation: 'hacks'} }
     assert_redirected_to session_url
-    assert_equal @password_credential, assigns(:credential)
     assert_equal @user, User.authenticate_signin(Session.new(email:
         @email_credential.email, password: 'hacks')), 'password not changed'
   end
 
   test "change_password works with correct input and extra form input" do
     set_session_current_user @user
-    post :change_password, credential: { old_password: 'pa55w0rd',
+    post :change_password, params: { credential: { old_password: 'pa55w0rd',
         password: 'hacks', password_confirmation: 'hacks' }, utf8: "\u2713",
-        commit: 'Change Password'
+        commit: 'Change Password' }
     assert_redirected_to session_url
-    assert_equal @password_credential, assigns(:credential)
     assert_equal @user, User.authenticate_signin(Session.new(email:
         @email_credential.email, password: 'hacks')), 'password not changed'
   end
 
   test "change_password rejects bad old password" do
     set_session_current_user @user
-    post :change_password, credential: { old_password: '_pa55w0rd',
-        password: 'hacks', password_confirmation: 'hacks' }
+    post :change_password, params: { credential: { old_password: '_pa55w0rd',
+        password: 'hacks', password_confirmation: 'hacks' } }
     assert_response :ok
-    assert_template :password_change
-    assert_equal @password_credential, assigns(:credential)
+    assert_select 'form[action="/session/change_password"][method="post"]' do
+      assert_select 'input[name="credential[old_password]"]'
+    end
     assert_equal @user, User.authenticate_signin(Session.new(email:
         @email_credential.email, password: 'pa55w0rd')),
         'password wrongly changed'
@@ -504,11 +502,12 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "change_password rejects un-confirmed password" do
     set_session_current_user @user
-    post :change_password, credential: { old_password: 'pa55w0rd',
-        password: 'hacks', password_confirmation: 'hacks_' }
+    post :change_password, params: { credential: { old_password: 'pa55w0rd',
+        password: 'hacks', password_confirmation: 'hacks_' } }
     assert_response :ok
-    assert_template :password_change
-    assert_equal @password_credential, assigns(:credential)
+    assert_select 'form[action="/session/change_password"][method="post"]' do
+      assert_select 'input[name="credential[old_password]"]'
+    end
     assert_equal @user, User.authenticate_signin(Session.new(email:
         @email_credential.email, password: 'pa55w0rd')),
         'password wrongly changed'
@@ -517,8 +516,8 @@ class SessionControllerApiTest < ActionController::TestCase
   test "change_password works for password recovery" do
     set_session_current_user @user
     @password_credential.destroy
-    post :change_password, credential: { password: 'hacks',
-                                         password_confirmation: 'hacks' }
+    post :change_password, params: { credential: { password: 'hacks',
+        password_confirmation: 'hacks' } }
     assert_redirected_to session_url
     assert_equal @user, User.authenticate_signin(Session.new(email:
         @email_credential.email, password: 'hacks')), 'password not changed'
@@ -528,17 +527,19 @@ class SessionControllerApiTest < ActionController::TestCase
     set_session_current_user @user
     @password_credential.destroy
     assert_no_difference 'Credential.count' do
-      post :change_password, credential: { password: 'hacks',
-                                           password_confirmation: 'hacks_' }
+      post :change_password, params: { credential: { password: 'hacks',
+          password_confirmation: 'hacks_' } }
     end
     assert_response :ok
-    assert_template :password_change
+    assert_select 'form[action="/session/change_password"][method="post"]' do
+      assert_select 'input[name="credential[old_password]"]', count: 0
+    end
   end
 
   test "change_password by json bounces without logged in user" do
-    post :change_password, format: 'json',
+    post :change_password, format: 'json', params: {
         credential: { old_password: 'pa55w0rd', password: 'hacks',
-                      password_confirmation: 'hacks' }
+                      password_confirmation: 'hacks' } }
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'Please sign in', data['error']
@@ -546,9 +547,9 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "change_password by json works with correct input" do
     set_session_current_user @user
-    post :change_password, format: 'json',
+    post :change_password, format: 'json', params: {
         credential: { old_password: 'pa55w0rd', password: 'hacks',
-                      password_confirmation: 'hacks' }
+                      password_confirmation: 'hacks' } }
     assert_response :ok
     assert_equal @user, User.authenticate_signin(Session.new(email:
         @email_credential.email, password: 'hacks')), 'password not changed'
@@ -556,13 +557,12 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "change_password by json rejects bad old password" do
     set_session_current_user @user
-    post :change_password, format: 'json',
+    post :change_password, format: 'json', params: {
         credential: { old_password: '_pa55w0rd', password: 'hacks',
-                      password_confirmation: 'hacks' }
+                      password_confirmation: 'hacks' } }
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'invalid', data['error']
-    assert_equal @password_credential, assigns(:credential)
     assert_equal @user, User.authenticate_signin(Session.new(email:
         @email_credential.email, password: 'pa55w0rd')),
         'password wrongly changed'
@@ -570,9 +570,9 @@ class SessionControllerApiTest < ActionController::TestCase
 
   test "change_password by json rejects un-confirmed password" do
     set_session_current_user @user
-    post :change_password, format: 'json',
+    post :change_password, format: 'json', params: {
          credential: { old_password: 'pa55w0rd', password: 'hacks',
-                       password_confirmation: 'hacks_' }
+                       password_confirmation: 'hacks_' } }
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
     assert_equal 'invalid', data['error']
@@ -584,8 +584,8 @@ class SessionControllerApiTest < ActionController::TestCase
   test "change_password by json works for password recovery" do
     set_session_current_user @user
     @password_credential.destroy
-    post :change_password, format: 'json',
-         credential: { password: 'hacks', password_confirmation: 'hacks' }
+    post :change_password, format: 'json', params: {
+         credential: { password: 'hacks', password_confirmation: 'hacks' } }
     assert_response :ok
     assert_equal @user, User.authenticate_signin(Session.new(email:
         @email_credential.email, password: 'hacks')), 'password not changed'
@@ -595,8 +595,8 @@ class SessionControllerApiTest < ActionController::TestCase
     set_session_current_user @user
     @password_credential.destroy
     assert_no_difference 'Credential.count' do
-      post :change_password, format: 'json',
-           credential: { password: 'hacks', password_confirmation: 'hacks_' }
+      post :change_password, format: 'json', params: {
+           credential: { password: 'hacks', password_confirmation: 'hacks_' } }
     end
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
@@ -608,7 +608,8 @@ class SessionControllerApiTest < ActionController::TestCase
     request.host = 'mail.test.host:1234'
 
     assert_difference 'Credential.count', 1 do
-      post :reset_password, session: { email: @email_credential.email }
+      post :reset_password, params: {
+          session: { email: @email_credential.email } }
     end
 
     token = Credential.last
@@ -630,8 +631,9 @@ class SessionControllerApiTest < ActionController::TestCase
     ActionMailer::Base.deliveries = []
 
     assert_difference 'Credential.count', 1 do
-      post :reset_password, session: { email: @email_credential.email },
-                            format: 'json'
+      post :reset_password, format: 'json', params: {
+          session: { email: @email_credential.email } }
+
     end
 
     token = Credential.last
@@ -648,7 +650,7 @@ class SessionControllerApiTest < ActionController::TestCase
     ActionMailer::Base.deliveries = []
 
     assert_no_difference 'Credential.count' do
-      post :reset_password, session: { email: 'no@such.email' }
+      post :reset_password, params: { session: { email: 'no@such.email' } }
     end
     assert ActionMailer::Base.deliveries.empty?, 'no email generated'
 
@@ -659,7 +661,8 @@ class SessionControllerApiTest < ActionController::TestCase
     ActionMailer::Base.deliveries = []
 
     assert_no_difference 'Credential.count' do
-      post :reset_password, session: { email: 'no@such.email' }, format: 'json'
+      post :reset_password, format: 'json', params: {
+          session: { email: 'no@such.email' } }
     end
     assert ActionMailer::Base.deliveries.empty?, 'no email generated'
 
@@ -672,8 +675,8 @@ class SessionControllerApiTest < ActionController::TestCase
     ActionMailer::Base.deliveries = []
 
     assert_difference 'Credential.count', 1 do
-      post :create, session: { email: @email_credential.email, password: '' },
-                    reset_password: :requested
+      post :create, params: { session: { email: @email_credential.email,
+          password: '' }, reset_password: 'requested' }
     end
 
     token = Credential.last
@@ -691,12 +694,10 @@ class SessionControllerApiTest < ActionController::TestCase
   test "omniauth logs in with good account details" do
     ActionController::Base.allow_forgery_protection = true
     begin
-
       request.env['omniauth.auth'] =
           { 'provider' => @omniauth_credential.provider,
             'uid' => @omniauth_credential.uid }
-      post :omniauth, provider: @omniauth_credential.provider
-      assert_equal @user, assigns(:current_user), 'instance variable'
+      post :omniauth, params: { provider: @omniauth_credential.provider }
       assert_equal @user, session_current_user, 'session'
       assert_nil flash[:alert], 'no alert'
       assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
@@ -714,8 +715,7 @@ class SessionControllerApiTest < ActionController::TestCase
       request.env['omniauth.auth'] =
           { 'provider' => @omniauth_credential.provider,
             'uid' => @omniauth_credential.uid }
-      post :omniauth, provider: @omniauth_credential.provider
-      assert_equal @user, assigns(:current_user), 'instance variable'
+      post :omniauth, params: { provider: @omniauth_credential.provider }
       assert_equal @user, session_current_user, 'session'
       assert_nil flash[:alert], 'no alert'
       assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
@@ -735,7 +735,7 @@ class SessionControllerApiTest < ActionController::TestCase
       request.env['omniauth.auth'] =
           { 'provider' => @omniauth_credential.provider,
             'uid' => @omniauth_credential.uid }
-      post :omniauth, provider: @omniauth_credential.provider
+      post :omniauth, params: { provider: @omniauth_credential.provider }
       assert_equal @user, session_current_user, 'session'
       assert_nil Tokens::Base.with_code(old_token.code).first,
                  'old session not purged'
@@ -754,7 +754,7 @@ class SessionControllerApiTest < ActionController::TestCase
       request.env['omniauth.auth'] =
           { 'provider' => @omniauth_credential.provider,
             'uid' => @omniauth_credential.uid }
-      post :omniauth, provider: @omniauth_credential.provider
+      post :omniauth, params: { provider: @omniauth_credential.provider }
       assert_equal @user, session_current_user, 'session'
       assert_equal old_token, Tokens::Base.with_code(old_token.code).first,
                  'old session purged'
@@ -772,7 +772,7 @@ class SessionControllerApiTest < ActionController::TestCase
       old_token.save!
       request.env['omniauth.auth'] =
           { 'provider' => @omniauth_credential.provider, 'uid' => 'fail' }
-      post :omniauth, provider: @omniauth_credential.provider
+      post :omniauth, params: { provider: @omniauth_credential.provider }
       assert_nil session_current_user, 'session'
       assert_equal old_token, Tokens::Base.with_code(old_token.code).first,
                  'old session purged'
@@ -788,10 +788,9 @@ class SessionControllerApiTest < ActionController::TestCase
           { 'provider' => @omniauth_credential.provider,
             'uid' => @omniauth_credential.uid }
       with_blocked_credential @omniauth_credential do
-        post :omniauth, provider: @omniauth_credential.provider
+        post :omniauth, params: { provider: @omniauth_credential.provider }
       end
       assert_redirected_to new_session_url
-      assert_nil assigns(:current_user), 'instance variable'
       assert_nil session_current_user, 'session'
       assert_match(/ blocked/, flash[:alert])
       assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
@@ -807,8 +806,7 @@ class SessionControllerApiTest < ActionController::TestCase
       request.env['omniauth.auth'] = omniauth_hash
       Credentials::OmniAuthUid.expects(:authenticate).at_least_once.
           with(omniauth_hash).returns @omniauth_credential.user
-      post :omniauth, provider: @omniauth_credential.provider
-      assert_equal @user, assigns(:current_user), 'instance variable'
+      post :omniauth, params: { provider: @omniauth_credential.provider }
       assert_equal @user, session_current_user, 'session'
       assert_redirected_to session_url
     ensure

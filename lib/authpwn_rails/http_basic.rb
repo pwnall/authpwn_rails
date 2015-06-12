@@ -9,7 +9,7 @@ class ActionController::Base
   # implement find_by_id.
   def self.authenticates_using_http_basic(options = {})
     include Authpwn::HttpBasicControllerInstanceMethods
-    before_filter :authenticate_using_http_basic, options
+    before_action :authenticate_using_http_basic, options
   end
 end
 
@@ -20,12 +20,12 @@ module Authpwn
 module HttpBasicControllerInstanceMethods
   include Authpwn::CurrentUser
 
-  # Filter that implements authenticates_using_http_basic.
+  # The before_action that implements authenticates_using_http_basic.
   #
   # If your ApplicationController contains authenticates_using_http_basic, you
-  # can opt out in individual controllers using skip_before_filter.
+  # can opt out in individual controllers using skip_before_action.
   #
-  #     skip_before_filter :authenticate_using_http_filter
+  #     skip_before_action :authenticate_using_http_filter
   def authenticate_using_http_basic
     return if current_user
     authenticate_with_http_basic do |email, password|

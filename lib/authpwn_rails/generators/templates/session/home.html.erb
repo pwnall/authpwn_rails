@@ -1,5 +1,6 @@
-<p>
+<p class="welcome-page">
   This view gets displayed when the user is logged in. Right now,
-  user <%= current_user.exuid %> is logged in. You should allow the user to
+  user <span class="user-exuid"><%= current_user.exuid %></span> is logged in.
+  You should allow the user to
   <%= link_to 'sign out', session_path, method: :delete %>.
 </p>

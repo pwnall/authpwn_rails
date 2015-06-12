@@ -38,7 +38,13 @@ class ActiveSupport::TestCase
       File.expand_path '../../../lib/authpwn_rails/generators/templates',
                        __FILE__
 
-  self.use_transactional_fixtures = false
+  if self.respond_to? :use_transactional_tests
+    # Rails 5 and above.
+    self.use_transactional_tests = true
+  else
+    # Rails 4.2 and below.
+    self.use_transactional_fixtures = false
+  end
   self.use_instantiated_fixtures  = false
   self.pre_loaded_fixtures = false
   fixtures :all

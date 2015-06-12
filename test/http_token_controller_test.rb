@@ -4,6 +4,18 @@ require File.expand_path('../test_helper', __FILE__)
 class HttpTokenController < ApplicationController
   authenticates_using_http_token
 
+  # NOTE: As of Rails 5, tests can't use assigns to reach into the controllers'
+  #       instance variables. current_user is a part of authpwn's API, so we
+  #       must test it.
+  before_action :export_current_user_to_cookie
+  def export_current_user_to_cookie
+    cookies['_authpwn_test_cuid'] = if current_user
+      current_user.id.to_s
+    else
+      'nil'
+    end
+  end
+
   def show
     if current_user
       render text: "User: #{current_user.id}"
@@ -25,7 +37,7 @@ class HttpTokenControllerTest < ActionController::TestCase
   test "no user_id in session cookie or header" do
     get :show
     assert_response :success
-    assert_nil assigns(:current_user)
+    assert_equal 'nil', cookies['_authpwn_test_cuid']
     assert_equal 'No user', response.body
   end
 
@@ -33,14 +45,14 @@ class HttpTokenControllerTest < ActionController::TestCase
     set_session_current_user @user
     get :show
     assert_response :success
-    assert_nil assigns(:current_user)
+    assert_equal 'nil', cookies['_authpwn_test_cuid']
     assert_equal 'No user', response.body
   end
 
   test "valid user credentials in header" do
     set_http_token_user @user
     get :show
-    assert_equal @user, assigns(:current_user)
+    assert_equal @user.id.to_s, cookies['_authpwn_test_cuid']
     assert_equal nil, session_current_user,
         'Token authentication should not update the session'
 
@@ -52,7 +64,7 @@ class HttpTokenControllerTest < ActionController::TestCase
     set_http_token_user @user
     Tokens::Api.where(user_id: @user.id).destroy_all
     get :show
-    assert_nil assigns(:current_user)
+    assert_equal 'nil', cookies['_authpwn_test_cuid']
     assert_equal 'No user', response.body
   end
 
@@ -61,7 +73,7 @@ class HttpTokenControllerTest < ActionController::TestCase
         returns @user
     set_http_token_user @user, 'ap1-c0d3'
     get :show
-    assert_equal @user, assigns(:current_user)
+    assert_equal @user.id.to_s, cookies['_authpwn_test_cuid']
     assert_equal nil, session_current_user,
         'Token authentication should not update the session'
 
@@ -73,7 +85,7 @@ class HttpTokenControllerTest < ActionController::TestCase
     set_http_token_user @user
     set_http_token_user nil
     get :show
-    assert_nil assigns(:current_user)
+    assert_equal 'nil', cookies['_authpwn_test_cuid']
     assert_equal 'No user', response.body
   end
 
@@ -81,7 +93,7 @@ class HttpTokenControllerTest < ActionController::TestCase
     user = users(:jane)
     set_http_token_user user
     get :show
-    assert_equal user, assigns(:current_user)
+    assert_equal user.id.to_s, cookies['_authpwn_test_cuid']
     assert_equal nil, session_current_user,
         'Token authentication should not update the session'
 
@@ -90,16 +102,16 @@ class HttpTokenControllerTest < ActionController::TestCase
   end
 
   test "invalid authpwn_suid in session" do
-    get :show, {}, authpwn_suid: 'random@user.com'
+    get :show, session: { authpwn_suid: 'random@user.com' }
     assert_response :success
-    assert_nil assigns(:current_user)
+    assert_equal 'nil', cookies['_authpwn_test_cuid']
   end
 
   test "valid user bounced to http authentication" do
     set_http_token_user @user
     get :bouncer
     assert_response :forbidden
-    assert_template 'session/forbidden'
+    assert_select 'p.forbidden-logged-in-user'
     assert_select 'a[href="/session"][data-method="delete"]', 'sign out'
   end
 
