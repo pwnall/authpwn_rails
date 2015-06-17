@@ -32,6 +32,8 @@ class AllGenerator < Rails::Generators::Base
   end
 
   def create_session_views
+    copy_file File.join('session', 'api_token.html.erb'),
+              File.join('app', 'views', 'session', 'api_token.html.erb')
     copy_file File.join('session', 'forbidden.html.erb'),
               File.join('app', 'views', 'session', 'forbidden.html.erb')
     copy_file File.join('session', 'home.html.erb'),
