@@ -127,6 +127,8 @@ module SessionController
 
   # GET /session/token/token-code
   def token
+    # NOTE: This repeats the code in Token::Base.authenticate, because we need
+    #       the token.
     if token = Tokens::Base.with_code(params[:code]).first
       auth = token.authenticate
     else

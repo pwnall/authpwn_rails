@@ -11,6 +11,9 @@ def setup_authpwn_routes
     resource :http_basic, controller: 'http_basic' do
       collection { get :bouncer }
     end
+    resource :http_token, controller: 'http_token' do
+      collection { get :bouncer }
+    end
 
     authpwn_session controller: 'bare_session', method_names: 'bare_session',
                     omniauth_path_prefix: '/bare_auth'

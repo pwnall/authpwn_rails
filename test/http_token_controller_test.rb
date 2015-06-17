@@ -1,8 +1,8 @@
 require File.expand_path('../test_helper', __FILE__)
 
 # Mock controller used for testing session handling.
-class HttpBasicController < ApplicationController
-  authenticates_using_http_basic
+class HttpTokenController < ApplicationController
+  authenticates_using_http_token
 
   def show
     if current_user
@@ -13,13 +13,13 @@ class HttpBasicController < ApplicationController
   end
 
   def bouncer
-    bounce_to_http_basic
+    bounce_to_http_token
   end
 end
 
-class HttpBasicControllerTest < ActionController::TestCase
+class HttpTokenControllerTest < ActionController::TestCase
   setup do
-    @user = users(:jane)
+    @user = users(:john)
   end
 
   test "no user_id in session cookie or header" do
@@ -38,46 +38,52 @@ class HttpBasicControllerTest < ActionController::TestCase
   end
 
   test "valid user credentials in header" do
-    set_http_basic_user @user, 'pa55w0rd'
+    set_http_token_user @user
     get :show
     assert_equal @user, assigns(:current_user)
+    assert_equal nil, session_current_user,
+        'Token authentication should not update the session'
 
-    jane_id = ActiveRecord::FixtureSet.identify :jane
-    assert_equal "User: #{jane_id}", response.body
+    john_id = ActiveRecord::FixtureSet.identify :john
+    assert_equal "User: #{john_id}", response.body
   end
 
-  test "invalid user credentials in header" do
-    set_http_basic_user @user, 'fail'
+  test "invalid token in header" do
+    set_http_token_user @user
+    Tokens::Api.where(user_id: @user.id).destroy_all
     get :show
     assert_nil assigns(:current_user)
     assert_equal 'No user', response.body
   end
 
-  test "uses User.authenticate_signin" do
-    signin = Session.new email: 'jane@gmail.com', password: 'fail'
-    Session.expects(:new).at_least_once.with(
-        email: 'jane@gmail.com', password: 'fail').returns signin
-    User.expects(:authenticate_signin).at_least_once.with(signin).returns @user
-    set_http_basic_user @user, 'fail'
+  test "uses Tokens::Api.authenticate" do
+    Tokens::Api.expects(:authenticate).at_least_once.with('ap1-c0d3').
+        returns @user
+    set_http_token_user @user, 'ap1-c0d3'
     get :show
     assert_equal @user, assigns(:current_user)
+    assert_equal nil, session_current_user,
+        'Token authentication should not update the session'
 
-    jane_id = ActiveRecord::FixtureSet.identify :jane
-    assert_equal "User: #{jane_id}", response.body
+    john_id = ActiveRecord::FixtureSet.identify :john
+    assert_equal "User: #{john_id}", response.body
   end
 
   test "reset user credentials in header" do
-    set_http_basic_user @user, 'pa55w0rd'
-    set_http_basic_user nil
+    set_http_token_user @user
+    set_http_token_user nil
     get :show
     assert_nil assigns(:current_user)
     assert_equal 'No user', response.body
   end
 
-  test "mocked user credentials in header" do
-    set_http_basic_user @user
+  test "newly created API token in header" do
+    user = users(:jane)
+    set_http_token_user user
     get :show
-    assert_equal @user, assigns(:current_user)
+    assert_equal user, assigns(:current_user)
+    assert_equal nil, session_current_user,
+        'Token authentication should not update the session'
 
     jane_id = ActiveRecord::FixtureSet.identify :jane
     assert_equal "User: #{jane_id}", response.body
@@ -90,7 +96,7 @@ class HttpBasicControllerTest < ActionController::TestCase
   end
 
   test "valid user bounced to http authentication" do
-    set_http_basic_user @user
+    set_http_token_user @user
     get :bouncer
     assert_response :forbidden
     assert_template 'session/forbidden'
@@ -98,7 +104,7 @@ class HttpBasicControllerTest < ActionController::TestCase
   end
 
   test "valid user bounced in json" do
-    set_http_basic_user @user
+    set_http_token_user @user
     get :bouncer, format: 'json'
     assert_response :ok
     data = ActiveSupport::JSON.decode response.body
@@ -108,14 +114,14 @@ class HttpBasicControllerTest < ActionController::TestCase
   test "no user_id bounced to http authentication" do
     get :bouncer
     assert_response :unauthorized
-    assert_equal 'Basic realm="Application"',
+    assert_equal 'Token realm="Application"',
                  response.headers['WWW-Authenticate']
   end
 
   test "no user_id bounced in json" do
     get :bouncer, format: 'json'
     assert_response :unauthorized
-    assert_equal 'Basic realm="Application"',
+    assert_equal 'Token realm="Application"',
                  response.headers['WWW-Authenticate']
   end
 end

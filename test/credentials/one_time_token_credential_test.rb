@@ -21,7 +21,7 @@ class OneTimeTokenCredentialTest < ActiveSupport::TestCase
     assert !@credential.valid?
   end
 
-  test 'user presence' do
+  test 'user required' do
     @credential.user = nil
     assert !@credential.valid?
   end

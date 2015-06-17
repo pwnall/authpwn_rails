@@ -14,12 +14,14 @@ module Authpwn
 
   # Contains extensions to the User model.
   module UserExtensions
+    autoload :ApiTokenField, 'authpwn_rails/user_extensions/api_token_field.rb'
     autoload :EmailField, 'authpwn_rails/user_extensions/email_field.rb'
     autoload :PasswordField, 'authpwn_rails/user_extensions/password_field.rb'
   end
 end
 
 require 'authpwn_rails/http_basic.rb'
+require 'authpwn_rails/http_token.rb'
 require 'authpwn_rails/routes.rb'
 require 'authpwn_rails/session.rb'
 require 'authpwn_rails/test_extensions.rb'
@@ -27,7 +29,7 @@ require 'authpwn_rails/test_extensions.rb'
 if defined?(Rails)
   require 'authpwn_rails/engine.rb'
 
-  # HACK(costan): this works around a known Rails bug
+  # HACK(pwnall): this works around a known Rails bug
   #     https://rails.lighthouseapp.com/projects/8994/tickets/1905-apphelpers-within-plugin-not-being-mixed-in
   require File.expand_path('../../app/helpers/session_helper.rb', __FILE__)
   ActionController::Base.helper SessionHelper

@@ -59,7 +59,7 @@ module ControllerTestExtensions
     Tokens::Base.with_code(suid).first!.user
   end
 
-  # Sets the HTTP Authentication header.
+  # Sets the HTTP Authentication header for Basic authentication.
   #
   # If no password is provided, the user's password is set to "password". This
   # change is normally reverted at the end of the test, as long as
@@ -93,6 +93,34 @@ module ControllerTestExtensions
 
     request.env['HTTP_AUTHORIZATION'] =
         "Basic #{::Base64.strict_encode64("#{email}:#{password}")}"
+    self
+  end
+
+  # Sets the HTTP Authentication header for Token authentication.
+  #
+  # If the user doesn't have an API token, one is generated automatically. This
+  # change is normally reverted at the end of the test, as long as
+  # transactional fixtures are not disabled.
+  #
+  # If a token code is provided, the user's API token's code is forced to the
+  # given value.
+  #
+  # Tests that need to disable transactional fixures should delete the user's
+  # API token after completion.
+  def set_http_token_user(user, token_code = nil)
+    if user.nil?
+      request.env.delete 'HTTP_AUTHORIZATION'
+      return self
+    end
+
+    credential = Tokens::Api.where(user_id: user.id).first
+    credential ||= Tokens::Api.random_for(user)
+    unless token_code.nil?
+      credential.code = token_code
+      credential.save!
+    end
+
+    request.env['HTTP_AUTHORIZATION'] = "Token #{credential.code}"
     self
   end
 end  # module Authpwn::ControllerTestExtensions

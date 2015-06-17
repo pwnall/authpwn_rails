@@ -5,8 +5,8 @@ class ActionController::Base
   # Keeps track of the currently authenticated user via the session.
   #
   # Assumes the existence of a User model. A bare ActiveModel model will do the
-  # trick. Model instances must implement id, and the model class must implement
-  # find_by_id.
+  # trick. Model instances must implement id, and the model class must
+  # implement find_by_id.
   def self.authenticates_using_http_basic(options = {})
     include Authpwn::HttpBasicControllerInstanceMethods
     before_filter :authenticate_using_http_basic, options

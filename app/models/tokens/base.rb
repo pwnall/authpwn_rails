@@ -27,8 +27,9 @@ class Base < ::Credential
   # Returns the authenticated User instance, or a symbol indicating the reason
   # why the (potentially valid) token code was rejected.
   def self.authenticate(code)
-    credential = self.with_code(code).first
-    credential ? credential.authenticate : :invalid
+    return :invalid unless token = self.with_code(code).first
+    return :invalid unless token.kind_of?(self)
+    token.authenticate
   end
 
   # Scope that uses a secret code.

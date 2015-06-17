@@ -29,5 +29,9 @@ require 'helpers/test_order.rb'
 # Simulate Rails' initializer loading.
 require 'authpwn_rails/generators/templates/initializer.rb'
 
+# Simulate Rails' autoloading.
+require 'authpwn_rails/generators/templates/session_mailer.rb'
+require 'authpwn_rails/generators/templates/session_controller.rb'
+
 # Rails stubbing is only needed by the initializer, and breaks tests.
 require 'helpers/rails_undo.rb'

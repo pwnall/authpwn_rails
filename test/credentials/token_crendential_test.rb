@@ -21,7 +21,7 @@ class TokenCredentialTest < ActiveSupport::TestCase
     assert !@credential.valid?
   end
 
-  test 'user presence' do
+  test 'user required' do
     @credential.user = nil
     assert !@credential.valid?
   end
@@ -46,7 +46,7 @@ class TokenCredentialTest < ActiveSupport::TestCase
 
   test 'with_code' do
     john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
-    john2 = 'bDSU4tzfjuob79e3R0ykLcOGTBBYvuBWWJ9V06tQrCE'
+    john_email = 'bDSU4tzfjuob79e3R0ykLcOGTBBYvuBWWJ9V06tQrCE'
     jane = '6TXe1vv7BgOw0BkJ1hzUKO6G08fLk4sVfJ3wPDZHS-c'
     bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
     assert_equal credentials(:john_token),
@@ -54,7 +54,7 @@ class TokenCredentialTest < ActiveSupport::TestCase
     assert_equal credentials(:jane_token),
                  Tokens::Base.with_code(jane).first!
     assert_equal credentials(:john_email_token),
-                 Tokens::Base.with_code(john2).first
+                 Tokens::Base.with_code(john_email).first
     assert_nil Tokens::Base.with_code(bogus).first
     assert_raise ActiveRecord::RecordNotFound do
       Tokens::Base.with_code('john@gmail.com').first!
@@ -77,11 +77,25 @@ class TokenCredentialTest < ActiveSupport::TestCase
 
   test 'class authenticate' do
     john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
+    john_email = 'bDSU4tzfjuob79e3R0ykLcOGTBBYvuBWWJ9V06tQrCE'
     jane = '6TXe1vv7BgOw0BkJ1hzUKO6G08fLk4sVfJ3wPDZHS-c'
     bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
+
     assert_equal users(:john), Tokens::Base.authenticate(john)
+    assert_equal users(:john), Tokens::Base.authenticate(john_email)
     assert_equal users(:jane), Tokens::Base.authenticate(jane)
     assert_equal :invalid, Tokens::Base.authenticate(bogus)
+  end
+
+  test 'class authenticate with non-base class' do
+    john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
+    john_email = 'bDSU4tzfjuob79e3R0ykLcOGTBBYvuBWWJ9V06tQrCE'
+    bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
+
+    assert_equal :invalid, Tokens::EmailVerification.authenticate(john)
+    assert_equal users(:john),
+        Tokens::EmailVerification.authenticate(john_email)
+    assert_equal :invalid, Tokens::EmailVerification.authenticate(bogus)
   end
 
   test 'class authenticate on expired tokens' do

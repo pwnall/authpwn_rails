@@ -16,14 +16,6 @@ module PasswordField
                          confirmation: { allow_nil: true }
   end
 
-  module ClassMethods
-    # The user who has a certain e-mail, or nil if the e-mail is unclaimed.
-    def with_email(email)
-      credential = Credentials::Email.where(name: email).includes(:user).first
-      credential && credential.user
-    end
-  end
-
   # Credentials::Password instance associated with this user.
   def password_credential
     credentials.find { |c| c.instance_of?(Credentials::Password) }

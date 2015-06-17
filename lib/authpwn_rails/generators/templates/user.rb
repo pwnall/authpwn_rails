@@ -6,6 +6,8 @@ class User < ActiveRecord::Base
   # include Authpwn::UserExtensions::EmailField
   # Virtual password attribute, with confirmation validation.
   # include Authpwn::UserExtensions::PasswordField
+  # Virtual API token attribute.
+  # include Authpwn::UserExtensions::ApiTokenField
 
   # Change this to customize user lookup in the e-mail/password signin process.
   #
