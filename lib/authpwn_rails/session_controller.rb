@@ -14,6 +14,9 @@ module SessionController
     skip_filter :authenticate_using_session
     authenticates_using_session except: [:create, :reset_password, :token]
 
+    # NOTE: The Omniauth callback uses POST in some cases.
+    skip_filter :verify_authenticity_token, only: [:omniauth]
+
     # If set, every successful login will cause a database purge.
     class_attribute :auto_purge_sessions
     self.auto_purge_sessions = true

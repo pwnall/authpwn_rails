@@ -689,95 +689,131 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "omniauth logs in with good account details" do
-    request.env['omniauth.auth'] =
-        { 'provider' => @omniauth_credential.provider,
-          'uid' => @omniauth_credential.uid }
-    post :omniauth, provider: @omniauth_credential.provider
-    assert_equal @user, assigns(:current_user), 'instance variable'
-    assert_equal @user, session_current_user, 'session'
-    assert_nil flash[:alert], 'no alert'
-    assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
-    assert_redirected_to session_url
+    ActionController::Base.allow_forgery_protection = true
+    begin
+
+      request.env['omniauth.auth'] =
+          { 'provider' => @omniauth_credential.provider,
+            'uid' => @omniauth_credential.uid }
+      post :omniauth, provider: @omniauth_credential.provider
+      assert_equal @user, assigns(:current_user), 'instance variable'
+      assert_equal @user, session_current_user, 'session'
+      assert_nil flash[:alert], 'no alert'
+      assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
+      assert_redirected_to session_url
+    ensure
+      ActionController::Base.allow_forgery_protection = false
+    end
   end
 
   test "omniauth logs in with good account details and no User-Agent" do
-    request.headers['User-Agent'] = nil
+    ActionController::Base.allow_forgery_protection = true
+    begin
+      request.headers['User-Agent'] = nil
 
-    request.env['omniauth.auth'] =
-        { 'provider' => @omniauth_credential.provider,
-          'uid' => @omniauth_credential.uid }
-    post :omniauth, provider: @omniauth_credential.provider
-    assert_equal @user, assigns(:current_user), 'instance variable'
-    assert_equal @user, session_current_user, 'session'
-    assert_nil flash[:alert], 'no alert'
-    assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
-    assert_redirected_to session_url
+      request.env['omniauth.auth'] =
+          { 'provider' => @omniauth_credential.provider,
+            'uid' => @omniauth_credential.uid }
+      post :omniauth, provider: @omniauth_credential.provider
+      assert_equal @user, assigns(:current_user), 'instance variable'
+      assert_equal @user, session_current_user, 'session'
+      assert_nil flash[:alert], 'no alert'
+      assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
+      assert_redirected_to session_url
+    ensure
+      ActionController::Base.allow_forgery_protection = false
+    end
   end
 
   test "omniauth purges sessions when logging in" do
-    BareSessionController.auto_purge_sessions = true
-    old_token = credentials(:jane_session_token)
-    old_token.updated_at = Time.now - 1.year
-    old_token.save!
-    request.env['omniauth.auth'] =
-        { 'provider' => @omniauth_credential.provider,
-          'uid' => @omniauth_credential.uid }
-    post :omniauth, provider: @omniauth_credential.provider
-    assert_equal @user, session_current_user, 'session'
-    assert_nil Tokens::Base.with_code(old_token.code).first,
-               'old session not purged'
+    ActionController::Base.allow_forgery_protection = true
+    begin
+      BareSessionController.auto_purge_sessions = true
+      old_token = credentials(:jane_session_token)
+      old_token.updated_at = Time.now - 1.year
+      old_token.save!
+      request.env['omniauth.auth'] =
+          { 'provider' => @omniauth_credential.provider,
+            'uid' => @omniauth_credential.uid }
+      post :omniauth, provider: @omniauth_credential.provider
+      assert_equal @user, session_current_user, 'session'
+      assert_nil Tokens::Base.with_code(old_token.code).first,
+                 'old session not purged'
+    ensure
+      ActionController::Base.allow_forgery_protection = false
+    end
   end
 
   test "omniauth does not purge sessions if auto_purge_sessions is false" do
-    BareSessionController.auto_purge_sessions = false
-    old_token = credentials(:jane_session_token)
-    old_token.updated_at = Time.now - 1.year
-    old_token.save!
-    request.env['omniauth.auth'] =
-        { 'provider' => @omniauth_credential.provider,
-          'uid' => @omniauth_credential.uid }
-    post :omniauth, provider: @omniauth_credential.provider
-    assert_equal @user, session_current_user, 'session'
-    assert_equal old_token, Tokens::Base.with_code(old_token.code).first,
-               'old session purged'
+    ActionController::Base.allow_forgery_protection = true
+    begin
+      BareSessionController.auto_purge_sessions = false
+      old_token = credentials(:jane_session_token)
+      old_token.updated_at = Time.now - 1.year
+      old_token.save!
+      request.env['omniauth.auth'] =
+          { 'provider' => @omniauth_credential.provider,
+            'uid' => @omniauth_credential.uid }
+      post :omniauth, provider: @omniauth_credential.provider
+      assert_equal @user, session_current_user, 'session'
+      assert_equal old_token, Tokens::Base.with_code(old_token.code).first,
+                 'old session purged'
+    ensure
+      ActionController::Base.allow_forgery_protection = false
+    end
   end
 
   test "omniauth does not purge sessions if not logged in" do
-    BareSessionController.auto_purge_sessions = true
-    old_token = credentials(:jane_session_token)
-    old_token.updated_at = Time.now - 1.year
-    old_token.save!
-    request.env['omniauth.auth'] =
-        { 'provider' => @omniauth_credential.provider, 'uid' => 'fail' }
-    post :omniauth, provider: @omniauth_credential.provider
-    assert_nil session_current_user, 'session'
-    assert_equal old_token, Tokens::Base.with_code(old_token.code).first,
-               'old session purged'
+    ActionController::Base.allow_forgery_protection = true
+    begin
+      BareSessionController.auto_purge_sessions = true
+      old_token = credentials(:jane_session_token)
+      old_token.updated_at = Time.now - 1.year
+      old_token.save!
+      request.env['omniauth.auth'] =
+          { 'provider' => @omniauth_credential.provider, 'uid' => 'fail' }
+      post :omniauth, provider: @omniauth_credential.provider
+      assert_nil session_current_user, 'session'
+      assert_equal old_token, Tokens::Base.with_code(old_token.code).first,
+                 'old session purged'
+    ensure
+      ActionController::Base.allow_forgery_protection = false
+    end
   end
 
   test "omniauth does not log in blocked accounts" do
-    request.env['omniauth.auth'] =
-        { 'provider' => @omniauth_credential.provider,
-          'uid' => @omniauth_credential.uid }
-    with_blocked_credential @omniauth_credential do
-      post :omniauth, provider: @omniauth_credential.provider
+    ActionController::Base.allow_forgery_protection = true
+    begin
+      request.env['omniauth.auth'] =
+          { 'provider' => @omniauth_credential.provider,
+            'uid' => @omniauth_credential.uid }
+      with_blocked_credential @omniauth_credential do
+        post :omniauth, provider: @omniauth_credential.provider
+      end
+      assert_redirected_to new_session_url
+      assert_nil assigns(:current_user), 'instance variable'
+      assert_nil session_current_user, 'session'
+      assert_match(/ blocked/, flash[:alert])
+      assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
+    ensure
+      ActionController::Base.allow_forgery_protection = false
     end
-    assert_redirected_to new_session_url
-    assert_nil assigns(:current_user), 'instance variable'
-    assert_nil session_current_user, 'session'
-    assert_match(/ blocked/, flash[:alert])
-    assert_nil flash[:auth_redirect_url], 'no redirect URL in flash'
   end
 
   test "omniauth uses Credentials::OmniAuthUid.authenticate" do
-    omniauth_hash = { 'provider' => 'fail', 'uid' => 'fail' }
-    request.env['omniauth.auth'] = omniauth_hash
-    Credentials::OmniAuthUid.expects(:authenticate).at_least_once.
-        with(omniauth_hash).returns @omniauth_credential.user
-    post :omniauth, provider: @omniauth_credential.provider
-    assert_equal @user, assigns(:current_user), 'instance variable'
-    assert_equal @user, session_current_user, 'session'
-    assert_redirected_to session_url
+    ActionController::Base.allow_forgery_protection = true
+    begin
+      omniauth_hash = { 'provider' => 'fail', 'uid' => 'fail' }
+      request.env['omniauth.auth'] = omniauth_hash
+      Credentials::OmniAuthUid.expects(:authenticate).at_least_once.
+          with(omniauth_hash).returns @omniauth_credential.user
+      post :omniauth, provider: @omniauth_credential.provider
+      assert_equal @user, assigns(:current_user), 'instance variable'
+      assert_equal @user, session_current_user, 'session'
+      assert_redirected_to session_url
+    ensure
+      ActionController::Base.allow_forgery_protection = false
+    end
   end
 
   test "auth_controller? is true" do

@@ -144,29 +144,39 @@ class SessionControllerTest < ActionController::TestCase
   end
 
   test "OmniAuth login via developer strategy and good account" do
-    old_token = credentials(:jane_session_token)
-    old_token.updated_at = Time.now - 1.year
-    old_token.save!
+    ActionController::Base.allow_forgery_protection = true
+    begin
+      old_token = credentials(:jane_session_token)
+      old_token.updated_at = Time.now - 1.year
+      old_token.save!
 
-    request.env['omniauth.auth'] = {
-        'provider' => @omniauth_credential.provider,
-        'uid' => @omniauth_credential.uid }
-    post :omniauth, provider: @omniauth_credential.provider
-    assert_equal @user, session_current_user, 'session'
-    assert_redirected_to session_url
-    assert_nil Tokens::Base.with_code(old_token.code).first,
-               'old session not purged'
+      request.env['omniauth.auth'] = {
+          'provider' => @omniauth_credential.provider,
+          'uid' => @omniauth_credential.uid }
+      post :omniauth, provider: @omniauth_credential.provider
+      assert_equal @user, session_current_user, 'session'
+      assert_redirected_to session_url
+      assert_nil Tokens::Base.with_code(old_token.code).first,
+                 'old session not purged'
+    ensure
+      ActionController::Base.allow_forgery_protection = false
+    end
   end
 
   test "OmniAuth login via developer strategy and new account" do
-    request.env['omniauth.auth'] = {
-        'provider' => @omniauth_credential.provider,
-        'uid' => 'new_user_gmail_com_uid',
-        'info' => { 'email' => 'new_user@gmail.com' } }
-    post :omniauth, provider: @omniauth_credential.provider
-    assert_not_nil session_current_user, 'session'
-    assert_equal true, Credentials::Email.with('new_user@gmail.com').verified?,
-        'newly created e-mail credential not verified'
-    assert_redirected_to session_url
+    ActionController::Base.allow_forgery_protection = true
+    begin
+      request.env['omniauth.auth'] = {
+          'provider' => @omniauth_credential.provider,
+          'uid' => 'new_user_gmail_com_uid',
+          'info' => { 'email' => 'new_user@gmail.com' } }
+      post :omniauth, provider: @omniauth_credential.provider
+      assert_not_nil session_current_user, 'session'
+      assert_equal true, Credentials::Email.with('new_user@gmail.com').verified?,
+          'newly created e-mail credential not verified'
+      assert_redirected_to session_url
+    ensure
+      ActionController::Base.allow_forgery_protection = false
+    end
   end
 end
