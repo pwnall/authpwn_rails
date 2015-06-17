@@ -37,6 +37,8 @@ module MapperMixin
     post "/#{paths}", controller: controller, action: 'create'
     delete "/#{paths}", controller: controller, action: 'destroy'
 
+    get "/#{paths}/api_token", controller: controller, action: 'api_token',
+                               as: "api_token_#{methods}"
     get "/#{paths}/change_password", controller: controller,
                                     action: 'password_change',
                                     as: "change_password_#{methods}"

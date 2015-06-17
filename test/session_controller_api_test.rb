@@ -399,6 +399,57 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_nil assigns(:current_user)
   end
 
+  test "api_token request" do
+    user = users(:john)
+    set_session_current_user user
+    get :api_token
+    assert_response :ok
+    assert_select 'span[class="api-token"]', credentials(:john_api_token).code
+  end
+
+  test "api_token request from user without token" do
+    set_session_current_user @user
+    assert_difference 'Tokens::Api.count', 1 do
+      get :api_token
+    end
+    assert_response :ok
+    token = @user.credentials.where(type: 'Tokens::Api').first
+    assert_select 'span[class="api-token"]', token.code
+  end
+
+  test "api_token request without logged in user" do
+    get :api_token
+    assert_response :forbidden
+  end
+
+  test "api_token JSON request" do
+    user = users(:john)
+    set_session_current_user user
+    get :api_token, format: 'json'
+
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal credentials(:john_api_token).code, data['api_token']
+  end
+
+  test "api_token JSON request from user without token" do
+    set_session_current_user @user
+    assert_difference 'Tokens::Api.count', 1 do
+      get :api_token, format: 'json'
+    end
+    token = @user.credentials.where(type: 'Tokens::Api').first
+
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal token.code, data['api_token']
+  end
+
+  test "api_token JSON request without logged in user" do
+    get :api_token, format: 'json'
+    assert_response :ok
+
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal 'Please sign in', data['error']
+  end
+
   test "password_change bounces without logged in user" do
     get :password_change
     assert_response :forbidden

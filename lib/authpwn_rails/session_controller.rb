@@ -90,6 +90,22 @@ module SessionController
     end
   end
 
+  # GET /api_token
+  def api_token
+    unless current_user
+      bounce_user
+      return
+    end
+
+    token = Tokens::Api.where(user_id: current_user.id).first ||
+        Tokens::Api.random_for(current_user)
+    @api_token = token.code
+    respond_to do |format|
+      format.html
+      format.json { render json: { api_token: @api_token } }
+    end
+  end
+
   # POST /session/reset_password
   def reset_password
     email = params[:session] && params[:session][:email]
@@ -127,9 +143,12 @@ module SessionController
 
   # GET /session/token/token-code
   def token
-    # NOTE: This repeats the code in Token::Base.authenticate, because we need
-    #       the token.
-    if token = Tokens::Base.with_code(params[:code]).first
+    # NOTE: We don't use Tokens::Base here because we don't want users to abuse
+    #       API tokens to build permanent login links.
+    #
+    # This repeats the code in Token::Base.authenticate, because we need the
+    # token.
+    if token = Tokens::OneTime.with_code(params[:code]).first
       auth = token.authenticate
     else
       auth = :invalid

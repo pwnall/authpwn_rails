@@ -120,6 +120,23 @@ class SessionControllerTest < ActionController::TestCase
     assert_redirected_to new_session_url
   end
 
+  test "API token request" do
+    user = users(:john)
+    set_session_current_user user
+    get :api_token
+
+    assert_select 'span[class="api-token"]', credentials(:john_api_token).code
+  end
+
+  test "API token JSON request" do
+    user = users(:john)
+    set_session_current_user user
+    get :api_token, format: 'json'
+
+    assert_equal credentials(:john_api_token).code,
+        ActiveSupport::JSON.decode(response.body)['api_token']
+  end
+
   test "OmniAuth failure" do
     get :omniauth_failure
 
