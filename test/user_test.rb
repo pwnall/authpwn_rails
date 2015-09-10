@@ -49,13 +49,6 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test 'find_by_param' do
-    assert_equal users(:john), User.find_by_param(users(:john).to_param)
-    assert_equal users(:jane), User.find_by_param(users(:jane).to_param)
-    assert_equal nil, User.find_by_param('bogus id')
-    assert_equal nil, User.find_by_param(nil)
-  end
-
   test 'authenticate_signin with valid data' do
     signin = Session.new email: 'jane@gmail.com', password: 'pa55w0rd'
     assert_equal users(:jane), User.authenticate_signin(signin)

@@ -38,14 +38,6 @@ module UserModel
       where(exuid: param)
     end
 
-    # Queries the database using the value returned by User#to_param.
-    #
-    # @deprecated use with_param(param).first or .first! instead
-    # @return [User, nil] nil if no matching User exists.
-    def find_by_param(param)
-      with_param(param).first
-    end
-
     # Authenticates a user given the information on a signup form.
     #
     # The easiest method of accepting other login information is to override
