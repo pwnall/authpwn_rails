@@ -28,7 +28,7 @@ class CookieController < ApplicationController
     if params[:exuid].blank?
       set_session_current_user nil
     else
-      set_session_current_user User.find_by_param(params[:exuid])
+      set_session_current_user User.with_param(params[:exuid]).first
     end
     render text: ''
   end
