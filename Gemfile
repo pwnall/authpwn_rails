@@ -7,10 +7,10 @@ group :development do
   gem 'mocha', '>= 0.14.0'
   gem 'jeweler', '>= 2.0.1'
   gem 'simplecov', '>= 0'
-  gem 'mysql2', '>= 0.3.18'
-  gem 'omniauth', '>= 1.2.2'
-  gem 'pg', '>= 0.18.2'
-  gem 'sqlite3', '>= 1.3.9'
+  gem 'mysql2', '>= 0.4.2'
+  gem 'omniauth', '>= 1.3.1'
+  gem 'pg', '>= 0.18.4'
+  gem 'sqlite3', '>= 1.3.11'
   gem 'rubysl', platforms: [:rbx]
   gem 'rubysl-bundler', platforms: [:rbx]
   gem 'rubysl-rake', platforms: [:rbx]

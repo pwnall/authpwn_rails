@@ -1,4 +1,7 @@
+sudo: false
 language: ruby
+addons:
+  postgresql: "9.4"
 env:
   - DB=mysql:utf8_general_ci
   - DB=mysql:utf8_bin
