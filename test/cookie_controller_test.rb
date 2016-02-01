@@ -205,6 +205,9 @@ class CookieControllerTest < ActionController::TestCase
     assert_response :forbidden
     assert_template 'session/forbidden'
     assert_select 'a[href="/session"][data-method="delete"]', 'sign out'
+    # Make sure no layout was rendered.
+    assert_select 'title', 0
+    assert_select 'h1', 0
   end
 
   test "valid user_id bounced in json" do
@@ -220,6 +223,9 @@ class CookieControllerTest < ActionController::TestCase
     assert_response :forbidden
     assert_template 'session/forbidden'
     assert_equal bouncer_cookie_url, flash[:auth_redirect_url]
+    # Make sure no layout was rendered.
+    assert_select 'title', 0
+    assert_select 'h1', 0
 
     assert_select 'script', %r/.*window.location.*#{new_session_path}.*/
   end

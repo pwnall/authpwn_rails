@@ -78,10 +78,10 @@ module ControllerInstanceMethods
       format.html do
         @redirect_url = redirect_url
         if current_user
-          render 'session/forbidden', status: :forbidden
+          render 'session/forbidden', layout: false, status: :forbidden
         else
           flash[:auth_redirect_url] = redirect_url
-          render 'session/forbidden', status: :forbidden
+          render 'session/forbidden', layout: false, status: :forbidden
         end
       end
       format.json do

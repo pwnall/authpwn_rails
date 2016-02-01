@@ -453,6 +453,9 @@ class SessionControllerApiTest < ActionController::TestCase
   test "password_change bounces without logged in user" do
     get :password_change
     assert_response :forbidden
+    # Make sure no layout was rendered.
+    assert_select 'title', 0
+    assert_select 'h1', 0
   end
 
   test "password_change renders correct form" do
@@ -467,6 +470,10 @@ class SessionControllerApiTest < ActionController::TestCase
     post :change_password, credential: { old_password: 'pa55w0rd',
         password: 'hacks', password_confirmation: 'hacks' }
     assert_response :forbidden
+    assert_template 'session/forbidden', layout: false
+    # Make sure no layout was rendered.
+    assert_select 'title', 0
+    assert_select 'h1', 0
   end
 
   test "change_password works with correct input" do

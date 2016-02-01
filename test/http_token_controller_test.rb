@@ -101,6 +101,9 @@ class HttpTokenControllerTest < ActionController::TestCase
     assert_response :forbidden
     assert_template 'session/forbidden'
     assert_select 'a[href="/session"][data-method="delete"]', 'sign out'
+    # Make sure no layout was rendered.
+    assert_select 'title', 0
+    assert_select 'h1', 0
   end
 
   test "valid user bounced in json" do

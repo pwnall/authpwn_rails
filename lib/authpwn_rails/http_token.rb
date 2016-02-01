@@ -55,7 +55,7 @@ module HttpTokenControllerInstanceMethods
 
     respond_to do |format|
       format.html do
-        render 'session/forbidden', status: :forbidden
+        render 'session/forbidden', layout: false, status: :forbidden
       end
       format.json do
         render json: { error: "You're not allowed to access that" }
