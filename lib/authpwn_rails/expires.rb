@@ -16,7 +16,7 @@ module Expires
   # True if this password is too old and should not be used for authentication.
   def expired?
     return false unless expires_after
-    updated_at < Time.now - expires_after
+    updated_at < Time.current - expires_after
   end
 end  # module Authpwn::Expires
 

@@ -46,9 +46,9 @@ class SessionUidTokenTest < ActiveSupport::TestCase
 
   test 'expired?' do
     Tokens::SessionUid.expires_after = 14.days
-    @credential.updated_at = Time.now - 1.day
+    @credential.updated_at = Time.current - 1.day
     assert_equal false, @credential.expired?
-    @credential.updated_at = Time.now - 1.month
+    @credential.updated_at = Time.current - 1.month
     assert_equal true, @credential.expired?
 
     Tokens::SessionUid.expires_after = nil
@@ -56,24 +56,24 @@ class SessionUidTokenTest < ActiveSupport::TestCase
   end
 
   test 'spend updates old token' do
-    @credential.updated_at = Time.now - 1.day
+    @credential.updated_at = Time.current - 1.day
     @credential.save!
     @credential.spend
-    assert_operator @credential.updated_at, :>=, Time.now - 1.minute
+    assert_operator @credential.updated_at, :>=, Time.current - 1.minute
   end
 
   test 'spend does not update reasonably new token' do
-    old_updated_at = @credential.updated_at = Time.now - 5.minutes
+    old_updated_at = @credential.updated_at = Time.current - 5.minutes
     @credential.spend
     assert_equal old_updated_at, @credential.updated_at
   end
 
   test 'remove_expired gets rid of old tokens' do
     old_token = credentials(:john_session_token)
-    old_token.updated_at = Time.now - 1.year
+    old_token.updated_at = Time.current - 1.year
     old_token.save!
     fresh_token = credentials(:jane_session_token)
-    fresh_token.updated_at = Time.now - 1.minute
+    fresh_token.updated_at = Time.current - 1.minute
     fresh_token.save!
 
     assert_difference 'Credential.count', -1 do

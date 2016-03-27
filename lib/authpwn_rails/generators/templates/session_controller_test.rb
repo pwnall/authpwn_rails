@@ -18,7 +18,7 @@ class SessionControllerTest < ActionController::TestCase
 
   test "user login works and purges old sessions" do
     old_token = credentials(:jane_session_token)
-    old_token.updated_at = Time.now - 1.year
+    old_token.updated_at = Time.current - 1.year
     old_token.save!
     post :create, session: { email: @email_credential.email,
                              password: 'pa55w0rd' }
@@ -147,7 +147,7 @@ class SessionControllerTest < ActionController::TestCase
     ActionController::Base.allow_forgery_protection = true
     begin
       old_token = credentials(:jane_session_token)
-      old_token.updated_at = Time.now - 1.year
+      old_token.updated_at = Time.current - 1.year
       old_token.save!
 
       request.env['omniauth.auth'] = {

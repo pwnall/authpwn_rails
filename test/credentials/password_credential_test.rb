@@ -71,27 +71,27 @@ class PasswordCredentialTest < ActiveSupport::TestCase
   end
 
   test 'expired?' do
-    @credential.updated_at = Time.now
+    @credential.updated_at = Time.current
     assert_equal false, @credential.expired?
-    @credential.updated_at = Time.now - 2.years
+    @credential.updated_at = Time.current - 2.years
     assert_equal true, @credential.expired?
     Credentials::Password.expires_after = nil
     assert_equal false, @credential.expired?
   end
 
   test 'authenticate' do
-    @credential.updated_at = Time.now
+    @credential.updated_at = Time.current
     assert_equal users(:bill), @credential.authenticate('awesome')
     assert_equal :invalid, @credential.authenticate('not awesome')
     Credentials::Password.expires_after = 1.month
-    @credential.updated_at = Time.now - 1.year
+    @credential.updated_at = Time.current - 1.year
     assert_equal :expired, @credential.authenticate('awesome')
   end
 
   test 'authenticate calls User#auth_bounce_reason' do
     user = @credential.user
     user.expects(:auth_bounce_reason).at_least_once.returns(:reason)
-    @credential.updated_at = Time.now
+    @credential.updated_at = Time.current
     assert_equal :reason, @credential.authenticate('awesome')
     assert_equal :invalid, @credential.authenticate('not awesome')
   end

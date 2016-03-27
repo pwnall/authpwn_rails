@@ -117,7 +117,7 @@ class SessionControllerApiTest < ActionController::TestCase
   test "create purges sessions when logging in" do
     BareSessionController.auto_purge_sessions = true
     old_token = credentials(:jane_session_token)
-    old_token.updated_at = Time.now - 1.year
+    old_token.updated_at = Time.current - 1.year
     old_token.save!
     post :create, session: { email: @email_credential.email,
                              password: 'pa55w0rd' }
@@ -129,7 +129,7 @@ class SessionControllerApiTest < ActionController::TestCase
   test "create does not purge sessions if auto_purge_sessions is false" do
     BareSessionController.auto_purge_sessions = false
     old_token = credentials(:jane_session_token)
-    old_token.updated_at = Time.now - 1.year
+    old_token.updated_at = Time.current - 1.year
     old_token.save!
     post :create, email: @email_credential.email, password: 'pa55w0rd'
     assert_equal @user, session_current_user, 'session'
@@ -159,7 +159,7 @@ class SessionControllerApiTest < ActionController::TestCase
   test "create by json purges sessions when logging in" do
     BareSessionController.auto_purge_sessions = true
     old_token = credentials(:jane_session_token)
-    old_token.updated_at = Time.now - 1.year
+    old_token.updated_at = Time.current - 1.year
     old_token.save!
     post :create, email: @email_credential.email, password: 'pa55w0rd',
                   format: 'json'
@@ -188,7 +188,7 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "create does not log in with expired password" do
-    @password_credential.updated_at = Time.now - 2.years
+    @password_credential.updated_at = Time.current - 2.years
     @password_credential.save!
     post :create, session: { email: @email_credential.email,
                              password: 'pa55w0rd' }
@@ -202,7 +202,7 @@ class SessionControllerApiTest < ActionController::TestCase
   test "create does not purge sessions if not logged in" do
     BareSessionController.auto_purge_sessions = true
     old_token = credentials(:jane_session_token)
-    old_token.updated_at = Time.now - 1.year
+    old_token.updated_at = Time.current - 1.year
     old_token.save!
     post :create, session: { email: @email_credential.email, password: 'fail' }
     assert_nil session_current_user, 'session'
@@ -246,7 +246,7 @@ class SessionControllerApiTest < ActionController::TestCase
   end
 
   test "create by json does not log in with expired password" do
-    @password_credential.updated_at = Time.now - 2.years
+    @password_credential.updated_at = Time.current - 2.years
     @password_credential.save!
     post :create, email: @email_credential.email, password: 'pa55w0rd',
                   format: 'json'
@@ -737,7 +737,7 @@ class SessionControllerApiTest < ActionController::TestCase
     begin
       BareSessionController.auto_purge_sessions = true
       old_token = credentials(:jane_session_token)
-      old_token.updated_at = Time.now - 1.year
+      old_token.updated_at = Time.current - 1.year
       old_token.save!
       request.env['omniauth.auth'] =
           { 'provider' => @omniauth_credential.provider,
@@ -756,7 +756,7 @@ class SessionControllerApiTest < ActionController::TestCase
     begin
       BareSessionController.auto_purge_sessions = false
       old_token = credentials(:jane_session_token)
-      old_token.updated_at = Time.now - 1.year
+      old_token.updated_at = Time.current - 1.year
       old_token.save!
       request.env['omniauth.auth'] =
           { 'provider' => @omniauth_credential.provider,
@@ -775,7 +775,7 @@ class SessionControllerApiTest < ActionController::TestCase
     begin
       BareSessionController.auto_purge_sessions = true
       old_token = credentials(:jane_session_token)
-      old_token.updated_at = Time.now - 1.year
+      old_token.updated_at = Time.current - 1.year
       old_token.save!
       request.env['omniauth.auth'] =
           { 'provider' => @omniauth_credential.provider, 'uid' => 'fail' }

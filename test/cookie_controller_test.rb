@@ -50,27 +50,27 @@ class CookieControllerTest < ActionController::TestCase
 
   test "valid suid in session does not refresh very recent session" do
     request.session[:authpwn_suid] = @token.suid
-    @token.updated_at = Time.now - 5.minutes
+    @token.updated_at = Time.current - 5.minutes
     @token.save!
     get :show
     assert_response :success
     assert_equal @user, assigns(:current_user)
-    assert_operator @token.reload.updated_at, :<=, Time.now - 5.minutes
+    assert_operator @token.reload.updated_at, :<=, Time.current - 5.minutes
   end
 
   test "valid suid in session refreshes recent session" do
     request.session[:authpwn_suid] = @token.suid
-    @token.updated_at = Time.now - 5.minutes
+    @token.updated_at = Time.current - 5.minutes
     @token.save!
     get :show
     assert_response :success
     assert_equal @user, assigns(:current_user)
-    assert_operator @token.reload.updated_at, :<=, Time.now - 5.minutes
+    assert_operator @token.reload.updated_at, :<=, Time.current - 5.minutes
   end
 
   test "valid suid in session is discarded if the session is old" do
     request.session[:authpwn_suid] = @token.suid
-    @token.updated_at = Time.now - 3.months
+    @token.updated_at = Time.current - 3.months
     @token.save!
     get :show
     assert_response :success
@@ -114,13 +114,13 @@ class CookieControllerTest < ActionController::TestCase
   end
 
   test "set_session_current_user refreshes old token" do
-    @token.updated_at = Time.now - 1.day
+    @token.updated_at = Time.current - 1.day
     request.session[:authpwn_suid] = @token.suid
     assert_no_difference 'Credential.count', 'existing token not reused' do
       put :update, exuid: @user.exuid
     end
     assert_response :success
-    assert_operator @token.reload.updated_at, :>=, Time.now - 1.hour,
+    assert_operator @token.reload.updated_at, :>=, Time.current - 1.hour,
         'Old token not refreshed'
     assert_equal @user, assigns(:current_user)
 

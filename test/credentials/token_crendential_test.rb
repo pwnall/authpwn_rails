@@ -113,7 +113,7 @@ class TokenCredentialTest < ActiveSupport::TestCase
     jane = 'skygyoxxmnerxwe4zbi3p5yjtg7zpjl2peyfcwh5wnc37fyfc4xa'
 
     Tokens::Base.all.each do |token|
-      token.updated_at = Time.now - 1.year
+      token.updated_at = Time.current - 1.year
       token.class.stubs(:expires_after).returns 1.week
       token.save!
     end
@@ -148,7 +148,7 @@ class TokenCredentialTest < ActiveSupport::TestCase
 
   test 'instance authenticate with expired tokens' do
     token = Tokens::Base.with_code(credentials(:jane_token).code).first
-    token.updated_at = Time.now - 1.year
+    token.updated_at = Time.current - 1.year
     token.save!
     token.class.stubs(:expires_after).returns 1.week
     assert_equal :invalid, token.authenticate,

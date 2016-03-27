@@ -41,12 +41,12 @@ class ApiTokenTest < ActiveSupport::TestCase
   end
 
   test 'expired?' do
-    @credential.updated_at = Time.now - 1.year
+    @credential.updated_at = Time.current - 1.year
     assert_equal false, @credential.expired?
   end
 
   test 'spend does not update old token' do
-    old_updated_at = @credential.updated_at = Time.now - 1.year
+    old_updated_at = @credential.updated_at = Time.current - 1.year
     @credential.spend
     assert_equal old_updated_at, @credential.updated_at
   end

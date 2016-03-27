@@ -38,7 +38,7 @@ class SessionUid < Tokens::Base
 
   # Updates the time associated with the session.
   def spend
-    self.touch if Time.now - updated_at >= updates_after
+    self.touch if Time.current - updated_at >= updates_after
   end
 
   # Garbage-collects database records of expired sessions.
@@ -46,7 +46,7 @@ class SessionUid < Tokens::Base
   # This method should be called periodically to keep the size of the session
   # table under control.
   def self.remove_expired
-    self.where('updated_at < ?', Time.now - expires_after).delete_all
+    self.where('updated_at < ?', Time.current - expires_after).delete_all
     self
   end
 end  # class Tokens::SessionUid
