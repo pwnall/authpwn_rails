@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'base32', '>= 0.3.2'
 gem 'rails', '>= 4.0.13'
 
 group :development do
@@ -10,6 +11,7 @@ group :development do
   gem 'mysql2', '>= 0.3.20'
   gem 'omniauth', '>= 1.3.1'
   gem 'pg', '>= 0.18.4'
+  gem 'rake', '>= 11.1.1'
   gem 'sqlite3', '>= 1.3.11'
   gem 'rubysl', platforms: [:rbx]
   gem 'rubysl-bundler', platforms: [:rbx]

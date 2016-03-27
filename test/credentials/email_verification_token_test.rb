@@ -1,9 +1,9 @@
-require File.expand_path('../../test_helper', __FILE__)
+require_relative '../test_helper'
 
 class EmailVerificationTokenTest < ActiveSupport::TestCase
   def setup
     @credential = Tokens::EmailVerification.new
-    @credential.code = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
+    @credential.code = 'fitobg6hzsk7odiiw3ca45ltghget4tlbbapxikgdsugfa36llwq'
     @credential.key = 'jane@gmail.com'
     @credential.user = users(:jane)
   end

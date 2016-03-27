@@ -1,5 +1,7 @@
 sudo: false
 language: ruby
+services:
+  - postgresql
 addons:
   postgresql: "9.4"
 env:

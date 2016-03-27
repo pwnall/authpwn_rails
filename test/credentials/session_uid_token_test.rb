@@ -1,9 +1,9 @@
-require File.expand_path('../../test_helper', __FILE__)
+require_relative '../test_helper'
 
 class SessionUidTokenTest < ActiveSupport::TestCase
   def setup
     @credential = Tokens::SessionUid.new
-    @credential.code = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
+    @credential.code = 'fitobg6hzsk7odiiw3ca45ltghget4tlbbapxikgdsugfa36llwq'
     @credential.browser_ip = '18.70.0.160'
     @credential.browser_ua =
         'Mozilla/5.0 (X11; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1'

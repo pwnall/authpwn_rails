@@ -1,4 +1,4 @@
-require File.expand_path('../test_helper', __FILE__)
+require_relative 'test_helper'
 
 require 'authpwn_rails/generators/templates/session_controller.rb'
 
@@ -24,7 +24,7 @@ class RoutesTest < ActionController::TestCase
     assert_routing({path: '/session/reset_password', method: :post},
                    {controller: 'session', action: 'reset_password'})
 
-    code = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
+    code = 'ue5tqbx3u4z7jxxglickknirxroy7c3bgig4e2yccbmwqvf3r2vq'
     assert_routing({path: "/session/token/#{code}", method: :get},
         {controller: 'session', action: 'token', code: code})
 

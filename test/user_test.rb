@@ -1,4 +1,4 @@
-require File.expand_path('../test_helper', __FILE__)
+require_relative 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
   def setup
@@ -37,7 +37,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'to_param' do
-    assert_equal '56789', users(:john).to_param
+    assert_equal 'john000exuid', users(:john).to_param
   end
 
   test 'with_param' do

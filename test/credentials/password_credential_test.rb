@@ -1,4 +1,4 @@
-require File.expand_path('../../test_helper', __FILE__)
+require_relative '../test_helper'
 
 class PasswordCredentialTest < ActiveSupport::TestCase
   def setup
@@ -40,6 +40,20 @@ class PasswordCredentialTest < ActiveSupport::TestCase
   test 'password required' do
     @credential.password = @credential.password_confirmation = nil
     assert !@credential.valid?
+  end
+
+  test 'generates salt' do
+    assert @credential.valid?
+    assert_match(/^[^|]{12,16}\|.+$/, @credential.key)
+  end
+
+  test 'generates random salts' do
+    salts = []
+    1000.times do
+      @credential.password = 'password'
+      salts << @credential.key.split('|').first
+    end
+    assert_equal salts.length, salts.uniq.length, 'Salts are not random enough'
   end
 
   test 'old_password always returns nil' do

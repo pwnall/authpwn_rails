@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'base32', '>= 0.3.2'
 gem 'rails', '~> 4.0.13'
 
 group :development do

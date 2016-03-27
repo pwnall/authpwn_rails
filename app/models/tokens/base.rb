@@ -1,5 +1,8 @@
 require 'securerandom'
 
+require 'base32'
+
+
 # :namespace
 module Tokens
 
@@ -12,8 +15,7 @@ class Base < ::Credential
   # Token names are random, so we can expect they'll be unique across the
   # entire namespace. We need this check to enforce name uniqueness across
   # different token types.
-  validates :name, format: /\A[A-Za-z0-9\_\-]+\Z/, presence: true,
-                   uniqueness: true
+  validates :name, format: /\A[a-z0-9]+\Z/, presence: true, uniqueness: true
 
   # Tokens can expire. This is a good idea most of the time, because token
   # codes are supposed to be used quickly.
@@ -93,7 +95,7 @@ class Base < ::Credential
 
   # Generates a random token code.
   def self.random_code
-    SecureRandom.urlsafe_base64(32)
+    Base32.encode(SecureRandom.random_bytes(32)).downcase.sub(/=*$/, '')
   end
 
   # Use codes instead of exposing ActiveRecord IDs.

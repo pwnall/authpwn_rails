@@ -1,9 +1,9 @@
-require File.expand_path('../../test_helper', __FILE__)
+require_relative '../test_helper'
 
 class TokenCredentialTest < ActiveSupport::TestCase
   def setup
     @credential = Tokens::Base.new
-    @credential.code = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
+    @credential.code = 'fitobg6hzsk7odiiw3ca45ltghget4tlbbapxikgdsugfa36llwq'
     @credential.user = users(:bill)
   end
 
@@ -44,11 +44,21 @@ class TokenCredentialTest < ActiveSupport::TestCase
     assert_operator users(:jane).credentials, :include?, token
   end
 
+  test 'random_for randomness' do
+    codes = []
+    1000.times do
+      token = Tokens::Base.random_for users(:jane)
+      codes << token.code
+    end
+    assert_equal codes.length, codes.uniq.length,
+        'Token codes are not random enough'
+  end
+
   test 'with_code' do
-    john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
-    john_email = 'bDSU4tzfjuob79e3R0ykLcOGTBBYvuBWWJ9V06tQrCE'
-    jane = '6TXe1vv7BgOw0BkJ1hzUKO6G08fLk4sVfJ3wPDZHS-c'
-    bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
+    john = 'ue5tqbx3u4z7jxxglickknirxroy7c3bgig4e2yccbmwqvf3r2vq'
+    john_email = 'qid3ipai5be3bcilygdztwvtlpiyrfzxks2solmetndb4vzuvkca'
+    jane = 'skygyoxxmnerxwe4zbi3p5yjtg7zpjl2peyfcwh5wnc37fyfc4xa'
+    bogus = '3bl3iypby25bqooia7hpskihlrzjkt7opz5vgdp7i3mkaopdjcza'
     assert_equal credentials(:john_token),
                  Tokens::Base.with_code(john).first
     assert_equal credentials(:jane_token),
@@ -76,10 +86,10 @@ class TokenCredentialTest < ActiveSupport::TestCase
   end
 
   test 'class authenticate' do
-    john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
-    john_email = 'bDSU4tzfjuob79e3R0ykLcOGTBBYvuBWWJ9V06tQrCE'
-    jane = '6TXe1vv7BgOw0BkJ1hzUKO6G08fLk4sVfJ3wPDZHS-c'
-    bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
+    john = 'ue5tqbx3u4z7jxxglickknirxroy7c3bgig4e2yccbmwqvf3r2vq'
+    john_email = 'qid3ipai5be3bcilygdztwvtlpiyrfzxks2solmetndb4vzuvkca'
+    jane = 'skygyoxxmnerxwe4zbi3p5yjtg7zpjl2peyfcwh5wnc37fyfc4xa'
+    bogus = '3bl3iypby25bqooia7hpskihlrzjkt7opz5vgdp7i3mkaopdjcza'
 
     assert_equal users(:john), Tokens::Base.authenticate(john)
     assert_equal users(:john), Tokens::Base.authenticate(john_email)
@@ -88,9 +98,9 @@ class TokenCredentialTest < ActiveSupport::TestCase
   end
 
   test 'class authenticate with non-base class' do
-    john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
-    john_email = 'bDSU4tzfjuob79e3R0ykLcOGTBBYvuBWWJ9V06tQrCE'
-    bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
+    john = 'ue5tqbx3u4z7jxxglickknirxroy7c3bgig4e2yccbmwqvf3r2vq'
+    john_email = 'qid3ipai5be3bcilygdztwvtlpiyrfzxks2solmetndb4vzuvkca'
+    bogus = '3bl3iypby25bqooia7hpskihlrzjkt7opz5vgdp7i3mkaopdjcza'
 
     assert_equal :invalid, Tokens::EmailVerification.authenticate(john)
     assert_equal users(:john),
@@ -99,8 +109,8 @@ class TokenCredentialTest < ActiveSupport::TestCase
   end
 
   test 'class authenticate on expired tokens' do
-    john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
-    jane = '6TXe1vv7BgOw0BkJ1hzUKO6G08fLk4sVfJ3wPDZHS-c'
+    john = 'ue5tqbx3u4z7jxxglickknirxroy7c3bgig4e2yccbmwqvf3r2vq'
+    jane = 'skygyoxxmnerxwe4zbi3p5yjtg7zpjl2peyfcwh5wnc37fyfc4xa'
 
     Tokens::Base.all.each do |token|
       token.updated_at = Time.now - 1.year
@@ -120,9 +130,9 @@ class TokenCredentialTest < ActiveSupport::TestCase
   end
 
   test 'class authenticate calls User#auth_bounce_reason' do
-    john = 'YZ-Fo8HX6_NyU6lVZXYi6cMDLV5eAgt35UTF5l8bD6A'
-    jane = '6TXe1vv7BgOw0BkJ1hzUKO6G08fLk4sVfJ3wPDZHS-c'
-    bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
+    john = 'ue5tqbx3u4z7jxxglickknirxroy7c3bgig4e2yccbmwqvf3r2vq'
+    jane = 'skygyoxxmnerxwe4zbi3p5yjtg7zpjl2peyfcwh5wnc37fyfc4xa'
+    bogus = '3bl3iypby25bqooia7hpskihlrzjkt7opz5vgdp7i3mkaopdjcza'
 
     with_blocked_credential credentials(:john_token), :reason do
       assert_equal :reason, Tokens::Base.authenticate(john)

@@ -1,4 +1,4 @@
-require File.expand_path('../test_helper', __FILE__)
+require_relative 'test_helper'
 
 # Mock controller used for testing session handling.
 class HttpTokenController < ApplicationController
@@ -57,9 +57,9 @@ class HttpTokenControllerTest < ActionController::TestCase
   end
 
   test "uses Tokens::Api.authenticate" do
-    Tokens::Api.expects(:authenticate).at_least_once.with('ap1-c0d3').
+    Tokens::Api.expects(:authenticate).at_least_once.with('ap1c0d3').
         returns @user
-    set_http_token_user @user, 'ap1-c0d3'
+    set_http_token_user @user, 'ap1c0d3'
     get :show
     assert_equal @user, assigns(:current_user)
     assert_equal nil, session_current_user,

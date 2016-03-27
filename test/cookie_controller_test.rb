@@ -1,4 +1,4 @@
-require File.expand_path('../test_helper', __FILE__)
+require_relative 'test_helper'
 
 # Mock controller used for testing session handling.
 class CookieController < ApplicationController
@@ -190,7 +190,7 @@ class CookieControllerTest < ActionController::TestCase
     assert_equal nil, assigns(:current_user)
   end
 
-  test "set_session_current_user behaves when no user is logged off" do
+  test "set_session_current_user behavhttps://appear.in/pwnalles when no user is logged off" do
     assert_no_difference 'Credential.count' do
       put :update, exuid: ''
     end

@@ -1,3 +1,5 @@
+require 'securerandom'
+
 # :namespace
 module Credentials
 
@@ -78,7 +80,7 @@ class Password < ::Credential
 
   # Generates a random salt value.
   def self.random_salt
-    [(0...12).map { |i| 1 + rand(255) }.pack('C*')].pack('m').strip
+    [SecureRandom.random_bytes(12)].pack('m').strip
   end
 end  # class Credentials::Password
 

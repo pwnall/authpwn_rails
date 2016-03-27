@@ -1,8 +1,8 @@
 jane:
-  exuid: 12345
+  exuid: jane000exuid
 
 john:
-  exuid: 56789
+  exuid: john000exuid
 
 bill:
-  exuid: 98765
+  exuid: bill000exuid

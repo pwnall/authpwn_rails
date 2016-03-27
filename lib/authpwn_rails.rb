@@ -1,4 +1,4 @@
-require 'active_support'
+require 'active_support/dependencies'
 
 # :nodoc: namespace
 module Authpwn
@@ -31,6 +31,6 @@ if defined?(Rails)
 
   # HACK(pwnall): this works around a known Rails bug
   #     https://rails.lighthouseapp.com/projects/8994/tickets/1905-apphelpers-within-plugin-not-being-mixed-in
-  require File.expand_path('../../app/helpers/session_helper.rb', __FILE__)
+  require_relative '../app/helpers/session_helper.rb'
   ActionController::Base.helper SessionHelper
 end

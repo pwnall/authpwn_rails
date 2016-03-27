@@ -15,10 +15,5 @@ module Rails
     def application
       @_app ||= AuthpwnApp::Application.new
     end
-
-    # Used by fbgraph.
-    def root
-      File.expand_path '../..', File.dirname(__FILE__)
-    end
   end
 end

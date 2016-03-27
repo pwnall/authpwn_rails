@@ -1,9 +1,9 @@
-require File.expand_path('../../test_helper', __FILE__)
+require_relative '../test_helper'
 
 class OneTimeTokenCredentialTest < ActiveSupport::TestCase
   def setup
     @credential = Tokens::OneTime.new
-    @credential.code = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
+    @credential.code = 'fitobg6hzsk7odiiw3ca45ltghget4tlbbapxikgdsugfa36llwq'
     @credential.user = users(:bill)
   end
 
@@ -37,7 +37,7 @@ class OneTimeTokenCredentialTest < ActiveSupport::TestCase
   end
 
   test 'authenticate spends the token' do
-    jane = '6TXe1vv7BgOw0BkJ1hzUKO6G08fLk4sVfJ3wPDZHS-c'
+    jane = 'skygyoxxmnerxwe4zbi3p5yjtg7zpjl2peyfcwh5wnc37fyfc4xa'
     bogus = 'AyCMIixa5C7BBqU-XFI7l7IaUFJ4zQZPmcK6oNb3FLo'
     assert_difference 'Credential.count', -1, 'token spent' do
       assert_equal users(:jane), Tokens::Base.authenticate(jane)
@@ -48,7 +48,7 @@ class OneTimeTokenCredentialTest < ActiveSupport::TestCase
   end
 
   test 'authenticate calls User#auth_bounce_reason' do
-    jane = '6TXe1vv7BgOw0BkJ1hzUKO6G08fLk4sVfJ3wPDZHS-c'
+    jane = 'skygyoxxmnerxwe4zbi3p5yjtg7zpjl2peyfcwh5wnc37fyfc4xa'
 
     with_blocked_credential credentials(:jane_token), :reason do
       assert_no_difference 'Credential.count', 'no token spent' do

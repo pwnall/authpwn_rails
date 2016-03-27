@@ -1,4 +1,4 @@
-require File.expand_path('../test_helper', __FILE__)
+require_relative 'test_helper'
 
 # Mock controller used for testing session handling.
 class HttpBasicController < ApplicationController

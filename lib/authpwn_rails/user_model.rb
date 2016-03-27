@@ -1,6 +1,8 @@
 require 'securerandom'
+
 require 'active_model'
 require 'active_support'
+require 'base32'
 
 
 # :nodoc: namespace
@@ -109,7 +111,7 @@ module UserModel
   # :nodoc: sets exuid to a (hopefully) unique value before validations occur.
   def set_default_exuid
     self.exuid ||=
-        SecureRandom.random_bytes(8).unpack('Q').first & 0x7fffffffffffffff
+        Base32.encode(SecureRandom.random_bytes(16)).downcase.sub(/=*$/, '')
   end
 end  # namespace Authpwn::UserModel
 
