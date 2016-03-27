@@ -63,7 +63,11 @@ class SessionUidTokenTest < ActiveSupport::TestCase
   end
 
   test 'spend does not update reasonably new token' do
-    old_updated_at = @credential.updated_at = Time.current - 5.minutes
+    # NOTE: Some databases don't support sub-second precision. In Rails 5, the
+    #       time values reflect this, and would cause the test to fail if we
+    #       don't round Time.current down to the nearest second.
+    old_updated_at = @credential.updated_at =
+        (Time.current - 5.minutes).change(usec: 0)
     @credential.spend
     assert_equal old_updated_at, @credential.updated_at
   end
