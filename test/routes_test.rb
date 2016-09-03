@@ -17,6 +17,8 @@ class RoutesTest < ActionController::TestCase
                    {controller: 'session', action: 'destroy'})
     assert_routing({path: '/session/api_token', method: :get},
                    {controller: 'session', action: 'api_token'})
+    assert_routing({path: '/session/api_token', method: :delete},
+                   {controller: 'session', action: 'destroy_api_token'})
     assert_routing({path: '/session/change_password', method: :get},
                    {controller: 'session', action: 'password_change'})
     assert_routing({path: '/session/change_password', method: :post},

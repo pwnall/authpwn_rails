@@ -109,6 +109,34 @@ module SessionController
     end
   end
 
+  # DELETE /api_token
+  def destroy_api_token
+    unless current_user
+      bounce_user
+      return
+    end
+
+    api_token = Tokens::Api.where(user_id: current_user.id).first
+    if api_token
+      api_token.destroy
+      respond_to do |format|
+        format.html do
+          redirect_to api_token_session_url,
+                      notice: 'Your old API token has been revoked'
+        end
+        format.json { render json: {} }
+      end
+    else
+      respond_to do |format|
+        format.html do
+          redirect_to api_token_session_url,
+                      alert: 'You had no old API token to revoke'
+        end
+        format.json { head :not_found }
+      end
+    end
+  end
+
   # POST /session/reset_password
   def reset_password
     email = params[:session] && params[:session][:email]

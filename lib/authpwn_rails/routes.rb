@@ -39,6 +39,9 @@ module MapperMixin
 
     get "/#{paths}/api_token", controller: controller, action: 'api_token',
                                as: "api_token_#{methods}"
+    delete "/#{paths}/api_token", controller: controller,
+                                  action: 'destroy_api_token',
+                                  as: "destroy_api_token_#{methods}"
     get "/#{paths}/change_password", controller: controller,
                                     action: 'password_change',
                                     as: "change_password_#{methods}"

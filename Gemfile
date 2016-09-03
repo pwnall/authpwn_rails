@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'base32', '>= 0.3.2'
-gem 'rails', '>= 4.0.13'
+gem 'rails', ['~> 4.0', '>= 4.0.13']
 
 group :development do
   gem 'bundler', '>= 1.6.6'

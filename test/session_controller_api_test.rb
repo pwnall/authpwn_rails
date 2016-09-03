@@ -450,6 +450,62 @@ class SessionControllerApiTest < ActionController::TestCase
     assert_equal 'Please sign in', data['error']
   end
 
+  test "api_token destroy request" do
+    user = users(:john)
+    set_session_current_user user
+    assert_difference 'Tokens::Api.count', -1 do
+      delete :destroy_api_token
+    end
+    assert_nil user.credentials.where(type: 'Tokens::Api').first
+    assert_redirected_to api_token_session_url
+    assert_match(/token.*revoked/, flash[:notice])
+  end
+
+  test "api_token destroy request from user without token" do
+    set_session_current_user @user
+    assert_no_difference 'Tokens::Api.count' do
+      delete :destroy_api_token
+    end
+    assert_nil @user.credentials.where(type: 'Tokens::Api').first
+    assert_redirected_to api_token_session_url
+    assert_match(/no.*token.*to.*revoke/, flash[:alert])
+  end
+
+  test "api_token destroy request without logged in user" do
+    delete :destroy_api_token
+    assert_response :forbidden
+  end
+
+  test "api_token destroy JSON request" do
+    user = users(:john)
+    set_session_current_user user
+    assert_difference 'Tokens::Api.count', -1 do
+      delete :destroy_api_token, format: 'json'
+    end
+
+    assert_nil user.credentials.where(type: 'Tokens::Api').first
+    assert_equal({}, ActiveSupport::JSON.decode(response.body))
+    assert_response :ok
+  end
+
+  test "api_token destroy JSON request from user without token" do
+    set_session_current_user @user
+    assert_no_difference 'Tokens::Api.count' do
+      delete :destroy_api_token, format: 'json'
+    end
+
+    assert_nil @user.credentials.where(type: 'Tokens::Api').first
+    assert_response :not_found
+  end
+
+  test "api_token destroy JSON request without logged in user" do
+    delete :destroy_api_token, format: 'json'
+    assert_response :ok
+
+    data = ActiveSupport::JSON.decode response.body
+    assert_equal 'Please sign in', data['error']
+  end
+
   test "password_change bounces without logged in user" do
     get :password_change
     assert_response :forbidden
