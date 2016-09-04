@@ -9,7 +9,7 @@ class ActionController::Base
   # find_by_id.
   def self.authenticates_using_session(options = {})
     include Authpwn::ControllerInstanceMethods
-    before_filter :authenticate_using_session, options
+    before_action :authenticate_using_session, options
   end
 
   # True for controllers belonging to the authentication implementation.
@@ -54,9 +54,9 @@ module ControllerInstanceMethods
   # Filter that implements authenticates_using_session.
   #
   # If your ApplicationController contains authenticates_using_session, you
-  # can opt out in individual controllers using skip_before_filter.
+  # can opt out in individual controllers using skip_before_action.
   #
-  #     skip_before_filter :authenticate_using_session
+  #     skip_before_action :authenticate_using_session
   def authenticate_using_session
     return if current_user
     session_uid = session[:authpwn_suid]

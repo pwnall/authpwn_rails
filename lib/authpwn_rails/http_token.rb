@@ -25,7 +25,7 @@ module HttpTokenControllerInstanceMethods
   # If your ApplicationController contains authenticates_using_http_token, you
   # can opt out in individual controllers using skip_before_action.
   #
-  #     skip_before_action :authenticate_using_http_filter
+  #     skip_before_action :authenticate_using_http_token
   def authenticate_using_http_token
     return if current_user
     authenticate_with_http_token do |token_code, options|
