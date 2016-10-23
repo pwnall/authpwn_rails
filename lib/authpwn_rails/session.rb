@@ -1,16 +1,15 @@
 require 'action_controller'
+require 'active_support'
 
-# :nodoc: adds authenticates_using_session
-class ActionController::Base
-  # Keeps track of the currently authenticated user via the session.
-  #
-  # Assumes the existence of a User model. A bare ActiveModel model will do the
-  # trick. Model instances must implement id, and the model class must implement
-  # find_by_id.
-  def self.authenticates_using_session(options = {})
-    include Authpwn::ControllerInstanceMethods
-    before_action :authenticate_using_session, options
-  end
+# :nodoc: namespace
+module Authpwn
+
+# Included in ActionController::Base.
+#
+# Can be included manually in controllers that don't inherit from
+# ActionController::Base, such as rails-api controllers.
+module ControllerBaseExtensions
+  extend ActiveSupport::Concern
 
   # True for controllers belonging to the authentication implementation.
   #
@@ -19,10 +18,20 @@ class ActionController::Base
   def auth_controller?
     false
   end
-end
 
-# :nodoc: namespace
-module Authpwn
+  # Class methds on classes that include Authpwn::ControllerBaseExtensions
+  module ClassMethods
+    # Keeps track of the currently authenticated user via the session.
+    #
+    # Assumes the existence of a User model. A bare ActiveModel model will do the
+    # trick. Model instances must implement id, and the model class must implement
+    # find_by_id.
+    def authenticates_using_session(options = {})
+      include Authpwn::ControllerInstanceMethods
+      before_action :authenticate_using_session, options
+    end
+  end
+end
 
 # Included in controllers that call authenticates_using_session.
 module ControllerInstanceMethods
@@ -94,3 +103,7 @@ module ControllerInstanceMethods
 end  # module Authpwn::ControllerInstanceMethods
 
 end  # namespace Authpwn
+
+class ActionController::Base
+  include Authpwn::ControllerBaseExtensions
+end

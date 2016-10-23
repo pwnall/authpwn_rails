@@ -15,7 +15,15 @@ module SessionController
     authenticates_using_session except: [:create, :reset_password, :token]
 
     # NOTE: The Omniauth callback uses POST in some cases.
-    skip_before_action :verify_authenticity_token, only: [:omniauth]
+    begin
+      skip_before_action :verify_authenticity_token, only: [:omniauth]
+    rescue ArgumentError => e
+      # Catch the case where the controller doesn't use protect_from_forgery.
+      unless e.message.match(/:verify_authenticity_token/i) &&
+          e.message.match(/has not been defined/i)
+        raise
+      end
+    end
 
     # If set, every successful login will cause a database purge.
     class_attribute :auto_purge_sessions
