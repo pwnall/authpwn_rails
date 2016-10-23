@@ -373,7 +373,7 @@ class SessionControllerApiTest < ActionController::TestCase
     set_session_current_user @user
     delete :destroy, format: 'json'
 
-    assert_response :ok
+    assert_response :no_content
   end
 
   test "api_token request" do
@@ -591,7 +591,7 @@ class SessionControllerApiTest < ActionController::TestCase
     post :change_password, format: 'json', params: {
         credential: { old_password: 'pa55w0rd', password: 'hacks',
                       password_confirmation: 'hacks' } }
-    assert_response :ok
+    assert_response :no_content
     assert_equal @user, User.authenticate_signin(Session.new(email:
         @email_credential.email, password: 'hacks')), 'password not changed'
   end
@@ -627,7 +627,7 @@ class SessionControllerApiTest < ActionController::TestCase
     @password_credential.destroy
     post :change_password, format: 'json', params: {
          credential: { password: 'hacks', password_confirmation: 'hacks' } }
-    assert_response :ok
+    assert_response :no_content
     assert_equal @user, User.authenticate_signin(Session.new(email:
         @email_credential.email, password: 'hacks')), 'password not changed'
   end

@@ -221,7 +221,7 @@ module SessionController
     self.set_session_current_user nil
     respond_to do |format|
       format.html { redirect_to session_url }
-      format.json { head :ok }
+      format.json { head :no_content }
     end
   end
 
@@ -272,7 +272,7 @@ module SessionController
         format.html do
           redirect_to session_url, notice: 'Password updated'
         end
-        format.json { head :ok }
+        format.json { head :no_content }
       else
         format.html { render action: :password_change }
         format.json { render json: { error: :invalid } }
