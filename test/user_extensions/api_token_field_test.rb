@@ -5,7 +5,7 @@ class UserWithApiToken < User
 end
 
 class ApiTokenFieldTest < ActiveSupport::TestCase
-  def setup
+  setup do
     @john = UserWithApiToken.find_by_id users(:john).id
     @jane = UserWithApiToken.find_by_id users(:jane).id
     @bill = UserWithApiToken.find_by_id users(:bill).id

@@ -1,3 +1,7 @@
+require 'action_controller'
+require 'active_support'
+
+
 # :nodoc: namespace
 module Authpwn
 

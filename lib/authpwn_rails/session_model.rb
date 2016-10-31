@@ -1,6 +1,5 @@
 require 'active_model'
 
-
 # :nodoc: namespace
 module Authpwn
 

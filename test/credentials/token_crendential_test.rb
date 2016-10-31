@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class TokenCredentialTest < ActiveSupport::TestCase
-  def setup
+  setup do
     @credential = Tokens::Base.new
     @credential.code = 'fitobg6hzsk7odiiw3ca45ltghget4tlbbapxikgdsugfa36llwq'
     @credential.user = users(:bill)

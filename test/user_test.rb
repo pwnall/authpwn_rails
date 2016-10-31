@@ -1,7 +1,7 @@
 require_relative 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  def setup
+  setup do
     @user = User.new
   end
 

@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class PasswordCredentialTest < ActiveSupport::TestCase
-  def setup
+  setup do
     @credential = Credentials::Password.new
     @credential.password = 'awesome'
     @credential.password_confirmation = 'awesome'

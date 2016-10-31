@@ -5,7 +5,7 @@ class UserWithPassword < User
 end
 
 class PasswordFieldTest < ActiveSupport::TestCase
-  def setup
+  setup do
     @user = UserWithPassword.new password: 'awesome',
                                  password_confirmation: 'awesome'
 

@@ -1,7 +1,7 @@
 require_relative 'test_helper'
 
 class ActionControllerTestExtensionsTest < ActionController::TestCase
-  def setup
+  setup do
     @user = users(:john)
     @token = credentials(:john_session_token)
   end

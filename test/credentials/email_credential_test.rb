@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class EmailCredentialTest < ActiveSupport::TestCase
-  def setup
+  setup do
     @credential = Credentials::Email.new
     @credential.email = 'dvdjohn@mit.edu'
     @credential.user = users(:bill)

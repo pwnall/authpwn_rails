@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class OneTimeTokenCredentialTest < ActiveSupport::TestCase
-  def setup
+  setup do
     @credential = Tokens::OneTime.new
     @credential.code = 'fitobg6hzsk7odiiw3ca45ltghget4tlbbapxikgdsugfa36llwq'
     @credential.user = users(:bill)

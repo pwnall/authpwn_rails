@@ -1,4 +1,13 @@
 require 'rubygems'
+require 'bundler'
+begin
+  Bundler.setup(:default, :development)
+rescue Bundler::BundlerError => e
+  $stderr.puts e.message
+  $stderr.puts "Run `bundle install` to install missing gems"
+  exit e.status_code
+end
+
 require 'minitest/autorun'
 
 require 'action_controller'
@@ -6,8 +15,6 @@ require 'action_mailer'
 require 'active_record'
 require 'active_support/core_ext'
 require 'rails'
-
-require 'sqlite3'
 
 require 'mocha/setup'
 
@@ -21,6 +28,7 @@ require 'helpers/action_mailer.rb'
 require 'helpers/autoload_path.rb'
 require 'helpers/db_setup.rb'
 require 'helpers/i18n.rb'
+require 'helpers/migrations.rb'
 require 'helpers/rails.rb'
 require 'helpers/routes.rb'
 require 'helpers/test_order.rb'

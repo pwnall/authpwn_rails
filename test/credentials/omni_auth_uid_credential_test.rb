@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class OmniAuthUidCredentialTest < ActiveSupport::TestCase
-  def setup
+  setup do
     @credential = Credentials::OmniAuthUid.new
     @credential.provider = 'developer'
     @credential.uid = 'dvdjohn@mit.edu'

@@ -12,6 +12,7 @@ module Rails
   class <<self
     # Used by the initializer.
     alias_method :_real_application, :application
+    remove_method :application
     def application
       @_app ||= AuthpwnApp::Application.new
     end

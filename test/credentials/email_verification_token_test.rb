@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class EmailVerificationTokenTest < ActiveSupport::TestCase
-  def setup
+  setup do
     @credential = Tokens::EmailVerification.new
     @credential.code = 'fitobg6hzsk7odiiw3ca45ltghget4tlbbapxikgdsugfa36llwq'
     @credential.key = 'jane@gmail.com'

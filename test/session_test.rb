@@ -1,7 +1,7 @@
 require_relative 'test_helper'
 
 class SessionTest < ActiveSupport::TestCase
-  def setup
+  setup do
     @session = Session.new email: 'costan@gmail.com', password: 'secret'
   end
 

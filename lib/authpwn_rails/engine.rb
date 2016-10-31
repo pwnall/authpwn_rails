@@ -1,7 +1,4 @@
-require 'authpwn_rails'
-
 require 'active_support/core_ext/numeric/time.rb'
-require 'rails'
 
 # :nodoc: namespace
 module Authpwn

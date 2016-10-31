@@ -3,7 +3,7 @@ module Authpwn
 
 # rails g authpwn:all
 class AllGenerator < Rails::Generators::Base
-  source_root File.expand_path("../templates", __FILE__)
+  source_root File.expand_path('../templates', __FILE__)
 
   def create_user_model
     copy_file 'user.rb', File.join('app', 'models', 'user.rb')

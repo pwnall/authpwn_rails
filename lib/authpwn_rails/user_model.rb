@@ -4,7 +4,6 @@ require 'active_model'
 require 'active_support'
 require 'base32'
 
-
 # :nodoc: namespace
 module Authpwn
 
