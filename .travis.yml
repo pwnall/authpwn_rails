@@ -3,7 +3,7 @@ language: ruby
 services:
   - postgresql
 addons:
-  postgresql: "9.4"
+  postgresql: "9.6"
 env:
   - DB=mysql:utf8_general_ci
   - DB=mysql:utf8_bin
@@ -11,6 +11,7 @@ env:
   - DB=sqlite
 gemfile:
   - Gemfile.rails5
+  - Gemfile.rails51
 rvm:
-  - 2.2.5
-  - 2.3.1
+  - 2.4.3
+  - 2.5.0
